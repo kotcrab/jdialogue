@@ -42,6 +42,9 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	
 	private ArrayList<DComponent> componentList = new ArrayList<DComponent>();
 	
+	private DComponent selectedComponent = null;
+	private int attachPointX;
+
 	public Renderer(EditorListener listener)
 	{
 		this.listener = listener;
@@ -80,20 +83,28 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		
 		Gdx.gl.glClearColor(0.69f, 0.69f, 0.69f, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		
+
+		batch.setShader(Assets.fontDistanceFieldShader);
 		for (DComponent comp : componentList)
 		{
 			comp.renderShapes(shapeRenderer);
-		}
-		
-		batch.setShader(Assets.fontDistanceFieldShader);
-		batch.begin();
-		for (DComponent comp : componentList)
-		{
+			
+			batch.begin();
 			comp.render(batch);
+			batch.end();
 		}
-		batch.end();
 		batch.setShader(null);
+
+		if(selectedComponent != null) selectedComponent.renderSelectionOutline(shapeRenderer);
+		
+//		batch.setShader(Assets.fontDistanceFieldShader);
+//		batch.begin();
+//		for (DComponent comp : componentList)
+//		{
+//			comp.render(batch);
+//		}
+//		batch.end();
+//		batch.setShader(null);
 		//
 		// shapeRenderer.begin(ShapeType.Filled);
 		// shapeRenderer.setColor(Color.GRAY);
@@ -192,8 +203,12 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	@Override
 	public boolean pan(float x, float y, float deltaX, float deltaY)
 	{
+		if(selectedComponent == null)
+		{
 		camera.position.x = camera.position.x + -deltaX * camera.zoom;
 		camera.position.y = camera.position.y + deltaY * camera.zoom;
+		}
+
 		return false;
 	}
 	
@@ -207,7 +222,34 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer)
 	{
+		if(selectedComponent != null)
+		{
+			selectedComponent.setX(Touch.calcX(screenX) - attachPointX);//  + (selectedComponent.getX() + selectedComponent.getWidth() - Touch.calcX(screenX)));
+			selectedComponent.setY(Touch.calcY(screenY));
+		}
+		return false;
+	}
 		
+	@Override
+	public boolean touchDown(float x, float y, int pointer, int button)
+	{
+		x = Touch.calcX(x);
+		y = Touch.calcY(y);
+		
+		
+		boolean found = false;
+		for (DComponent comp : componentList)
+		{
+			if(comp.contains(x, y))
+			{
+				selectedComponent = comp;
+				attachPointX = (int) (x - selectedComponent.getX());
+				found = true;
+				break;
+			}
+		}
+		
+		if(found == false) selectedComponent = null;
 		return false;
 	}
 	
@@ -219,16 +261,8 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	}
 	
 	@Override
-	public boolean touchDown(float x, float y, int pointer, int button)
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
-	@Override
 	public boolean tap(float x, float y, int count, int button)
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 	

@@ -16,6 +16,8 @@
 
 package pl.kotcrab.dialoguelib.editor;
 
+import java.awt.Rectangle;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -44,8 +46,7 @@ public abstract class DComponent
 		else
 			height = (outputs + 1) * 30;
 		
-		this.title.center(width);
-		this.title.setPosition(x + this.title.getPosition().x + 3, this.title.getPosition().y);
+		calcTextPos();
 			
 	}
 	
@@ -55,6 +56,48 @@ public abstract class DComponent
 		title.draw(batch);
 	}
 	
+	public void setX(int x)
+	{
+		this.x = x;
+		calcTextPos();
+
+	}
+
+	public void setY(int y)
+	{
+		this.y = y;
+		calcTextPos();
+
+	}
+	
+	private void calcTextPos()
+	{
+		this.title.center(width);
+		this.title.setPosition(x + this.title.getPosition().x + 3, y);
+	}
+	
+	public int getX()
+	{
+		return x;
+	}
+
+	public int getY()
+	{
+		return y;
+	}
+	
+	
+
+	public int getHeight()
+	{
+		return height;
+	}
+
+	public int getWidth()
+	{
+		return width;
+	}
+
 	public void renderShapes(ShapeRenderer shapeRenderer)
 	{
 		shapeRenderer.begin(ShapeType.Filled); //background
@@ -66,5 +109,18 @@ public abstract class DComponent
 		shapeRenderer.setColor(Color.BLACK);
 		shapeRenderer.rect(x, y - height / 2, width, height);
 		shapeRenderer.end();
+	}
+	
+	public void renderSelectionOutline(ShapeRenderer shapeRenderer)
+	{
+		shapeRenderer.begin(ShapeType.Line); //outline
+		shapeRenderer.setColor(Color.ORANGE);
+		shapeRenderer.rect(x, y - height / 2, width, height);
+		shapeRenderer.end();
+	}
+	
+	public boolean contains(float x, float y)
+	{
+		return this.x <= x && this.x + this.width >= x && this.y - this.height / 2 <= y && this.y + this.height / 2 >= y;
 	}
 }

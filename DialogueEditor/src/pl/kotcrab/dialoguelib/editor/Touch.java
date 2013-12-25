@@ -42,7 +42,7 @@ public class Touch
 	/** Zwaraca poprawne miejsce dotyku pobrane przy ucyzciu Gdx.input.getX()  
 	 * Aby uzywac nalezy wyowalc jednorazowo setCamera()
 	 * @param x pochadzace z Gdx.input.getX()*/
-	public static int calcX(int x)
+	public static int calcX(float x)
 	{
 		calcVector.x = x;
 		camera.unproject(calcVector);
@@ -52,7 +52,7 @@ public class Touch
 	/** Zwaraca poprawne miejsce dotyku pobrane przy ucyzciu Gdx.input.getY()  
 	 * Aby uzywac nalezy wyowalc jednorazowo setCamera()
 	 * @param y pochadzace z Gdx.input.getY()*/
-	public static int calcY(int y)
+	public static int calcY(float y)
 	{
 		calcVector.y = y;
 		camera.unproject(calcVector);
