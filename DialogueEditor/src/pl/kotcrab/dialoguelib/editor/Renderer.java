@@ -18,10 +18,15 @@ package pl.kotcrab.dialoguelib.editor;
 
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 import pl.kotcrab.dialoguelib.editor.components.ChoiceComponent;
+import pl.kotcrab.dialoguelib.editor.components.Connection;
 import pl.kotcrab.dialoguelib.editor.components.DComponent;
 import pl.kotcrab.dialoguelib.editor.components.DComponentType;
+import pl.kotcrab.dialoguelib.editor.components.EndComponent;
 import pl.kotcrab.dialoguelib.editor.components.RandomComponent;
+import pl.kotcrab.dialoguelib.editor.components.StartComponent;
 import pl.kotcrab.dialoguelib.editor.components.TextComponent;
 
 import com.badlogic.gdx.ApplicationListener;
@@ -49,8 +54,10 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	private ArrayList<DComponent> componentList = new ArrayList<DComponent>();
 	
 	private DComponent selectedComponent = null;
+	private Connection selectedConnection = null;
 	private int attachPointX;
 	private int attachPointY;
+
 
 	
 	public Renderer(EditorListener listener)
@@ -74,7 +81,10 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		Gdx.input.setInputProcessor(mul);
 		
 		
-		componentList.add(new TextComponent(200, 200));
+		componentList.add(new TextComponent(200, 300));
+		
+		componentList.add(new StartComponent(0, 300));
+		componentList.add(new EndComponent(500, 300));
 	}
 	
 	public void update()
@@ -105,6 +115,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		batch.setShader(null);
 		
 		if(selectedComponent != null) selectedComponent.renderSelectionOutline(shapeRenderer);
+		if(selectedConnection != null) selectedConnection.renderSelected(shapeRenderer);
 		
 		
 		// batch.setShader(Assets.fontDistanceFieldShader);
@@ -265,9 +276,46 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	}
 	
 	@Override
+	public boolean keyDown(int keycode)
+	{
+		if(selectedComponent != null)
+		{
+			if(selectedComponent instanceof StartComponent || selectedComponent instanceof EndComponent)
+			{
+				listener.showMsg("This component cannot be deleted!", "Error", JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
+				
+			if(componentList.remove(selectedComponent))
+				selectedComponent = null;
+			else
+				throw new EditorException("Component not on list! Ilegal state!");
+	
+		}
+		return false;
+	}
+	
+	@Override
 	public boolean mouseMoved(int screenX, int screenY)
 	{
-		// TODO Auto-generated method stub
+		float x = Touch.calcX(screenX);
+		float y = Touch.calcY(screenY);
+		
+		boolean found = false;
+		for (DComponent comp : componentList)
+		{
+			Connection connection = comp.connectionContains(x, y);
+			if(connection != null)
+			{
+				selectedConnection = connection;
+				found = true;
+				break;
+			}
+		}
+		
+		if(found == false) selectedConnection = null;
+
+		
 		return false;
 	}
 	
@@ -312,19 +360,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		return false;
 	}
 	
-	@Override
-	public boolean keyDown(int keycode)
-	{
-		if(selectedComponent != null)
-		{
-			if(componentList.remove(selectedComponent))
-				selectedComponent = null;
-			else
-				throw new EditorException("Component not on list! Ilegal state!");
-	
-		}
-		return false;
-	}
+
 	
 	@Override
 	public boolean keyUp(int keycode)

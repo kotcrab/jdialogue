@@ -41,6 +41,14 @@ public class Connection
 		shapeRenderer.rect(x, y, 12, 12);
 		shapeRenderer.end();
 	}
+	
+	public void renderSelected(ShapeRenderer shapeRenderer)
+	{
+		shapeRenderer.begin(ShapeType.Filled);
+		shapeRenderer.setColor(Color.ORANGE);
+		shapeRenderer.rect(x, y, 12, 12);
+		shapeRenderer.end();
+	}
 
 	public Connection getTarget()
 	{
@@ -76,5 +84,10 @@ public class Connection
 	{
 		this.x = x;
 		this.y = y;
+	}
+	
+	public boolean contains(float x, float y) //is given point inside component
+	{
+		return this.x <= x && this.x + 12 >= x && this.y <= y && this.y + 12 >= y;
 	}
 }

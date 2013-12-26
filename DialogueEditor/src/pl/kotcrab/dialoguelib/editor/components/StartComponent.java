@@ -14,11 +14,15 @@
  * limitations under the License.
  ******************************************************************************/
 
-package pl.kotcrab.dialoguelib.editor;
+package pl.kotcrab.dialoguelib.editor.components;
 
-public interface EditorListener
+
+public class StartComponent extends DComponent
 {
-	public void mouseRightClicked(int x, int y);
 
-	public void showMsg(String msg, String title, int msgType);
+	public StartComponent(int x, int y)
+	{
+		super("Start", x, y, 0,1);
+	}
+	
 }

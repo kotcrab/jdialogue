@@ -143,6 +143,23 @@ public abstract class DComponent
 		return this.x <= x && this.x + this.width >= x && this.y - this.height / 2 <= y && this.y + this.height / 2 >= y;
 	}
 	
+	public Connection connectionContains(float x, float y)
+	{
+		for (int i = 0; i < inputs.length; i++)
+		{
+			if(inputs[i].contains(x, y))
+				return inputs[i];
+		}
+		
+		for (int i = 0; i < outputs.length; i++)
+		{
+			if(outputs[i].contains(x, y))
+				return outputs[i];
+		}
+		
+		return null;
+	}
+	
 	private void calcTextPos()
 	{
 		this.title.center(width);
@@ -183,4 +200,6 @@ public abstract class DComponent
 	{
 		return width;
 	}
+
+
 }

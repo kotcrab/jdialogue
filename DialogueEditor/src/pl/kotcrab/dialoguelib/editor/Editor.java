@@ -28,6 +28,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
@@ -49,6 +50,8 @@ import java.awt.event.FocusListener;
 public class Editor extends JFrame
 {
 	private static final long serialVersionUID = 7300428735708717490L;
+	private static JFrame window;
+	
 	private JPanel contentPane;
 	private JTable table;
 	private LwjglCanvas canvas;
@@ -60,9 +63,8 @@ public class Editor extends JFrame
 	 */
 	public static void main(String[] args)
 	{
-
-			App.parseArguments(args);
-
+		
+		App.parseArguments(args);
 		
 		try
 		{
@@ -80,24 +82,24 @@ public class Editor extends JFrame
 			{
 				try
 				{
-					Editor frame = new Editor();
-					frame.setVisible(true);
+					window = new Editor();
+					window.setVisible(true);
 					
 					GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 					GraphicsDevice[] gd = ge.getScreenDevices();
 					if(App.getScreenId() > -1 && App.getScreenId() < gd.length)
 					{
-						frame.setLocation(gd[App.getScreenId()].getDefaultConfiguration().getBounds().x, frame.getY());
+						window.setLocation(gd[App.getScreenId()].getDefaultConfiguration().getBounds().x, window.getY());
 					}
 					else if(gd.length > 0)
 					{
-						frame.setLocation(gd[0].getDefaultConfiguration().getBounds().x, frame.getY());
+						window.setLocation(gd[0].getDefaultConfiguration().getBounds().x, window.getY());
 					}
 					else
 					{
 						throw new RuntimeException("No Screens Found");
 					}
-					frame.setExtendedState(frame.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+					window.setExtendedState(window.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 					
 				}
 				catch (Exception e)
@@ -144,7 +146,6 @@ public class Editor extends JFrame
 		table = new JTable();
 		splitPane.setRightComponent(table);
 		
-		
 		MenuItem mAddText = new MenuItem("Add 'Text'");
 		MenuItem mAddChoice = new MenuItem("Add 'Choice'");
 		MenuItem mAddRandom = new MenuItem("Add 'Random'");
@@ -165,7 +166,7 @@ public class Editor extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				renderer.addComponent(DComponentType.CHOICE);				
+				renderer.addComponent(DComponentType.CHOICE);
 			}
 		});
 		
@@ -175,7 +176,7 @@ public class Editor extends JFrame
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				renderer.addComponent(DComponentType.RANDOM);				
+				renderer.addComponent(DComponentType.RANDOM);
 			}
 		});
 		
@@ -183,8 +184,6 @@ public class Editor extends JFrame
 		popupMenu.add(mAddText);
 		popupMenu.add(mAddChoice);
 		popupMenu.add(mAddRandom);
-
-		
 		
 		renderer = new Renderer(new EditorListener()
 		{
@@ -192,6 +191,20 @@ public class Editor extends JFrame
 			public void mouseRightClicked(int x, int y)
 			{
 				popupMenu.show(canvas.getCanvas(), x, y);
+			}
+			
+			@Override
+			public void showMsg(final String msg, final String title, final int msgType)
+			{
+				EventQueue.invokeLater(new Runnable()
+				{
+					
+					@Override
+					public void run()
+					{
+						JOptionPane.showMessageDialog(Editor.window, msg, title, msgType);	
+					}
+				});
 			}
 		});
 		
