@@ -14,15 +14,6 @@
  * limitations under the License.
  ******************************************************************************/
 
-package pl.kotcrab.dialoguelib.editor;
+package pl.kotcrab.dialoguelib.editor.components;
 
-public class ArgsParserException extends RuntimeException
-{
-	private static final long serialVersionUID = 1L;
-	
-	public ArgsParserException(String message)
-	{
-		super(message);
-	}
-	
-}
+public enum DComponentType{TEXT, CHOICE, RANDOM}

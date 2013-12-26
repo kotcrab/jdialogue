@@ -20,7 +20,7 @@ public class App
 {
 	private static int screenId = 0;
 	
-	public static void parseArguments(String[] args) throws ArgsParserException
+	public static void parseArguments(String[] args)
 	{
 		for(int i = 0; i < args.length; i++)
 		{

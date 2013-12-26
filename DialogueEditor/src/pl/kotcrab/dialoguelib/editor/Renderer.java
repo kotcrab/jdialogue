@@ -18,6 +18,12 @@ package pl.kotcrab.dialoguelib.editor;
 
 import java.util.ArrayList;
 
+import pl.kotcrab.dialoguelib.editor.components.ChoiceComponent;
+import pl.kotcrab.dialoguelib.editor.components.DComponent;
+import pl.kotcrab.dialoguelib.editor.components.DComponentType;
+import pl.kotcrab.dialoguelib.editor.components.RandomComponent;
+import pl.kotcrab.dialoguelib.editor.components.TextComponent;
+
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
@@ -44,7 +50,9 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	
 	private DComponent selectedComponent = null;
 	private int attachPointX;
+	private int attachPointY;
 
+	
 	public Renderer(EditorListener listener)
 	{
 		this.listener = listener;
@@ -65,6 +73,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		mul.addProcessor(new GestureDetector(this));
 		Gdx.input.setInputProcessor(mul);
 		
+		
 		componentList.add(new TextComponent(200, 200));
 	}
 	
@@ -83,7 +92,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		
 		Gdx.gl.glClearColor(0.69f, 0.69f, 0.69f, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-
+		
 		batch.setShader(Assets.fontDistanceFieldShader);
 		for (DComponent comp : componentList)
 		{
@@ -94,17 +103,18 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 			batch.end();
 		}
 		batch.setShader(null);
-
+		
 		if(selectedComponent != null) selectedComponent.renderSelectionOutline(shapeRenderer);
 		
-//		batch.setShader(Assets.fontDistanceFieldShader);
-//		batch.begin();
-//		for (DComponent comp : componentList)
-//		{
-//			comp.render(batch);
-//		}
-//		batch.end();
-//		batch.setShader(null);
+		
+		// batch.setShader(Assets.fontDistanceFieldShader);
+		// batch.begin();
+		// for (DComponent comp : componentList)
+		// {
+		// comp.render(batch);
+		// }
+		// batch.end();
+		// batch.setShader(null);
 		//
 		// shapeRenderer.begin(ShapeType.Filled);
 		// shapeRenderer.setColor(Color.GRAY);
@@ -144,8 +154,10 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		switch (componentType)
 		{
 		case CHOICE:
+			componentList.add(new ChoiceComponent(Touch.getX(), Touch.getY()));
 			break;
 		case RANDOM:
+			componentList.add(new RandomComponent(Touch.getX(), Touch.getY()));
 			break;
 		case TEXT:
 			componentList.add(new TextComponent(Touch.getX(), Touch.getY()));
@@ -172,31 +184,30 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	@Override
 	public boolean scrolled(int amount)
 	{
-		if(camera.zoom - 0.1f < 1 && camera.zoom + 0.1f > 10) return false;
-		
 		float newZoom = 0;
-		if(amount == 1)
+		if(amount == 1) // out
 		{
 			if(camera.zoom >= 4) return false;
 			
-			camera.zoom += 0.1f * camera.zoom;
-			newZoom = camera.zoom + 0.1f * camera.zoom;
+			newZoom = camera.zoom + 0.1f * camera.zoom * 2;
+			
+			camera.position.x = Touch.getX() + (camera.zoom / newZoom) * (camera.position.x - Touch.getX());
+			camera.position.y = Touch.getY() + (camera.zoom / newZoom) * (camera.position.y - Touch.getY());
+			
+			camera.zoom += 0.1f * camera.zoom * 2;
 		}
 		
-		if(amount == -1)
+		if(amount == -1) // in
 		{
 			if(camera.zoom <= 0.5f) return false;
 			
-			camera.zoom -= 0.1f * camera.zoom;
-			newZoom = camera.zoom - 0.1f * camera.zoom;
+			newZoom = camera.zoom - 0.1f * camera.zoom * 2;
+			
+			camera.position.x = Touch.getX() + (newZoom / camera.zoom) * (camera.position.x - Touch.getX());
+			camera.position.y = Touch.getY() + (newZoom / camera.zoom) * (camera.position.y - Touch.getY());
+			
+			camera.zoom -= 0.1f * camera.zoom * 2;
 		}
-		
-		float width = camera.position.x - Touch.getX();
-		float height = camera.position.y + Touch.getY();
-		
-		camera.position.x -= width * (1 - newZoom / camera.zoom);
-		camera.position.y -= height * (1 - newZoom / camera.zoom);
-		
 		return false;
 	}
 	
@@ -205,10 +216,10 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	{
 		if(selectedComponent == null)
 		{
-		camera.position.x = camera.position.x + -deltaX * camera.zoom;
-		camera.position.y = camera.position.y + deltaY * camera.zoom;
+			camera.position.x = camera.position.x + -deltaX * camera.zoom;
+			camera.position.y = camera.position.y + deltaY * camera.zoom;
 		}
-
+		
 		return false;
 	}
 	
@@ -224,18 +235,17 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	{
 		if(selectedComponent != null)
 		{
-			selectedComponent.setX(Touch.calcX(screenX) - attachPointX);//  + (selectedComponent.getX() + selectedComponent.getWidth() - Touch.calcX(screenX)));
-			selectedComponent.setY(Touch.calcY(screenY));
+			selectedComponent.setX(Touch.calcX(screenX) - attachPointX);// + (selectedComponent.getX() + selectedComponent.getWidth() - Touch.calcX(screenX)));
+			selectedComponent.setY(Touch.calcY(screenY) - attachPointY);
 		}
 		return false;
 	}
-		
+	
 	@Override
 	public boolean touchDown(float x, float y, int pointer, int button)
 	{
 		x = Touch.calcX(x);
 		y = Touch.calcY(y);
-		
 		
 		boolean found = false;
 		for (DComponent comp : componentList)
@@ -244,6 +254,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 			{
 				selectedComponent = comp;
 				attachPointX = (int) (x - selectedComponent.getX());
+				attachPointY = (int) (y - selectedComponent.getY());
 				found = true;
 				break;
 			}
@@ -304,7 +315,14 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	@Override
 	public boolean keyDown(int keycode)
 	{
-		// TODO Auto-generated method stub
+		if(selectedComponent != null)
+		{
+			if(componentList.remove(selectedComponent))
+				selectedComponent = null;
+			else
+				throw new EditorException("Component not on list! Ilegal state!");
+	
+		}
 		return false;
 	}
 	

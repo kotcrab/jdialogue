@@ -16,4 +16,13 @@
 
 package pl.kotcrab.dialoguelib.editor;
 
-public enum DComponentType{TEXT, CHOICE, RANDOM}
+public class EditorException extends RuntimeException
+{
+	private static final long serialVersionUID = 1L;
+	
+	public EditorException(String message)
+	{
+		super(message);
+	}
+	
+}

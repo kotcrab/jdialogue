@@ -14,14 +14,15 @@
  * limitations under the License.
  ******************************************************************************/
 
-package pl.kotcrab.dialoguelib.editor;
+package pl.kotcrab.dialoguelib.editor.components;
 
-public class TextComponent extends DComponent
+public class RandomComponent extends DComponent
 {
-
-	public TextComponent(int x, int y)
+	
+	public RandomComponent(int x, int y)
 	{
-		super("Show Text", x, y, 1,1);
+		super("Random", x, y, 5, 5);
+
 	}
 	
 }

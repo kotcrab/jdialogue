@@ -38,6 +38,8 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+import pl.kotcrab.dialoguelib.editor.components.DComponentType;
+
 import com.badlogic.gdx.backends.lwjgl.LwjglCanvas;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -58,15 +60,9 @@ public class Editor extends JFrame
 	 */
 	public static void main(String[] args)
 	{
-		try
-		{
+
 			App.parseArguments(args);
-		}
-		catch (ArgsParserException e)
-		{
-			e.printStackTrace();
-			System.exit(-1);
-		}
+
 		
 		try
 		{
