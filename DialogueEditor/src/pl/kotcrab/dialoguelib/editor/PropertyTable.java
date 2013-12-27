@@ -1,13 +1,10 @@
 package pl.kotcrab.dialoguelib.editor;
 
 import java.util.Date;
-import java.util.Vector;
 
 import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 /**
@@ -18,44 +15,9 @@ public class PropertyTable extends JTable
 {
 	private static final long serialVersionUID = 1L;
 
-	public PropertyTable()
-	{
-		// TODO Auto-generated constructor stub
-	}
-	
 	public PropertyTable(TableModel dm)
 	{
 		super(dm);
-		// TODO Auto-generated constructor stub
-	}
-	
-	public PropertyTable(TableModel dm, TableColumnModel cm)
-	{
-		super(dm, cm);
-		// TODO Auto-generated constructor stub
-	}
-	
-	public PropertyTable(int numRows, int numColumns)
-	{
-		super(numRows, numColumns);
-		// TODO Auto-generated constructor stub
-	}
-	
-	public PropertyTable(Vector rowData, Vector columnNames)
-	{
-		super(rowData, columnNames);
-		// TODO Auto-generated constructor stub
-	}
-	
-	public PropertyTable(Object[][] rowData, Object[] columnNames)
-	{
-		super(rowData, columnNames);
-		// TODO Auto-generated constructor stub
-	}
-	
-	public PropertyTable(TableModel dm, TableColumnModel cm, ListSelectionModel sm)
-	{
-		super(dm, cm, sm);
 		// TODO Auto-generated constructor stub
 	}
 	
