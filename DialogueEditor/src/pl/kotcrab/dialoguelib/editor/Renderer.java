@@ -22,6 +22,7 @@ import javax.swing.JOptionPane;
 
 import pl.kotcrab.dialoguelib.editor.components.ChoiceComponent;
 import pl.kotcrab.dialoguelib.editor.components.Connection;
+import pl.kotcrab.dialoguelib.editor.components.ConnectionRenderer;
 import pl.kotcrab.dialoguelib.editor.components.DComponent;
 import pl.kotcrab.dialoguelib.editor.components.DComponentType;
 import pl.kotcrab.dialoguelib.editor.components.EndComponent;
@@ -32,17 +33,21 @@ import pl.kotcrab.dialoguelib.editor.components.TextComponent;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
+//TODO undo, redo
 public class Renderer implements ApplicationListener, InputProcessor, GestureListener
 {
 	private EditorListener listener;
@@ -53,8 +58,10 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	
 	private ArrayList<DComponent> componentList = new ArrayList<DComponent>();
 	
-	private DComponent selectedComponent = null;
 	private Connection selectedConnection = null;
+	private ConnectionRenderer connectionRenderer;
+	
+	private DComponent selectedComponent = null;
 	private int attachPointX;
 	private int attachPointY;
 	
@@ -67,6 +74,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	public void create()
 	{
 		Assets.load();
+		
 		camera = new OrthographicCamera(1280, 720);
 		camera.position.x = 1280 / 2;
 		camera.position.y = 720 / 2;
@@ -84,6 +92,8 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		
 		componentList.add(new StartComponent(0, 300));
 		componentList.add(new EndComponent(500, 300));
+		
+		connectionRenderer = new ConnectionRenderer();
 	}
 	
 	public void update()
@@ -107,6 +117,11 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		{
 			comp.renderShapes(shapeRenderer);
 			
+			shapeRenderer.begin(ShapeType.Line);
+			shapeRenderer.setColor(Color.BLACK);
+			connectionRenderer.render(shapeRenderer, comp);
+			shapeRenderer.end();
+			
 			batch.begin();
 			comp.render(batch);
 			batch.end();
@@ -114,33 +129,39 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		batch.setShader(null);
 		
 		if(selectedComponent != null) selectedComponent.renderSelectionOutline(shapeRenderer);
-		if(selectedConnection != null) selectedConnection.renderSelected(shapeRenderer);
-		
-		// batch.setShader(Assets.fontDistanceFieldShader);
-		// batch.begin();
-		// for (DComponent comp : componentList)
-		// {
-		// comp.render(batch);
-		// }
-		// batch.end();
-		// batch.setShader(null);
-		//
-		// shapeRenderer.begin(ShapeType.Filled);
-		// shapeRenderer.setColor(Color.GRAY);
-		// shapeRenderer.rect(0, 0, 128, 128);
-		// shapeRenderer.end();
-		// shapeRenderer.setColor(Color.BLACK);
-		// shapeRenderer.begin(ShapeType.Line);
-		// int x1 = 400;
-		// int y1 = 400;
-		// int x2 = Touch.getX();
-		// int y2 = Touch.getY();
-		// int d = 200;
-		// shapeRenderer.curve(x1, y1, x1 + d, y1,// x1+dx, x1,
-		// x2 - d, y2,// x2+dy, y2,
-		// x2, y2, 32);
-		// // shapeRenderer.rect(x1, y1, x2 - x1, y2 - y1);
-		// shapeRenderer.end();
+		if(selectedConnection != null)
+		{
+			selectedConnection.renderAsSelected(shapeRenderer);
+			
+			if(Gdx.input.isButtonPressed(Buttons.LEFT)) // TODO optimize this
+			{
+				shapeRenderer.begin(ShapeType.Line);
+				shapeRenderer.setColor(Color.ORANGE);
+				float x1 = selectedConnection.getX() + 6;
+				float y1 = selectedConnection.getY() + 6;
+				float x2 = Touch.getX();
+				float y2 = Touch.getY();
+				
+				float d = Math.abs(y1 - y2);
+				if(d > 200) d = 200; // limit
+				
+				if(selectedConnection.isInput() == true) // swaping values because curve will look weird without this
+				{
+					float temp = x1;
+					x1 = x2;
+					x2 = temp;
+					
+					temp = y1;
+					y1 = y2;
+					y2 = temp;
+				}
+				
+				shapeRenderer.curve(x1, y1, x1 + d, y1, x2 - d, y2, x2, y2, 32);
+				shapeRenderer.end();
+			}
+			
+
+		}
 	}
 	
 	@Override
@@ -175,6 +196,46 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 			break;
 		
 		}
+	}
+	
+	/**
+	 * Find selected connection
+	 * 
+	 * @param x
+	 *            in screen cords
+	 * @param y
+	 *            in sreen cords
+	 */
+	private void findConnection(float x, float y, boolean touchUp)
+	{
+		x = Touch.calcX(x);
+		y = Touch.calcY(y);
+		
+		boolean found = false;
+		for (DComponent comp : componentList)
+		{
+			Connection connection = comp.connectionContains(x, y);
+			if(connection != null)
+			{
+				if(selectedConnection != null && selectedConnection != connection && touchUp)
+				{
+					if(selectedConnection.isInput() && connection.isInput() == false)
+					{
+						connection.setTarget(selectedConnection);
+					}
+					else
+					{
+						selectedConnection.setTarget(connection);
+					}
+				}
+				
+				selectedConnection = connection;
+				found = true;
+				break;
+			}
+		}
+		
+		if(found == false) selectedConnection = null;
 	}
 	
 	//@formatter:off
@@ -223,10 +284,11 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	@Override
 	public boolean pan(float x, float y, float deltaX, float deltaY)
 	{
-		if(selectedComponent == null)
+		if(selectedComponent == null && selectedConnection == null)
 		{
 			camera.position.x = camera.position.x + -deltaX * camera.zoom;
 			camera.position.y = camera.position.y + deltaY * camera.zoom;
+			return false;
 		}
 		
 		return false;
@@ -235,14 +297,14 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button)
 	{
-		
+		findConnection(screenX, screenY, true);
 		return false;
 	}
 	
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer)
 	{
-		if(selectedComponent != null)
+		if(selectedComponent != null && selectedConnection == null)
 		{
 			selectedComponent.setX(Touch.calcX(screenX) - attachPointX);// + (selectedComponent.getX() + selectedComponent.getWidth() - Touch.calcX(screenX)));
 			selectedComponent.setY(Touch.calcY(screenY) - attachPointY);
@@ -270,14 +332,18 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 			}
 		}
 		
-		if(found == false) selectedComponent = null;
+		if(found == false)
+		{
+			selectedComponent = null;
+			listener.changePropertyTableModel(null);
+		}
 		return false;
 	}
 	
 	@Override
 	public boolean keyDown(int keycode)
 	{
-		if(selectedComponent != null)
+		if(keycode == Keys.DEL && selectedComponent != null)
 		{
 			if(selectedComponent instanceof StartComponent || selectedComponent instanceof EndComponent)
 			{
@@ -297,22 +363,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	@Override
 	public boolean mouseMoved(int screenX, int screenY)
 	{
-		float x = Touch.calcX(screenX);
-		float y = Touch.calcY(screenY);
-		
-		boolean found = false;
-		for (DComponent comp : componentList)
-		{
-			Connection connection = comp.connectionContains(x, y);
-			if(connection != null)
-			{
-				selectedConnection = connection;
-				found = true;
-				break;
-			}
-		}
-		
-		if(found == false) selectedConnection = null;
+		findConnection(screenX, screenY, false);
 		
 		return false;
 	}

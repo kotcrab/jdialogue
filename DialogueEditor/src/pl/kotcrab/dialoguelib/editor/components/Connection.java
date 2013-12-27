@@ -19,19 +19,19 @@ package pl.kotcrab.dialoguelib.editor.components;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.Rectangle;
 
 public class Connection
 {
-	
 	private float x, y;
 	
 	private Connection target; //null if input!
+	private boolean isInput;
 	
-	public Connection(float x, float y)
+	public Connection(float x, float y, boolean isInput)
 	{
 		this.x = x;
 		this.y = y;
+		this.isInput = isInput;
 	}
 	
 	public void render(ShapeRenderer shapeRenderer)
@@ -42,7 +42,7 @@ public class Connection
 		shapeRenderer.end();
 	}
 	
-	public void renderSelected(ShapeRenderer shapeRenderer)
+	public void renderAsSelected(ShapeRenderer shapeRenderer)
 	{
 		shapeRenderer.begin(ShapeType.Filled);
 		shapeRenderer.setColor(Color.ORANGE);
@@ -86,6 +86,11 @@ public class Connection
 		this.y = y;
 	}
 	
+	public boolean isInput()
+	{
+		return isInput;
+	}
+
 	public boolean contains(float x, float y) //is given point inside component
 	{
 		return this.x <= x && this.x + 12 >= x && this.y <= y && this.y + 12 >= y;

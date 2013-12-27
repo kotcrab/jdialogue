@@ -58,10 +58,10 @@ public abstract class DComponent
 		this.outputs = new Connection[outputs];
 		
 		for (int i = 0; i < this.inputs.length; i++)
-			this.inputs[i] = new Connection(0, 0);
+			this.inputs[i] = new Connection(0, 0, true);
 		
 		for (int i = 0; i < this.outputs.length; i++)
-			this.outputs[i] = new Connection(0, 0);
+			this.outputs[i] = new Connection(0, 0, false);
 		
 		ry = y - height / 2;
 		
@@ -166,7 +166,7 @@ public abstract class DComponent
 	private void calcTextPos()
 	{
 		this.title.center(width);
-		this.title.setPosition(x + this.title.getPosition().x + 3, ry + height - 30);
+		this.title.setPosition(x + this.title.getPosition().x, ry + height - 30);
 	}
 	
 	public void setX(int x)
@@ -204,5 +204,9 @@ public abstract class DComponent
 		return width;
 	}
 
+	public Connection[] getOutputs()
+	{
+		return outputs;
+	}
 
 }

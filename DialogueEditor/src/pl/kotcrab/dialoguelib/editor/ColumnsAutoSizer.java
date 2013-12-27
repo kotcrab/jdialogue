@@ -26,11 +26,10 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 //FROM: http://bosmeeuw.wordpress.com/2011/08/07/java-swing-automatically-resize-table-columns-to-their-contents/
-//Modified
+//Modified version
 
 public class ColumnsAutoSizer
 {
-	
 	public static void sizeColumnsToFit(JTable table)
 	{
 		sizeColumnsToFit(table, 5);

@@ -40,11 +40,13 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableModel;
 
 import pl.kotcrab.dialoguelib.editor.components.ComponentTableModel;
 import pl.kotcrab.dialoguelib.editor.components.DComponentType;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglCanvas;
+import javax.swing.JTable;
 
 public class Editor extends JFrame
 {
@@ -56,6 +58,7 @@ public class Editor extends JFrame
 	private Renderer renderer;
 	private JSplitPane rendererSplitPane;
 	private PropertyTable table;
+	private JTable table_1;
 	
 	/**
 	 * Launch the application.
@@ -195,15 +198,21 @@ public class Editor extends JFrame
 					@Override
 					public void run()
 					{
-						JOptionPane.showMessageDialog(Editor.window, msg, title, msgType);	
+						JOptionPane.showMessageDialog(Editor.window, msg, title, msgType);
 					}
 				});
 			}
-
+			
 			@Override
 			public void changePropertyTableModel(ComponentTableModel tableModel)
 			{
-				table.setModel(tableModel);
+				if(tableModel == null) //if componet doesn't have table model set default
+					table.setModel(new DefaultTableModel());
+				else
+				{
+					table.setModel(tableModel);
+					ColumnsAutoSizer.sizeColumnsToFit(table);
+				}
 			}
 		});
 		
@@ -219,18 +228,14 @@ public class Editor extends JFrame
 		propertiesSplitPane.setLeftComponent(propertyPanel);
 		propertyPanel.setLayout(new BorderLayout());
 		
-		table = new PropertyTable();
-
-		table.getModel().addTableModelListener(new TableModelListener() {
-		    public void tableChanged(TableModelEvent e) {
-		    	System.out.println("lis");
-		        ColumnsAutoSizer.sizeColumnsToFit(table);
-		    }
-		});
+		table = new PropertyTable(new DefaultTableModel());
 		
 		propertyPanel.add(table.getTableHeader(), BorderLayout.PAGE_START);
 		propertyPanel.add(table, BorderLayout.CENTER);
-		//propertiesSplitPane.setLeftComponent(table);
+		
+		table_1 = new JTable();
+		propertiesSplitPane.setRightComponent(table_1);
+		// propertiesSplitPane.setLeftComponent(table);
 		
 	}
 }
