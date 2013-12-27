@@ -16,6 +16,7 @@
 
 package pl.kotcrab.dialoguelib.editor.components;
 
+
 import pl.kotcrab.dialoguelib.editor.Assets;
 import pl.kotcrab.dialoguelib.editor.KotcrabText;
 
@@ -33,6 +34,8 @@ public abstract class DComponent
 	
 	private Connection[] inputs;
 	private Connection[] outputs;
+	
+	public abstract ComponentTableModel getTableModel();
 	
 	public DComponent(String title, int x, int y, int inputs, int outputs)
 	{

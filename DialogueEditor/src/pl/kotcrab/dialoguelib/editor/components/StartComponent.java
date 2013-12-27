@@ -17,12 +17,20 @@
 package pl.kotcrab.dialoguelib.editor.components;
 
 
+
 public class StartComponent extends DComponent
 {
 
 	public StartComponent(int x, int y)
 	{
 		super("Start", x, y, 0,1);
+	}
+
+	@Override
+	public ComponentTableModel getTableModel()
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

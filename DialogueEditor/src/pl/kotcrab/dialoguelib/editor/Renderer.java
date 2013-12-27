@@ -57,8 +57,6 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	private Connection selectedConnection = null;
 	private int attachPointX;
 	private int attachPointY;
-
-
 	
 	public Renderer(EditorListener listener)
 	{
@@ -70,6 +68,8 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	{
 		Assets.load();
 		camera = new OrthographicCamera(1280, 720);
+		camera.position.x = 1280 / 2;
+		camera.position.y = 720 / 2;
 		Touch.setCamera(camera);
 		
 		shapeRenderer = new ShapeRenderer();
@@ -79,7 +79,6 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		mul.addProcessor(this);
 		mul.addProcessor(new GestureDetector(this));
 		Gdx.input.setInputProcessor(mul);
-		
 		
 		componentList.add(new TextComponent(200, 300));
 		
@@ -116,7 +115,6 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		
 		if(selectedComponent != null) selectedComponent.renderSelectionOutline(shapeRenderer);
 		if(selectedConnection != null) selectedConnection.renderSelected(shapeRenderer);
-		
 		
 		// batch.setShader(Assets.fontDistanceFieldShader);
 		// batch.begin();
@@ -267,6 +265,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 				attachPointX = (int) (x - selectedComponent.getX());
 				attachPointY = (int) (y - selectedComponent.getY());
 				found = true;
+				listener.changePropertyTableModel(selectedComponent.getTableModel());
 				break;
 			}
 		}
@@ -285,12 +284,12 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 				listener.showMsg("This component cannot be deleted!", "Error", JOptionPane.ERROR_MESSAGE);
 				return false;
 			}
-				
+			
 			if(componentList.remove(selectedComponent))
 				selectedComponent = null;
 			else
 				throw new EditorException("Component not on list! Ilegal state!");
-	
+			
 		}
 		return false;
 	}
@@ -314,7 +313,6 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		}
 		
 		if(found == false) selectedConnection = null;
-
 		
 		return false;
 	}
@@ -359,8 +357,6 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
-
 	
 	@Override
 	public boolean keyUp(int keycode)

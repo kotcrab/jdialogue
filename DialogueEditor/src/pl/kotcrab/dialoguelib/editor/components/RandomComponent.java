@@ -16,6 +16,7 @@
 
 package pl.kotcrab.dialoguelib.editor.components;
 
+
 public class RandomComponent extends DComponent
 {
 	
@@ -23,6 +24,13 @@ public class RandomComponent extends DComponent
 	{
 		super("Random", x, y, 5, 5);
 
+	}
+
+	@Override
+	public ComponentTableModel getTableModel()
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

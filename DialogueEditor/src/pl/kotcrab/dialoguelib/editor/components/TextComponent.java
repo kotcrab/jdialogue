@@ -20,9 +20,34 @@ package pl.kotcrab.dialoguelib.editor.components;
 public class TextComponent extends DComponent
 {
 
+	TextComponentTableModel tableModel;
+	
 	public TextComponent(int x, int y)
 	{
-		super("Show Text", x, y, 1,1);
+		super("Show Text", x, y, 1, 1);
+		tableModel = new TextComponentTableModel();
 	}
 	
+	@Override
+	public ComponentTableModel getTableModel()
+	{
+		return tableModel;
+	}
+	
+}
+
+class TextComponentTableModel extends ComponentTableModel
+{
+	private static final long serialVersionUID = 1L;
+	
+	public TextComponentTableModel()
+	{	
+		//@formatter:off
+		data = new Object[][]
+			{
+			    {"Text", "Set Text"},
+			    {"Sayer", new Boolean(false)}
+			};
+		//@formatter:on
+	}	
 }

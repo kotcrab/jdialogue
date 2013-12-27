@@ -16,12 +16,20 @@
 
 package pl.kotcrab.dialoguelib.editor.components;
 
+
 public class ChoiceComponent extends DComponent
 {
 	
 	public ChoiceComponent(int x, int y)
 	{
 		super("Choice", x, y, 1, 3);
+	}
+
+	@Override
+	public ComponentTableModel getTableModel()
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

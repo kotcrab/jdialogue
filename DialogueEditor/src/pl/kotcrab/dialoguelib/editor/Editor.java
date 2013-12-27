@@ -23,6 +23,8 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -30,22 +32,19 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
-import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 
+import pl.kotcrab.dialoguelib.editor.components.ComponentTableModel;
 import pl.kotcrab.dialoguelib.editor.components.DComponentType;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglCanvas;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 
 public class Editor extends JFrame
 {
@@ -53,17 +52,16 @@ public class Editor extends JFrame
 	private static JFrame window;
 	
 	private JPanel contentPane;
-	private JTable table;
 	private LwjglCanvas canvas;
 	private Renderer renderer;
-	private JSplitPane splitPane;
+	private JSplitPane rendererSplitPane;
+	private PropertyTable table;
 	
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args)
 	{
-		
 		App.parseArguments(args);
 		
 		try
@@ -72,7 +70,6 @@ public class Editor extends JFrame
 		}
 		catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -137,14 +134,11 @@ public class Editor extends JFrame
 		JButton saveBtn = new JButton("Save");
 		toolBar.add(saveBtn);
 		
-		splitPane = new JSplitPane();
-		splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-		splitPane.setResizeWeight(0.8);
-		splitPane.setContinuousLayout(true);
-		contentPane.add(splitPane, BorderLayout.CENTER);
-		
-		table = new JTable();
-		splitPane.setRightComponent(table);
+		rendererSplitPane = new JSplitPane();
+		rendererSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+		rendererSplitPane.setResizeWeight(0.8);
+		rendererSplitPane.setContinuousLayout(true);
+		contentPane.add(rendererSplitPane, BorderLayout.CENTER);
 		
 		MenuItem mAddText = new MenuItem("Add 'Text'");
 		MenuItem mAddChoice = new MenuItem("Add 'Choice'");
@@ -198,7 +192,6 @@ public class Editor extends JFrame
 			{
 				EventQueue.invokeLater(new Runnable()
 				{
-					
 					@Override
 					public void run()
 					{
@@ -206,11 +199,38 @@ public class Editor extends JFrame
 					}
 				});
 			}
+
+			@Override
+			public void changePropertyTableModel(ComponentTableModel tableModel)
+			{
+				table.setModel(tableModel);
+			}
 		});
 		
 		canvas = new LwjglCanvas(renderer, true);
 		canvas.getCanvas().add(popupMenu);
-		splitPane.setLeftComponent(canvas.getCanvas());
+		rendererSplitPane.setLeftComponent(canvas.getCanvas());
+		
+		JSplitPane propertiesSplitPane = new JSplitPane();
+		propertiesSplitPane.setResizeWeight(0.7);
+		rendererSplitPane.setRightComponent(propertiesSplitPane);
+		
+		JPanel propertyPanel = new JPanel();
+		propertiesSplitPane.setLeftComponent(propertyPanel);
+		propertyPanel.setLayout(new BorderLayout());
+		
+		table = new PropertyTable();
+
+		table.getModel().addTableModelListener(new TableModelListener() {
+		    public void tableChanged(TableModelEvent e) {
+		    	System.out.println("lis");
+		        ColumnsAutoSizer.sizeColumnsToFit(table);
+		    }
+		});
+		
+		propertyPanel.add(table.getTableHeader(), BorderLayout.PAGE_START);
+		propertyPanel.add(table, BorderLayout.CENTER);
+		//propertiesSplitPane.setLeftComponent(table);
 		
 	}
 }
