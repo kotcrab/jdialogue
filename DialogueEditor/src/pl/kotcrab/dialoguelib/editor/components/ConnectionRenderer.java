@@ -1,17 +1,36 @@
+/*******************************************************************************
+ * Copyright 2013 Pawel Pastuszak
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
+
+
 package pl.kotcrab.dialoguelib.editor.components;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 public class ConnectionRenderer
 {
 	public void render(ShapeRenderer shapeRenderer, DComponent comp)
 	{
-		Connection[] inputs = comp.getOutputs();
+		Connector[] inputs = comp.getOutputs();
 		
 		for (int i = 0; i < inputs.length; i++)
 		{
-			Connection con = inputs[i];
-			Connection target = con.getTarget();
+			Connector con = inputs[i];
+			Connector target = con.getTarget();
 			
 			if(target == null) continue;
 			
@@ -21,10 +40,34 @@ public class ConnectionRenderer
 			float y2 = target.getY() + 6;
 			
 			float d = Math.abs(y1 - y2);
-			if(d > 200) d = 200; // limit
+			if(d > 100) d = 100; // limit
 			
 			shapeRenderer.curve(x1, y1, x1 + d, y1, x2 - d, y2, x2, y2, 32);
 		}
 	}
 	
+	public void render(ShapeRenderer shapeRenderer, Connector selectedConnection, float x2, float y2)
+	{
+		shapeRenderer.begin(ShapeType.Line);
+		shapeRenderer.setColor(Color.ORANGE);
+		float x1 = selectedConnection.getX() + 6;
+		float y1 = selectedConnection.getY() + 6;
+		
+		float d = Math.abs(y1 - y2);
+		if(d > 100) d = 100; // limit
+		
+		if(selectedConnection.isInput() == true) // swaping values because curve will look weird without this
+		{
+			float temp = x1;
+			x1 = x2;
+			x2 = temp;
+			
+			temp = y1;
+			y1 = y2;
+			y2 = temp;
+		}
+		
+		shapeRenderer.curve(x1, y1, x1 + d, y1, x2 - d, y2, x2, y2, 32);
+		shapeRenderer.end();
+	}
 }

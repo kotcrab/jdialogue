@@ -16,14 +16,11 @@
 
 package pl.kotcrab.dialoguelib.editor.components;
 
-
 public class RandomComponent extends DComponent
 {
-	
 	public RandomComponent(int x, int y)
 	{
 		super("Random", x, y, 5, 5);
-
 	}
 
 	@Override
@@ -32,5 +29,4 @@ public class RandomComponent extends DComponent
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
 }

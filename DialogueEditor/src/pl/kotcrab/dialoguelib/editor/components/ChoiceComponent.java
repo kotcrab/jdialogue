@@ -16,10 +16,8 @@
 
 package pl.kotcrab.dialoguelib.editor.components;
 
-
 public class ChoiceComponent extends DComponent
 {
-	
 	public ChoiceComponent(int x, int y)
 	{
 		super("Choice", x, y, 1, 3);
@@ -31,5 +29,4 @@ public class ChoiceComponent extends DComponent
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
 }

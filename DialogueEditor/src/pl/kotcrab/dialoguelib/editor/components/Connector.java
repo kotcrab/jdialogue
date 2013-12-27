@@ -20,18 +20,21 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
-public class Connection
+public class Connector
 {
 	private float x, y;
 	
-	private Connection target; //null if input!
+	private Connector target; //null if input!
 	private boolean isInput;
 	
-	public Connection(float x, float y, boolean isInput)
+	private DComponent parrentComponent;
+	
+	public Connector(float x, float y, DComponent parrentComponent, boolean isInput)
 	{
 		this.x = x;
 		this.y = y;
 		this.isInput = isInput;
+		this.parrentComponent = parrentComponent;
 	}
 	
 	public void render(ShapeRenderer shapeRenderer)
@@ -50,12 +53,12 @@ public class Connection
 		shapeRenderer.end();
 	}
 
-	public Connection getTarget()
+	public Connector getTarget()
 	{
 		return target;
 	}
 
-	public void setTarget(Connection target)
+	public void setTarget(Connector target)
 	{
 		this.target = target;
 	}
@@ -86,6 +89,11 @@ public class Connection
 		this.y = y;
 	}
 	
+	public DComponent getParrentComponent()
+	{
+		return parrentComponent;
+	}
+
 	public boolean isInput()
 	{
 		return isInput;

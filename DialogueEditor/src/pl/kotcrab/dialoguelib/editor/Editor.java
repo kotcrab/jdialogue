@@ -144,6 +144,7 @@ public class Editor extends JFrame
 		MenuItem mAddText = new MenuItem("Add 'Text'");
 		MenuItem mAddChoice = new MenuItem("Add 'Choice'");
 		MenuItem mAddRandom = new MenuItem("Add 'Random'");
+		MenuItem mAddCallback = new MenuItem("Add 'Callback'");
 		
 		mAddText.addActionListener(new ActionListener()
 		{
@@ -166,8 +167,7 @@ public class Editor extends JFrame
 		});
 		
 		mAddRandom.addActionListener(new ActionListener()
-		{
-			
+		{	
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
@@ -175,10 +175,20 @@ public class Editor extends JFrame
 			}
 		});
 		
+		mAddCallback.addActionListener(new ActionListener()
+		{	
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				renderer.addComponent(DComponentType.CALLBACK);
+			}
+		});
+		
 		final PopupMenu popupMenu = new PopupMenu();
 		popupMenu.add(mAddText);
 		popupMenu.add(mAddChoice);
 		popupMenu.add(mAddRandom);
+		popupMenu.add(mAddCallback);
 		
 		renderer = new Renderer(new EditorListener()
 		{
@@ -234,6 +244,5 @@ public class Editor extends JFrame
 		table_1 = new JTable();
 		propertiesSplitPane.setRightComponent(table_1);
 		// propertiesSplitPane.setLeftComponent(table);
-		
 	}
 }

@@ -14,14 +14,37 @@
  * limitations under the License.
  ******************************************************************************/
 
-package pl.kotcrab.dialoguelib.editor;
+package pl.kotcrab.dialoguelib.editor.components;
 
-public class EditorException extends RuntimeException
+
+public class CallbackComponent extends DComponent
+{
+	CallbackComponentTableModel tableModel;
+	
+	public CallbackComponent(int x, int y)
+	{
+		super("Callback", x, y, 1, 1);
+		tableModel = new CallbackComponentTableModel();
+	}
+	
+	@Override
+	public ComponentTableModel getTableModel()
+	{
+		return tableModel;
+	}
+}
+
+class CallbackComponentTableModel extends ComponentTableModel
 {
 	private static final long serialVersionUID = 1L;
 	
-	public EditorException(String message)
-	{
-		super(message);
-	}
+	public CallbackComponentTableModel()
+	{	
+		//@formatter:off
+		data = new Object[][]
+			{
+			    {"Callback Text", "Set Text"},
+			};
+		//@formatter:on
+	}	
 }

@@ -16,11 +16,8 @@
 
 package pl.kotcrab.dialoguelib.editor.components;
 
-
-
 public class StartComponent extends DComponent
 {
-
 	public StartComponent(int x, int y)
 	{
 		super("Start", x, y, 0,1);
@@ -32,5 +29,4 @@ public class StartComponent extends DComponent
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
 }

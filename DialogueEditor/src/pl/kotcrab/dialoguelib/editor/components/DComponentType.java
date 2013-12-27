@@ -16,4 +16,4 @@
 
 package pl.kotcrab.dialoguelib.editor.components;
 
-public enum DComponentType{TEXT, CHOICE, RANDOM}
+public enum DComponentType{TEXT, CHOICE, RANDOM, CALLBACK}

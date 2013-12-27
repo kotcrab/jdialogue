@@ -16,10 +16,8 @@
 
 package pl.kotcrab.dialoguelib.editor.components;
 
-
 public class TextComponent extends DComponent
 {
-
 	TextComponentTableModel tableModel;
 	
 	public TextComponent(int x, int y)
@@ -33,7 +31,6 @@ public class TextComponent extends DComponent
 	{
 		return tableModel;
 	}
-	
 }
 
 class TextComponentTableModel extends ComponentTableModel

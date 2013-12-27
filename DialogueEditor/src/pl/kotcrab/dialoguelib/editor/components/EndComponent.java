@@ -16,11 +16,8 @@
 
 package pl.kotcrab.dialoguelib.editor.components;
 
-
-
 public class EndComponent extends DComponent
 {
-
 	public EndComponent(int x, int y)
 	{
 		super("End", x, y, 1,0);
@@ -32,5 +29,4 @@ public class EndComponent extends DComponent
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
 }

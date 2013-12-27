@@ -24,5 +24,4 @@ public class ArgsParserException extends RuntimeException
 	{
 		super(message);
 	}
-	
 }

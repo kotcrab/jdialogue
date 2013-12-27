@@ -47,15 +47,11 @@ public class App
 			}
 			
 			throw new ArgsParserException("Unrecognized parameter: " + args[i]);
-
 		}
-		
 	}
 
 	public static int getScreenId()
 	{
 		return screenId;
 	}
-	
-	
 }

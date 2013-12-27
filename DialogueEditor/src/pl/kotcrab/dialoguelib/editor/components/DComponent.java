@@ -16,7 +16,6 @@
 
 package pl.kotcrab.dialoguelib.editor.components;
 
-
 import pl.kotcrab.dialoguelib.editor.Assets;
 import pl.kotcrab.dialoguelib.editor.KotcrabText;
 
@@ -32,8 +31,8 @@ public abstract class DComponent
 	private int x, y, ry, height, width;
 	// private int inputs, outputs;
 	
-	private Connection[] inputs;
-	private Connection[] outputs;
+	private Connector[] inputs;
+	private Connector[] outputs;
 	
 	public abstract ComponentTableModel getTableModel();
 	
@@ -41,12 +40,9 @@ public abstract class DComponent
 	{
 		this.x = x;
 		this.y = y;
-		// this.inputs = inputs;
-		// this.outputs = outputs;
 		
 		this.title = new KotcrabText(Assets.consolasFont, title, false, 0, 0);
 		this.title.setScale(0.7f);
-		// this.title.cener
 		
 		this.width = (int) (this.title.getTextBounds().width + 30);
 		if(inputs > outputs)
@@ -54,14 +50,14 @@ public abstract class DComponent
 		else
 			height = (outputs + 1) * 20 + 20;
 		
-		this.inputs = new Connection[inputs];
-		this.outputs = new Connection[outputs];
+		this.inputs = new Connector[inputs];
+		this.outputs = new Connector[outputs];
 		
 		for (int i = 0; i < this.inputs.length; i++)
-			this.inputs[i] = new Connection(0, 0, true);
+			this.inputs[i] = new Connector(0, 0, this, true);
 		
 		for (int i = 0; i < this.outputs.length; i++)
-			this.outputs[i] = new Connection(0, 0, false);
+			this.outputs[i] = new Connector(0, 0, this, false);
 		
 		ry = y - height / 2;
 		
@@ -73,7 +69,7 @@ public abstract class DComponent
 	{
 		float avY = height - 30; // avaiable space in y coordinate
 		
-		//12 is connection height
+		// 12 is connection height
 		
 		float avYIn = (avY - (12 * (inputs.length))) / (inputs.length); // i have no idea what i'm doing, no seriously why is this working?
 		for (int i = 0; i < inputs.length; i++)
@@ -82,26 +78,6 @@ public abstract class DComponent
 		float avYOut = (avY - (12 * (outputs.length))) / (outputs.length); // i have no idea what i'm doing, no seriously why is this working?
 		for (int i = 0; i < outputs.length; i++)
 			outputs[i].setPosition(x + width - 12, ry + avYOut / 2 + ((avYOut + 12) * i));
-		
-//		if(inputs.length > outputs.length)
-//		{
-//			for (int i = 0; i < inputs.length; i++)
-//				inputs[i].setPosition(x, ry + 10 + (20 * i));
-//			
-//			float avYOut = (avY - (12 * (outputs.length))) / (outputs.length); // i have no idea what i'm doing, no seriously why is this working?
-//			
-//			for (int i = 0; i < outputs.length; i++)
-//				outputs[i].setPosition(x + width - 12, ry + avYOut / 2 + ((avYOut + 12) * i));
-//		}
-//		else
-//		{
-//			for (int i = 0; i < outputs.length; i++)
-//				outputs[i].setPosition(x + width - 12, ry + 10 + (20 * i));
-//			
-//			avY = (avY - (12 * (inputs.length))) / (inputs.length); // i have no idea what i'm doing, no seriously why is this working?
-//			for (int i = 0; i < inputs.length; i++)
-//				inputs[i].setPosition(x, ry + avY / 2 + ((avY + 12) * i));
-//		}
 		
 	}
 	
@@ -141,23 +117,54 @@ public abstract class DComponent
 		shapeRenderer.end();
 	}
 	
-	public boolean contains(float x, float y) //is given point inside component
+	/**
+	 * Detaches this component from others
+	 */
+	public void detach()
+	{
+		for (int i = 0; i < inputs.length; i++)
+		{
+			Connector[] parrentOut = null;
+			try
+			{
+				parrentOut = inputs[i].getTarget().getParrentComponent().getOutputs();
+			}
+			catch (NullPointerException e)
+			{
+				continue;
+			}
+			
+			for (int j = 0; j < parrentOut.length; j++)
+			{
+				if(parrentOut[j] == inputs[i].getTarget())
+				{
+					parrentOut[j].setTarget(null);
+					break;
+				}
+			}
+			
+			inputs[i].setTarget(null);
+		}
+		
+		for (int i = 0; i < outputs.length; i++)
+			outputs[i].setTarget(null);
+	}
+	
+	public boolean contains(float x, float y) // is given point inside component
 	{
 		return this.x <= x && this.x + this.width >= x && this.y - this.height / 2 <= y && this.y + this.height / 2 >= y;
 	}
 	
-	public Connection connectionContains(float x, float y)
+	public Connector connectionContains(float x, float y)
 	{
 		for (int i = 0; i < inputs.length; i++)
 		{
-			if(inputs[i].contains(x, y))
-				return inputs[i];
+			if(inputs[i].contains(x, y)) return inputs[i];
 		}
 		
 		for (int i = 0; i < outputs.length; i++)
 		{
-			if(outputs[i].contains(x, y))
-				return outputs[i];
+			if(outputs[i].contains(x, y)) return outputs[i];
 		}
 		
 		return null;
@@ -203,10 +210,9 @@ public abstract class DComponent
 	{
 		return width;
 	}
-
-	public Connection[] getOutputs()
+	
+	public Connector[] getOutputs()
 	{
 		return outputs;
 	}
-
 }

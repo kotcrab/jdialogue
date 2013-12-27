@@ -20,8 +20,9 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
+import pl.kotcrab.dialoguelib.editor.components.CallbackComponent;
 import pl.kotcrab.dialoguelib.editor.components.ChoiceComponent;
-import pl.kotcrab.dialoguelib.editor.components.Connection;
+import pl.kotcrab.dialoguelib.editor.components.Connector;
 import pl.kotcrab.dialoguelib.editor.components.ConnectionRenderer;
 import pl.kotcrab.dialoguelib.editor.components.DComponent;
 import pl.kotcrab.dialoguelib.editor.components.DComponentType;
@@ -58,7 +59,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	
 	private ArrayList<DComponent> componentList = new ArrayList<DComponent>();
 	
-	private Connection selectedConnection = null;
+	private Connector selectedConnection = null;
 	private ConnectionRenderer connectionRenderer;
 	
 	private DComponent selectedComponent = null;
@@ -133,35 +134,20 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		{
 			selectedConnection.renderAsSelected(shapeRenderer);
 			
-			if(Gdx.input.isButtonPressed(Buttons.LEFT)) // TODO optimize this
+			if(Gdx.input.isButtonPressed(Buttons.LEFT))
 			{
-				shapeRenderer.begin(ShapeType.Line);
-				shapeRenderer.setColor(Color.ORANGE);
-				float x1 = selectedConnection.getX() + 6;
-				float y1 = selectedConnection.getY() + 6;
-				float x2 = Touch.getX();
-				float y2 = Touch.getY();
-				
-				float d = Math.abs(y1 - y2);
-				if(d > 200) d = 200; // limit
-				
-				if(selectedConnection.isInput() == true) // swaping values because curve will look weird without this
-				{
-					float temp = x1;
-					x1 = x2;
-					x2 = temp;
-					
-					temp = y1;
-					y1 = y2;
-					y2 = temp;
-				}
-				
-				shapeRenderer.curve(x1, y1, x1 + d, y1, x2 - d, y2, x2, y2, 32);
-				shapeRenderer.end();
+				connectionRenderer.render(shapeRenderer, selectedConnection, Touch.getX(), Touch.getY());
 			}
 			
-
 		}
+		
+		shapeRenderer.begin(ShapeType.Line);
+		shapeRenderer.setColor(Color.BLACK);
+		for (DComponent comp : componentList)
+		{
+			connectionRenderer.render(shapeRenderer, comp);
+		}
+		shapeRenderer.end();
 	}
 	
 	@Override
@@ -192,6 +178,9 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		case TEXT:
 			componentList.add(new TextComponent(Touch.getX(), Touch.getY()));
 			break;
+		case CALLBACK:
+			componentList.add(new CallbackComponent(Touch.getX(), Touch.getY()));
+			break;
 		default:
 			break;
 		
@@ -214,18 +203,21 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		boolean found = false;
 		for (DComponent comp : componentList)
 		{
-			Connection connection = comp.connectionContains(x, y);
+			Connector connection = comp.connectionContains(x, y);
 			if(connection != null)
 			{
-				if(selectedConnection != null && selectedConnection != connection && touchUp)
+				if(selectedConnection != null && selectedConnection != connection && selectedConnection.getParrentComponent() != connection.getParrentComponent() && touchUp)
 				{
-					if(selectedConnection.isInput() && connection.isInput() == false)
+					if(selectedConnection.isInput() != connection.isInput()) // to prevent connecting 2 outputs or 2 inputs
 					{
-						connection.setTarget(selectedConnection);
-					}
-					else
-					{
-						selectedConnection.setTarget(connection);
+						//if(selectedConnection.isInput() && connection.isInput() == false)
+						//{
+							connection.setTarget(selectedConnection);
+						//}
+						//else
+						//{
+							selectedConnection.setTarget(connection);
+						//}
 					}
 				}
 				
@@ -343,7 +335,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	@Override
 	public boolean keyDown(int keycode)
 	{
-		if(keycode == Keys.DEL && selectedComponent != null)
+		if(keycode == Keys.FORWARD_DEL && selectedComponent != null)
 		{
 			if(selectedComponent instanceof StartComponent || selectedComponent instanceof EndComponent)
 			{
@@ -351,12 +343,18 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 				return false;
 			}
 			
+			selectedComponent.detach();
+			
 			if(componentList.remove(selectedComponent))
 				selectedComponent = null;
 			else
 				throw new EditorException("Component not on list! Ilegal state!");
 			
 		}
+		
+		if(keycode == Keys.BACKSPACE && selectedComponent != null)
+			selectedComponent.detach();
+		
 		return false;
 	}
 	
@@ -421,5 +419,4 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	{
 		return false;
 	}
-	
 }
