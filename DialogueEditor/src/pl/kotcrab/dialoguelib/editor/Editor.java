@@ -145,6 +145,7 @@ public class Editor extends JFrame
 		MenuItem mAddChoice = new MenuItem("Add 'Choice'");
 		MenuItem mAddRandom = new MenuItem("Add 'Random'");
 		MenuItem mAddCallback = new MenuItem("Add 'Callback'");
+		MenuItem mAddEnd = new MenuItem("Add 'End'");
 		
 		mAddText.addActionListener(new ActionListener()
 		{
@@ -184,11 +185,22 @@ public class Editor extends JFrame
 			}
 		});
 		
+		mAddEnd.addActionListener(new ActionListener()
+		{	
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				renderer.addComponent(DComponentType.END);
+			}
+		});
+		
+		
 		final PopupMenu popupMenu = new PopupMenu();
 		popupMenu.add(mAddText);
 		popupMenu.add(mAddChoice);
 		popupMenu.add(mAddRandom);
 		popupMenu.add(mAddCallback);
+		popupMenu.add(mAddEnd);
 		
 		renderer = new Renderer(new EditorListener()
 		{

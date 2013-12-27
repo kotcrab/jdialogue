@@ -41,8 +41,13 @@ public class ConnectionRenderer
 			
 			float d = Math.abs(y1 - y2);
 			if(d > 100) d = 100; // limit
-			
-			shapeRenderer.curve(x1, y1, x1 + d, y1, x2 - d, y2, x2, y2, 32);
+			shapeRenderer.setColor(Color.BLACK);
+			shapeRenderer.begin(ShapeType.Line);
+			shapeRenderer.curve(x1, y1, x1 + d, y1, x2 - d, y2, x2, y2, 32); //connection line
+			shapeRenderer.end();
+			shapeRenderer.begin(ShapeType.Filled);
+			shapeRenderer.triangle(target.getX() - 8, target.getY(), target.getX() - 8, target.getY() + 12, target.getX() + 3, y2); //ending triangle
+			shapeRenderer.end();
 		}
 	}
 	

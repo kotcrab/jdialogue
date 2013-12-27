@@ -120,34 +120,13 @@ public abstract class DComponent
 	/**
 	 * Detaches this component from others
 	 */
-	public void detach()
+	public void detachAll()
 	{
 		for (int i = 0; i < inputs.length; i++)
-		{
-			Connector[] parrentOut = null;
-			try
-			{
-				parrentOut = inputs[i].getTarget().getParrentComponent().getOutputs();
-			}
-			catch (NullPointerException e)
-			{
-				continue;
-			}
-			
-			for (int j = 0; j < parrentOut.length; j++)
-			{
-				if(parrentOut[j] == inputs[i].getTarget())
-				{
-					parrentOut[j].setTarget(null);
-					break;
-				}
-			}
-			
-			inputs[i].setTarget(null);
-		}
+			inputs[i].detach();
 		
 		for (int i = 0; i < outputs.length; i++)
-			outputs[i].setTarget(null);
+			outputs[i].detach();
 	}
 	
 	public boolean contains(float x, float y) // is given point inside component

@@ -117,12 +117,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		for (DComponent comp : componentList)
 		{
 			comp.renderShapes(shapeRenderer);
-			
-			shapeRenderer.begin(ShapeType.Line);
-			shapeRenderer.setColor(Color.BLACK);
-			connectionRenderer.render(shapeRenderer, comp);
-			shapeRenderer.end();
-			
+						
 			batch.begin();
 			comp.render(batch);
 			batch.end();
@@ -140,14 +135,11 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 			}
 			
 		}
-		
-		shapeRenderer.begin(ShapeType.Line);
-		shapeRenderer.setColor(Color.BLACK);
+				
 		for (DComponent comp : componentList)
 		{
 			connectionRenderer.render(shapeRenderer, comp);
 		}
-		shapeRenderer.end();
 	}
 	
 	@Override
@@ -181,6 +173,9 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		case CALLBACK:
 			componentList.add(new CallbackComponent(Touch.getX(), Touch.getY()));
 			break;
+		case END:
+			componentList.add(new EndComponent(Touch.getX(), Touch.getY()));
+			break;
 		default:
 			break;
 		
@@ -210,14 +205,14 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 				{
 					if(selectedConnection.isInput() != connection.isInput()) // to prevent connecting 2 outputs or 2 inputs
 					{
-						//if(selectedConnection.isInput() && connection.isInput() == false)
-						//{
-							connection.setTarget(selectedConnection);
-						//}
-						//else
-						//{
-							selectedConnection.setTarget(connection);
-						//}
+						// if(selectedConnection.isInput() && connection.isInput() == false)
+						// {
+						connection.setTarget(selectedConnection);
+						// }
+						// else
+						// {
+						selectedConnection.setTarget(connection);
+						// }
 					}
 				}
 				
@@ -335,15 +330,15 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	@Override
 	public boolean keyDown(int keycode)
 	{
-		if(keycode == Keys.FORWARD_DEL && selectedComponent != null)
+		if(keycode == Keys.FORWARD_DEL && selectedComponent != null) // because forward_del is delete key, del is backspace!
 		{
-			if(selectedComponent instanceof StartComponent || selectedComponent instanceof EndComponent)
+			if(selectedComponent instanceof StartComponent)
 			{
 				listener.showMsg("This component cannot be deleted!", "Error", JOptionPane.ERROR_MESSAGE);
 				return false;
 			}
 			
-			selectedComponent.detach();
+			selectedComponent.detachAll();
 			
 			if(componentList.remove(selectedComponent))
 				selectedComponent = null;
@@ -352,8 +347,12 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 			
 		}
 		
-		if(keycode == Keys.BACKSPACE && selectedComponent != null)
-			selectedComponent.detach();
+		if(keycode == Keys.CONTROL_LEFT && selectedConnection != null)
+		{
+			selectedConnection.detach();
+		}
+		
+		if(keycode == Keys.BACKSPACE && selectedComponent != null) selectedComponent.detachAll();
 		
 		return false;
 	}

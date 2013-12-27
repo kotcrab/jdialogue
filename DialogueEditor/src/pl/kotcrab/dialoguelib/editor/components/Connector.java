@@ -24,7 +24,7 @@ public class Connector
 {
 	private float x, y;
 	
-	private Connector target; //null if input!
+	private Connector target; // null if input!
 	private boolean isInput;
 	
 	private DComponent parrentComponent;
@@ -52,32 +52,60 @@ public class Connector
 		shapeRenderer.rect(x, y, 12, 12);
 		shapeRenderer.end();
 	}
-
+	
 	public Connector getTarget()
 	{
 		return target;
 	}
-
+	
+	public void detach()
+	{
+		if(isInput) //if its input we must detach from output component
+		{
+			Connector[] parrentOut = null;
+			try
+			{
+				parrentOut = target.getParrentComponent().getOutputs();
+			}
+			catch (NullPointerException e) // target was not set, ignore
+			{
+				return;
+			}
+			
+			for (int j = 0; j < parrentOut.length; j++) //searching for matching output connector 
+			{
+				if(parrentOut[j] == target) //found
+				{
+					parrentOut[j].setTarget(null); //detach
+					break;
+				}
+			}
+		}
+		
+		setTarget(null);
+		
+	}
+	
 	public void setTarget(Connector target)
 	{
 		this.target = target;
 	}
-
+	
 	public float getX()
 	{
 		return x;
 	}
-
+	
 	public void setX(float x)
 	{
 		this.x = x;
 	}
-
+	
 	public float getY()
 	{
 		return y;
 	}
-
+	
 	public void setY(float y)
 	{
 		this.y = y;
@@ -93,13 +121,13 @@ public class Connector
 	{
 		return parrentComponent;
 	}
-
+	
 	public boolean isInput()
 	{
 		return isInput;
 	}
-
-	public boolean contains(float x, float y) //is given point inside component
+	
+	public boolean contains(float x, float y) // is given point inside component
 	{
 		return this.x <= x && this.x + 12 >= x && this.y <= y && this.y + 12 >= y;
 	}
