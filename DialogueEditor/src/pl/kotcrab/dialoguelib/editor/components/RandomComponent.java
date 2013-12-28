@@ -20,7 +20,7 @@ public class RandomComponent extends DComponent
 {
 	public RandomComponent(int x, int y)
 	{
-		super("Random", x, y, 5, 5);
+		super("Random", x, y, 1, 3);
 	}
 
 	@Override

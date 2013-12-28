@@ -207,11 +207,11 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 					{
 						// if(selectedConnection.isInput() && connection.isInput() == false)
 						// {
-						connection.setTarget(selectedConnection);
+						connection.addTarget(selectedConnection);
 						// }
 						// else
 						// {
-						selectedConnection.setTarget(connection);
+						selectedConnection.addTarget(connection);
 						// }
 					}
 				}

@@ -16,17 +16,47 @@
 
 package pl.kotcrab.dialoguelib.editor.components;
 
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+
 public class ChoiceComponent extends DComponent
 {
+	private ChoiceComponentTableModel tableModel;
+	
 	public ChoiceComponent(int x, int y)
 	{
-		super("Choice", x, y, 1, 3);
+		super("Choice", x, y, 1, 6);
+		
+		tableModel = new ChoiceComponentTableModel();
+		
+		tableModel.addTableModelListener(new TableModelListener()
+		{	
+			@Override
+			public void tableChanged(TableModelEvent e)
+			{
+				resize(getInputs().length, (int) tableModel.getValueAt(0, 1));
+			}
+		});
 	}
-
+	
 	@Override
 	public ComponentTableModel getTableModel()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return tableModel;
+	}
+}
+
+class ChoiceComponentTableModel extends ComponentTableModel
+{
+	private static final long serialVersionUID = 1L;
+	
+	public ChoiceComponentTableModel()
+	{
+		//@formatter:off
+		data = new Object[][]
+			{
+			    {"Outputs", new Integer(6)},
+			};
+		//@formatter:on
 	}
 }

@@ -28,6 +28,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
@@ -39,6 +40,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import pl.kotcrab.dialoguelib.editor.components.ComponentTableModel;
@@ -168,7 +170,7 @@ public class Editor extends JFrame
 		});
 		
 		mAddRandom.addActionListener(new ActionListener()
-		{	
+		{
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
@@ -177,7 +179,7 @@ public class Editor extends JFrame
 		});
 		
 		mAddCallback.addActionListener(new ActionListener()
-		{	
+		{
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
@@ -186,14 +188,13 @@ public class Editor extends JFrame
 		});
 		
 		mAddEnd.addActionListener(new ActionListener()
-		{	
+		{
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
 				renderer.addComponent(DComponentType.END);
 			}
 		});
-		
 		
 		final PopupMenu popupMenu = new PopupMenu();
 		popupMenu.add(mAddText);
@@ -226,7 +227,7 @@ public class Editor extends JFrame
 			@Override
 			public void changePropertyTableModel(ComponentTableModel tableModel)
 			{
-				if(tableModel == null) //if componet doesn't have table model set default
+				if(tableModel == null) // if componet doesn't have table model set default
 					table.setModel(new DefaultTableModel());
 				else
 				{

@@ -16,6 +16,8 @@
 
 package pl.kotcrab.dialoguelib.editor.components;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -24,15 +26,16 @@ public class Connector
 {
 	private float x, y;
 	
-	private Connector target; // null if input!
+	private ArrayList<Connector> targets = new ArrayList<Connector>();
+	private ArrayList<Connector> targetsToRemove = new ArrayList<Connector>();
 	private boolean isInput;
 	
 	private DComponent parrentComponent;
 	
-	public Connector(float x, float y, DComponent parrentComponent, boolean isInput)
+	public Connector(DComponent parrentComponent, boolean isInput)
 	{
-		this.x = x;
-		this.y = y;
+		this.x = 0;
+		this.y = 0;
 		this.isInput = isInput;
 		this.parrentComponent = parrentComponent;
 	}
@@ -55,40 +58,81 @@ public class Connector
 	
 	public Connector getTarget()
 	{
-		return target;
+		if(targets.size() > 0)
+			return targets.get(0);
+		else
+			return null;
 	}
 	
 	public void detach()
 	{
-		if(isInput) //if its input we must detach from output component
+		for(Connector target : targets)
 		{
-			Connector[] parrentOut = null;
+			Connector[] targetConnectors = null;
 			try
 			{
-				parrentOut = target.getParrentComponent().getOutputs();
+				if(isInput)
+					targetConnectors = target.getParrentComponent().getOutputs();
+				else
+					targetConnectors = target.getParrentComponent().getInputs();
 			}
 			catch (NullPointerException e) // target was not set, ignore
 			{
-				return;
+				continue;
 			}
 			
-			for (int j = 0; j < parrentOut.length; j++) //searching for matching output connector 
+			for(int j = 0; j < targetConnectors.length; j++) // searching for matching output connector
 			{
-				if(parrentOut[j] == target) //found
+				if(targetConnectors[j] == target) // found
 				{
-					parrentOut[j].setTarget(null); //detach
+					Connector temp = targetConnectors[j];
+					targetConnectors[j].removeTarget(this); // detach
+					targetsToRemove.add(temp);
 					break;
 				}
 			}
 		}
 		
-		setTarget(null);
+		if(targetsToRemove.size() > 0)
+		{
+			targets.removeAll(targetsToRemove);
+			targetsToRemove.clear();
+		}
 		
+		// if(isInput) //if its input we must detach from output component
+		// {
+		// Connector[] parrentOut = null;
+		// try
+		// {
+		// parrentOut = target.getParrentComponent().getOutputs();
+		// }
+		// catch (NullPointerException e) // target was not set, ignore
+		// {
+		// return;
+		// }
+		//
+		// for (int j = 0; j < parrentOut.length; j++) //searching for matching output connector
+		// {
+		// if(parrentOut[j] == target) //found
+		// {
+		// parrentOut[j].setTarget(null); //detach
+		// break;
+		// }
+		// }
+		// }
+		//
+		// addTarget(null);
+		//
 	}
 	
-	public void setTarget(Connector target)
+	public void addTarget(Connector target)
 	{
-		this.target = target;
+		targets.add(target);
+	}
+	
+	public void removeTarget(Connector target)
+	{
+		targets.remove(target);
 	}
 	
 	public float getX()
