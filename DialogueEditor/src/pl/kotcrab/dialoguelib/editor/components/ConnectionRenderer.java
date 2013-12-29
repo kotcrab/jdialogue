@@ -22,6 +22,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 public class ConnectionRenderer
 {
+	private boolean renderCurves = true;
+	
 	public void render(ShapeRenderer shapeRenderer, DComponent comp)
 	{
 		Connector[] inputs = comp.getOutputs();
@@ -38,11 +40,22 @@ public class ConnectionRenderer
 			float x2 = target.getX() + 6;
 			float y2 = target.getY() + 6;
 			
-			float d = Math.abs(y1 - y2);
-			if(d > 100) d = 100; // limit
+			float d = 0;
+			
+			if(renderCurves)
+			{
+				d = Math.abs(y1 - y2);
+				if(d > 100) d = 100; // limit
+			}
+			
 			shapeRenderer.setColor(Color.BLACK);
 			shapeRenderer.begin(ShapeType.Line);
-			shapeRenderer.curve(x1, y1, x1 + d, y1, x2 - d, y2, x2, y2, 32); // connection line
+			
+			if(renderCurves)
+				shapeRenderer.curve(x1, y1, x1 + d, y1, x2 - d, y2, x2, y2, 32); // connection line
+			else
+				shapeRenderer.line(x1, y1, x2 - 12, y2);
+			
 			shapeRenderer.end();
 			shapeRenderer.begin(ShapeType.Filled);
 			shapeRenderer.triangle(target.getX() - 8, target.getY(), target.getX() - 8, target.getY() + 12, target.getX() + 3, y2); // ending triangle
@@ -57,8 +70,13 @@ public class ConnectionRenderer
 		float x1 = selectedConnection.getX() + 6;
 		float y1 = selectedConnection.getY() + 6;
 		
-		float d = Math.abs(y1 - y2);
-		if(d > 100) d = 100; // limit
+		float d = 0;
+		
+		if(renderCurves)
+		{
+			d = Math.abs(y1 - y2);
+			if(d > 100) d = 100; // limit
+		}
 		
 		if(selectedConnection.isInput() == true) // swaping values because curve will look weird without this
 		{
@@ -71,7 +89,17 @@ public class ConnectionRenderer
 			y2 = temp;
 		}
 		
-		shapeRenderer.curve(x1, y1, x1 + d, y1, x2 - d, y2, x2, y2, 32);
+		if(renderCurves)
+			shapeRenderer.curve(x1, y1, x1 + d, y1, x2 - d, y2, x2, y2, 32);
+		else
+			shapeRenderer.line(x1, y1, x2, y2);
+		
 		shapeRenderer.end();
 	}
+	
+	public void setRenderCurves(boolean renderCurves)
+	{
+		this.renderCurves = renderCurves;
+	}
+	
 }

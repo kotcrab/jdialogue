@@ -23,6 +23,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Rectangle;
 
 public abstract class DComponent
 {
@@ -116,11 +117,11 @@ public abstract class DComponent
 		
 	}
 	
-	public void renderSelectionOutline(ShapeRenderer shapeRenderer)
+	public void renderSelectionOutline(ShapeRenderer shapeRenderer, Color color)
 	{
 		
 		shapeRenderer.begin(ShapeType.Line);
-		shapeRenderer.setColor(Color.ORANGE);
+		shapeRenderer.setColor(color);
 		shapeRenderer.rect(x, y - height / 2, width, height);// outline
 		shapeRenderer.line(x, ry + height - 30, x + width, ry + height - 30); // line under text
 		shapeRenderer.end();
@@ -169,10 +170,10 @@ public abstract class DComponent
 				
 				System.arraycopy(inputs, 0, newInputs, 0, inputs.length);
 				
+				for(int i = inputs.length; i < newInputs.length; i++)
+					newInputs[i] = new Connector(this, true);
+						
 				inputs = newInputs;
-				
-				for(int i = nInputs; i < inputs.length; i++)
-					inputs[i] = new Connector(this, true);
 			}
 		}
 		
@@ -192,7 +193,6 @@ public abstract class DComponent
 			
 			if(nOutputs > outputs.length)
 			{
-				
 				Connector[] newOutputs = new Connector[nOutputs];
 				
 				System.arraycopy(outputs, 0, newOutputs, 0, outputs.length);
@@ -216,6 +216,17 @@ public abstract class DComponent
 	public boolean contains(float x, float y) // is given point inside component
 	{
 		return this.x <= x && this.x + this.width >= x && this.y - this.height / 2 <= y && this.y + this.height / 2 >= y;
+	}
+	
+	public boolean contains (Rectangle rectangle) {
+		float xmin = rectangle.x;
+		float xmax = xmin + rectangle.width;
+
+		float ymin = rectangle.y;
+		float ymax = ymin + rectangle.height;
+
+		return ((xmin > x && xmin < x + width) && (xmax > x && xmax < x + width))
+			&& ((ymin > y && ymin < y + height / 2) && (ymax > y && ymax < y + height / 2));
 	}
 	
 	public Connector connectionContains(float x, float y)

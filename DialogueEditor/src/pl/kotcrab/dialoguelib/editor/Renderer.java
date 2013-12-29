@@ -38,12 +38,14 @@ import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
@@ -62,10 +64,16 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	private ConnectionRenderer connectionRenderer;
 	
 	private DComponent selectedComponent = null;
+	private ArrayList<DComponent> selectedComponentsList = new ArrayList<DComponent>();
 	private int attachPointX;
 	private int attachPointY;
 	
+	private RectangularSelection rectangularSelection;
+	
 	private boolean disposed = false;
+	
+	private boolean renderDebug = false;
+	private Matrix4 renderDebugMatrix;
 	
 	public Renderer(EditorListener listener)
 	{
@@ -85,9 +93,19 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		shapeRenderer = new ShapeRenderer();
 		batch = new SpriteBatch();
 		
+		rectangularSelection = new RectangularSelection(new RectangularSelectionListener()
+		{
+			@Override
+			public void finishedDrawing(ArrayList<DComponent> matchingComponents)
+			{
+				selectedComponentsList = matchingComponents;
+			}
+		}, componentList);
+		
 		InputMultiplexer mul = new InputMultiplexer();
 		mul.addProcessor(this);
 		mul.addProcessor(new GestureDetector(this));
+		mul.addProcessor(rectangularSelection);
 		Gdx.input.setInputProcessor(mul);
 		
 		componentList.add(new TextComponent(200, 300));
@@ -96,14 +114,19 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		componentList.add(new EndComponent(500, 300));
 		
 		connectionRenderer = new ConnectionRenderer();
+		
+		renderDebugMatrix = new Matrix4();
+		renderDebugMatrix.setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		renderDebugMatrix.scl(0.7f);
+		
 	}
 	
 	public void resetCamera()
 	{
-		Vector3 pos = camera.position.cpy();
-		camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getWidth());
-		camera.position.x = pos.x;
-		camera.position.y = pos.y;
+		// camera.zoom = 1;
+		camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		camera.position.x = Gdx.graphics.getWidth() / 2;
+		camera.position.y = Gdx.graphics.getHeight() / 2;
 		camera.zoom = 1;
 	}
 	
@@ -113,6 +136,11 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		
 		shapeRenderer.setProjectionMatrix(camera.combined);
 		batch.setProjectionMatrix(camera.combined);
+		
+		if(Gdx.input.isKeyPressed(Keys.CONTROL_LEFT) && selectedConnection != null && Gdx.input.isButtonPressed(Buttons.LEFT))
+		{
+			selectedConnection.detach();
+		}
 	}
 	
 	@Override
@@ -136,7 +164,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 			}
 			batch.setShader(null);
 			
-			if(selectedComponent != null) selectedComponent.renderSelectionOutline(shapeRenderer);
+			if(selectedComponent != null) selectedComponent.renderSelectionOutline(shapeRenderer, Color.ORANGE);
 			if(selectedConnection != null)
 			{
 				selectedConnection.renderAsSelected(shapeRenderer);
@@ -148,10 +176,28 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 				
 			}
 			
+			rectangularSelection.render(shapeRenderer);
+			for(DComponent comp : selectedComponentsList)
+			{
+				comp.renderSelectionOutline(shapeRenderer, Color.RED);
+			}
+			
 			for(DComponent comp : componentList)
 			{
 				connectionRenderer.render(shapeRenderer, comp);
 			}
+			
+			if(renderDebug)
+			{
+				batch.setProjectionMatrix(renderDebugMatrix);
+				batch.setShader(Assets.fontDistanceFieldShader);
+				batch.begin();
+				Assets.consolasFont.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, Gdx.graphics.getHeight() + 260);
+				Assets.consolasFont.draw(batch, "Components: " + componentList.size(), 10, Gdx.graphics.getHeight() + 230);
+				batch.end();
+				batch.setShader(null);
+			}
+			
 		}
 	}
 	
@@ -174,6 +220,9 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		camera.setToOrtho(false, width, height);
 		camera.position.x = pos.x;
 		camera.position.y = pos.y;
+		
+		renderDebugMatrix.setToOrtho2D(0, 0, width, height);
+		renderDebugMatrix.scl(0.7f);
 	}
 	
 	public void addComponent(DComponentType componentType)
@@ -245,11 +294,25 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	@Override public void pause(){}
 	//@formatter:on
 	
+	public void setRenderCurves(boolean renderCurves)
+	{
+		connectionRenderer.setRenderCurves(renderCurves);
+	}
+	
+	public void setRenderDebug(boolean renderDebug)
+	{
+		this.renderDebug = renderDebug;
+	}
+	
 	// ==================================================================INPUT============================================================================
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button)
 	{
-		if(button == Buttons.RIGHT) listener.mouseRightClicked(screenX, screenY); // ! we are sending raw coordinates
+		if(button == Buttons.RIGHT)
+		{
+			listener.mouseRightClicked(screenX, screenY); // ! we are sending raw coordinates
+			return true;
+		}
 		return false;
 	}
 	
@@ -280,17 +343,17 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 			
 			camera.zoom -= 0.1f * camera.zoom * 2;
 		}
-		return false;
+		return true;
 	}
 	
 	@Override
 	public boolean pan(float x, float y, float deltaX, float deltaY)
 	{
-		if(selectedComponent == null && selectedConnection == null)
+		if(selectedComponent == null && selectedConnection == null && selectedComponentsList.size() == 0 && Gdx.input.isButtonPressed(Buttons.LEFT))
 		{
 			camera.position.x = camera.position.x + -deltaX * camera.zoom;
 			camera.position.y = camera.position.y + deltaY * camera.zoom;
-			return false;
+			return true;
 		}
 		
 		return false;
@@ -306,10 +369,26 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer)
 	{
-		if(selectedComponent != null && selectedConnection == null)
+		if(selectedComponentsList.size() > 0)
 		{
-			selectedComponent.setX(Touch.calcX(screenX) - attachPointX);// + (selectedComponent.getX() + selectedComponent.getWidth() - Touch.calcX(screenX)));
+			for(DComponent comp : selectedComponentsList) // FIXME
+			{
+				int diffX = comp.getX() - selectedComponent.getX();
+				int diffY = comp.getY() - selectedComponent.getY();
+				
+				comp.setX(Touch.calcX(screenX) - attachPointX + diffX);
+				comp.setY(Touch.calcY(screenY) - attachPointY + diffY);
+				
+			}
+			
+			return true;
+		}
+		
+		if(selectedComponent != null && selectedConnection == null && Gdx.input.isButtonPressed(Buttons.LEFT))
+		{
+			selectedComponent.setX(Touch.calcX(screenX) - attachPointX);
 			selectedComponent.setY(Touch.calcY(screenY) - attachPointY);
+			return true;
 		}
 		return false;
 	}
@@ -325,11 +404,19 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		{
 			if(comp.contains(x, y))
 			{
+				if(selectedComponentsList.contains(comp))
+				{
+					if(selectedComponent != null) return false;
+				}
+				else
+					selectedComponentsList.clear();
+				
 				selectedComponent = comp;
 				attachPointX = (int) (x - selectedComponent.getX());
 				attachPointY = (int) (y - selectedComponent.getY());
 				found = true;
 				listener.changePropertyTableModel(selectedComponent.getTableModel());
+				
 				break;
 			}
 		}
@@ -338,7 +425,9 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		{
 			selectedComponent = null;
 			listener.changePropertyTableModel(null);
+			selectedComponentsList.clear();
 		}
+		
 		return false;
 	}
 	
@@ -356,18 +445,21 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 			selectedComponent.detachAll();
 			
 			if(componentList.remove(selectedComponent))
+			{
 				selectedComponent = null;
+				selectedComponentsList.clear();
+			}
 			else
 				throw new EditorException("Component not on list! Ilegal state!");
 			
+			return true;
 		}
 		
-		if(keycode == Keys.CONTROL_LEFT && selectedConnection != null)
+		if(keycode == Keys.BACKSPACE && selectedComponent != null)
 		{
-			selectedConnection.detach();
+			selectedComponent.detachAll();
+			return true;
 		}
-		
-		if(keycode == Keys.BACKSPACE && selectedComponent != null) selectedComponent.detachAll();
 		
 		return false;
 	}
@@ -383,6 +475,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	@Override
 	public boolean tap(float x, float y, int count, int button)
 	{
+		
 		return false;
 	}
 	

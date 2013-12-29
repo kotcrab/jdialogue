@@ -27,9 +27,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
@@ -44,10 +46,7 @@ import javax.swing.table.DefaultTableModel;
 import pl.kotcrab.dialoguelib.editor.components.ComponentTableModel;
 import pl.kotcrab.dialoguelib.editor.components.DComponentType;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglCanvas;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenuItem;
 
 public class Editor extends JFrame
 {
@@ -176,7 +175,9 @@ public class Editor extends JFrame
 		
 		canvas = new LwjglCanvas(renderer, true);
 		canvas.getCanvas().add(popupMenu);
+		
 		rendererSplitPane.setLeftComponent(canvas.getCanvas());
+		
 		// renderer end
 		
 		// property table
@@ -212,19 +213,35 @@ public class Editor extends JFrame
 		setJMenuBar(menuBar);
 		
 		JMenu fileMenu = new JMenu("File");
+		fileMenu.getPopupMenu().setLightWeightPopupEnabled(false); // without this menu will render under canvas
 		menuBar.add(fileMenu);
 		
 		JMenu rendererMenu = new JMenu("Renderer");
+		rendererMenu.getPopupMenu().setLightWeightPopupEnabled(false); // without this menu will render under canvas
 		menuBar.add(rendererMenu);
 		
-		JCheckBoxMenuItem chckRenderDebug = new JCheckBoxMenuItem("Render debug info");
+		final JCheckBoxMenuItem chckRenderDebug = new JCheckBoxMenuItem("Render Debug Info");
+		chckRenderDebug.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				renderer.setRenderDebug(chckRenderDebug.isSelected());
+			}
+		});
 		rendererMenu.add(chckRenderDebug);
 		
-		JCheckBoxMenuItem chckRenderCurves = new JCheckBoxMenuItem("Render Curves");
+		final JCheckBoxMenuItem chckRenderCurves = new JCheckBoxMenuItem("Render Curves");
+		chckRenderCurves.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				renderer.setRenderCurves(chckRenderCurves.isSelected());
+			}
+		});
 		chckRenderCurves.setSelected(true);
 		rendererMenu.add(chckRenderCurves);
 		
-		JMenuItem chckResetCamera = new JMenuItem("Reset camera");
+		JMenuItem chckResetCamera = new JMenuItem("Reset Camera");
 		chckResetCamera.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
