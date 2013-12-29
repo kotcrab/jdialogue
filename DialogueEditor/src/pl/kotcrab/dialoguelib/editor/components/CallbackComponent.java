@@ -16,7 +16,6 @@
 
 package pl.kotcrab.dialoguelib.editor.components;
 
-
 public class CallbackComponent extends DComponent
 {
 	CallbackComponentTableModel tableModel;
@@ -39,12 +38,12 @@ class CallbackComponentTableModel extends ComponentTableModel
 	private static final long serialVersionUID = 1L;
 	
 	public CallbackComponentTableModel()
-	{	
+	{
 		//@formatter:off
 		data = new Object[][]
 			{
 			    {"Callback Text", "Set Text"},
 			};
 		//@formatter:on
-	}	
+	}
 }

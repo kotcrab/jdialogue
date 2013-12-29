@@ -25,12 +25,12 @@ public class ChoiceComponent extends DComponent
 	
 	public ChoiceComponent(int x, int y)
 	{
-		super("Choice", x, y, 1, 6);
+		super("Choice", x, y, 1, 3);
 		
 		tableModel = new ChoiceComponentTableModel();
 		
 		tableModel.addTableModelListener(new TableModelListener()
-		{	
+		{
 			@Override
 			public void tableChanged(TableModelEvent e)
 			{
@@ -55,7 +55,7 @@ class ChoiceComponentTableModel extends ComponentTableModel
 		//@formatter:off
 		data = new Object[][]
 			{
-			    {"Outputs", new Integer(6)},
+			    {"Outputs", new Integer(3)},
 			};
 		//@formatter:on
 	}

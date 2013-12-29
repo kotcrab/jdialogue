@@ -24,7 +24,7 @@ public class App
 	{
 		for(int i = 0; i < args.length; i++)
 		{
-			if(args[i].equals("-screen") )
+			if(args[i].equals("-screen"))
 			{
 				if(i + 1 > args.length - 1)
 				{
@@ -35,7 +35,7 @@ public class App
 				{
 					screenId = Integer.parseInt(args[i + 1]);
 				}
-				catch(NumberFormatException e)
+				catch (NumberFormatException e)
 				{
 					System.err.println("-screen requires moniotr id. Example: -screen 1");
 					e.printStackTrace();
@@ -49,7 +49,7 @@ public class App
 			throw new ArgsParserException("Unrecognized parameter: " + args[i]);
 		}
 	}
-
+	
 	public static int getScreenId()
 	{
 		return screenId;

@@ -21,25 +21,28 @@ import com.badlogic.gdx.math.Vector3;
 
 public class Touch
 {
-	private static OrthographicCamera camera; //kamera
-	private static Vector3 calcVector; //wektor do obliczen
+	private static OrthographicCamera camera; // kamera
+	private static Vector3 calcVector; // wektor do obliczen
 	
-	/** Przygotowywuje klase do uzytku*/
+	/** Przygotowywuje klase do uzytku */
 	public static void setCamera(OrthographicCamera camera)
 	{
 		Touch.camera = camera;
 		calcVector = new Vector3(0, 0, 0);
 	}
 	
-	/** Zwaraca kamere*/
+	/** Zwaraca kamere */
 	public static OrthographicCamera getCamera()
 	{
 		return camera;
 	}
-
-	/** Zwaraca poprawne miejsce dotyku pobrane przy ucyzciu Gdx.input.getX()  
-	 * Aby uzywac nalezy wyowalc jednorazowo setCamera()
-	 * @param x pochadzace z Gdx.input.getX()*/
+	
+	/**
+	 * Zwaraca poprawne miejsce dotyku pobrane przy ucyzciu Gdx.input.getX() Aby uzywac nalezy wyowalc jednorazowo setCamera()
+	 * 
+	 * @param x
+	 *            pochadzace z Gdx.input.getX()
+	 */
 	public static int calcX(float x)
 	{
 		calcVector.x = x;
@@ -47,9 +50,12 @@ public class Touch
 		return (int) calcVector.x;
 	}
 	
-	/** Zwaraca poprawne miejsce dotyku pobrane przy ucyzciu Gdx.input.getY()  
-	 * Aby uzywac nalezy wyowalc jednorazowo setCamera()
-	 * @param y pochadzace z Gdx.input.getY()*/
+	/**
+	 * Zwaraca poprawne miejsce dotyku pobrane przy ucyzciu Gdx.input.getY() Aby uzywac nalezy wyowalc jednorazowo setCamera()
+	 * 
+	 * @param y
+	 *            pochadzace z Gdx.input.getY()
+	 */
 	public static int calcY(float y)
 	{
 		calcVector.y = y;
@@ -66,10 +72,9 @@ public class Touch
 	
 	public static int getY()
 	{
-		calcVector.y =  Gdx.input.getY();
+		calcVector.y = Gdx.input.getY();
 		camera.unproject(calcVector);
 		return (int) calcVector.y;
 	}
 	
-	 
 }

@@ -14,7 +14,6 @@
  * limitations under the License.
  ******************************************************************************/
 
-
 package pl.kotcrab.dialoguelib.editor.components;
 
 import com.badlogic.gdx.graphics.Color;
@@ -27,7 +26,7 @@ public class ConnectionRenderer
 	{
 		Connector[] inputs = comp.getOutputs();
 		
-		for (int i = 0; i < inputs.length; i++)
+		for(int i = 0; i < inputs.length; i++)
 		{
 			Connector con = inputs[i];
 			Connector target = con.getTarget();
@@ -43,10 +42,10 @@ public class ConnectionRenderer
 			if(d > 100) d = 100; // limit
 			shapeRenderer.setColor(Color.BLACK);
 			shapeRenderer.begin(ShapeType.Line);
-			shapeRenderer.curve(x1, y1, x1 + d, y1, x2 - d, y2, x2, y2, 32); //connection line
+			shapeRenderer.curve(x1, y1, x1 + d, y1, x2 - d, y2, x2, y2, 32); // connection line
 			shapeRenderer.end();
 			shapeRenderer.begin(ShapeType.Filled);
-			shapeRenderer.triangle(target.getX() - 8, target.getY(), target.getX() - 8, target.getY() + 12, target.getX() + 3, y2); //ending triangle
+			shapeRenderer.triangle(target.getX() - 8, target.getY(), target.getX() - 8, target.getY() + 12, target.getX() + 3, y2); // ending triangle
 			shapeRenderer.end();
 		}
 	}

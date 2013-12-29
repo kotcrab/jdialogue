@@ -20,9 +20,9 @@ public class EndComponent extends DComponent
 {
 	public EndComponent(int x, int y)
 	{
-		super("End", x, y, 1,0);
+		super("End", x, y, 1, 0);
 	}
-
+	
 	@Override
 	public ComponentTableModel getTableModel()
 	{

@@ -22,12 +22,13 @@ import javax.swing.JOptionPane;
 
 import pl.kotcrab.dialoguelib.editor.components.CallbackComponent;
 import pl.kotcrab.dialoguelib.editor.components.ChoiceComponent;
-import pl.kotcrab.dialoguelib.editor.components.Connector;
 import pl.kotcrab.dialoguelib.editor.components.ConnectionRenderer;
+import pl.kotcrab.dialoguelib.editor.components.Connector;
 import pl.kotcrab.dialoguelib.editor.components.DComponent;
 import pl.kotcrab.dialoguelib.editor.components.DComponentType;
 import pl.kotcrab.dialoguelib.editor.components.EndComponent;
 import pl.kotcrab.dialoguelib.editor.components.RandomComponent;
+import pl.kotcrab.dialoguelib.editor.components.RelayComponent;
 import pl.kotcrab.dialoguelib.editor.components.StartComponent;
 import pl.kotcrab.dialoguelib.editor.components.TextComponent;
 
@@ -37,12 +38,10 @@ import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Vector2;
@@ -65,6 +64,8 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	private DComponent selectedComponent = null;
 	private int attachPointX;
 	private int attachPointY;
+	
+	private boolean disposed = false;
 	
 	public Renderer(EditorListener listener)
 	{
@@ -97,6 +98,15 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		connectionRenderer = new ConnectionRenderer();
 	}
 	
+	public void resetCamera()
+	{
+		Vector3 pos = camera.position.cpy();
+		camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getWidth());
+		camera.position.x = pos.x;
+		camera.position.y = pos.y;
+		camera.zoom = 1;
+	}
+	
 	public void update()
 	{
 		camera.update();
@@ -108,44 +118,53 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	@Override
 	public void render()
 	{
-		update();
-		
-		Gdx.gl.glClearColor(0.69f, 0.69f, 0.69f, 1);
-		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		
-		batch.setShader(Assets.fontDistanceFieldShader);
-		for (DComponent comp : componentList)
+		if(!disposed)
 		{
-			comp.renderShapes(shapeRenderer);
-						
-			batch.begin();
-			comp.render(batch);
-			batch.end();
-		}
-		batch.setShader(null);
-		
-		if(selectedComponent != null) selectedComponent.renderSelectionOutline(shapeRenderer);
-		if(selectedConnection != null)
-		{
-			selectedConnection.renderAsSelected(shapeRenderer);
+			update();
 			
-			if(Gdx.input.isButtonPressed(Buttons.LEFT))
+			Gdx.gl.glClearColor(0.69f, 0.69f, 0.69f, 1);
+			Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+			
+			batch.setShader(Assets.fontDistanceFieldShader);
+			for(DComponent comp : componentList)
 			{
-				connectionRenderer.render(shapeRenderer, selectedConnection, Touch.getX(), Touch.getY());
+				comp.renderShapes(shapeRenderer);
+				
+				batch.begin();
+				comp.render(batch);
+				batch.end();
+			}
+			batch.setShader(null);
+			
+			if(selectedComponent != null) selectedComponent.renderSelectionOutline(shapeRenderer);
+			if(selectedConnection != null)
+			{
+				selectedConnection.renderAsSelected(shapeRenderer);
+				
+				if(Gdx.input.isButtonPressed(Buttons.LEFT))
+				{
+					connectionRenderer.render(shapeRenderer, selectedConnection, Touch.getX(), Touch.getY());
+				}
+				
 			}
 			
-		}
-				
-		for (DComponent comp : componentList)
-		{
-			connectionRenderer.render(shapeRenderer, comp);
+			for(DComponent comp : componentList)
+			{
+				connectionRenderer.render(shapeRenderer, comp);
+			}
 		}
 	}
 	
 	@Override
 	public void dispose()
 	{
-		Assets.dispose();
+		if(!disposed)
+		{
+			Assets.dispose();
+			shapeRenderer.dispose();
+			batch.dispose();
+			disposed = true;
+		}
 	}
 	
 	@Override
@@ -176,9 +195,11 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		case END:
 			componentList.add(new EndComponent(Touch.getX(), Touch.getY()));
 			break;
+		case RELAY:
+			componentList.add(new RelayComponent(Touch.getX(), Touch.getY()));
+			break;
 		default:
 			break;
-		
 		}
 	}
 	
@@ -196,7 +217,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		y = Touch.calcY(y);
 		
 		boolean found = false;
-		for (DComponent comp : componentList)
+		for(DComponent comp : componentList)
 		{
 			Connector connection = comp.connectionContains(x, y);
 			if(connection != null)
@@ -205,14 +226,8 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 				{
 					if(selectedConnection.isInput() != connection.isInput()) // to prevent connecting 2 outputs or 2 inputs
 					{
-						// if(selectedConnection.isInput() && connection.isInput() == false)
-						// {
 						connection.addTarget(selectedConnection);
-						// }
-						// else
-						// {
 						selectedConnection.addTarget(connection);
-						// }
 					}
 				}
 				
@@ -306,7 +321,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		y = Touch.calcY(y);
 		
 		boolean found = false;
-		for (DComponent comp : componentList)
+		for(DComponent comp : componentList)
 		{
 			if(comp.contains(x, y))
 			{

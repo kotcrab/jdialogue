@@ -16,17 +16,47 @@
 
 package pl.kotcrab.dialoguelib.editor.components;
 
-public class RandomComponent extends DComponent
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+
+public class RelayComponent extends DComponent
 {
-	public RandomComponent(int x, int y)
+	private RelayComponentTableModel tableModel;
+	
+	public RelayComponent(int x, int y)
 	{
-		super("Random", x, y, 1, 3);
+		super("Relay", x, y, 3, 1);
+		
+		tableModel = new RelayComponentTableModel();
+		
+		tableModel.addTableModelListener(new TableModelListener()
+		{
+			@Override
+			public void tableChanged(TableModelEvent e)
+			{
+				resize((int) tableModel.getValueAt(0, 1), getOutputs().length);
+			}
+		});
 	}
 	
 	@Override
 	public ComponentTableModel getTableModel()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return tableModel;
+	}
+}
+
+class RelayComponentTableModel extends ComponentTableModel
+{
+	private static final long serialVersionUID = 1L;
+	
+	public RelayComponentTableModel()
+	{
+		//@formatter:off
+		data = new Object[][]
+			{
+			    {"Inputs", new Integer(3)},
+			};
+		//@formatter:on
 	}
 }

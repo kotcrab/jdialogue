@@ -27,7 +27,7 @@ public class Assets
 {
 	public static ShaderProgram fontDistanceFieldShader;
 	public static BitmapFont consolasFont;
-
+	
 	public static void load()
 	{
 		fontDistanceFieldShader = new ShaderProgram(Gdx.files.internal("assets/font/font.vert"), Gdx.files.internal("assets/font/font.frag"));
@@ -47,7 +47,7 @@ public class Assets
 	public static void dispose()
 	{
 		consolasFont.dispose();
-		//fontDistanceFieldShader.dispose(); //FIXME disposing shader causes "No OpenGL context found in the current thread."
+		fontDistanceFieldShader.dispose();
 		Gdx.app.log("Assets", "Finished disposing assets");
-	}	
+	}
 }

@@ -14,7 +14,6 @@
  * limitations under the License.
  ******************************************************************************/
 
-
 package pl.kotcrab.dialoguelib.editor.components;
 
 import javax.swing.table.AbstractTableModel;

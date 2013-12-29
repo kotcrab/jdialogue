@@ -28,7 +28,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
@@ -40,13 +39,15 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import pl.kotcrab.dialoguelib.editor.components.ComponentTableModel;
 import pl.kotcrab.dialoguelib.editor.components.DComponentType;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglCanvas;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenuItem;
 
 public class Editor extends JFrame
 {
@@ -58,7 +59,7 @@ public class Editor extends JFrame
 	private Renderer renderer;
 	private JSplitPane rendererSplitPane;
 	private PropertyTable table;
-	private JTable table_1;
+	private JTable projectTable;
 	
 	/**
 	 * Launch the application.
@@ -80,32 +81,25 @@ public class Editor extends JFrame
 		{
 			public void run()
 			{
-				try
+				window = new Editor();
+				window.setVisible(true);
+				
+				GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+				GraphicsDevice[] gd = ge.getScreenDevices();
+				if(App.getScreenId() > -1 && App.getScreenId() < gd.length)
 				{
-					window = new Editor();
-					window.setVisible(true);
-					
-					GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-					GraphicsDevice[] gd = ge.getScreenDevices();
-					if(App.getScreenId() > -1 && App.getScreenId() < gd.length)
-					{
-						window.setLocation(gd[App.getScreenId()].getDefaultConfiguration().getBounds().x, window.getY());
-					}
-					else if(gd.length > 0)
-					{
-						window.setLocation(gd[0].getDefaultConfiguration().getBounds().x, window.getY());
-					}
-					else
-					{
-						throw new RuntimeException("No Screens Found");
-					}
-					window.setExtendedState(window.getExtendedState() | JFrame.MAXIMIZED_BOTH);
-					
+					window.setLocation(gd[App.getScreenId()].getDefaultConfiguration().getBounds().x, window.getY());
 				}
-				catch (Exception e)
+				else if(gd.length > 0)
 				{
-					e.printStackTrace();
+					window.setLocation(gd[0].getDefaultConfiguration().getBounds().x, window.getY());
 				}
+				else
+				{
+					throw new RuntimeException("No Screens Found");
+				}
+				window.setExtendedState(window.getExtendedState() | JFrame.MAXIMIZED_BOTH);
+				
 			}
 		});
 	}
@@ -119,16 +113,14 @@ public class Editor extends JFrame
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 700, 500);
 		
-		JMenuBar menuBar = new JMenuBar();
-		setJMenuBar(menuBar);
+		createMenuBar();
 		
-		JMenu fileMenu = new JMenu("File");
-		menuBar.add(fileMenu);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 		
+		// toolbar
 		JToolBar toolBar = new JToolBar();
 		toolBar.setFloatable(false);
 		toolBar.setBorder(new LineBorder(new Color(0, 0, 0), 0));
@@ -136,6 +128,7 @@ public class Editor extends JFrame
 		
 		JButton saveBtn = new JButton("Save");
 		toolBar.add(saveBtn);
+		// toolbar end
 		
 		rendererSplitPane = new JSplitPane();
 		rendererSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
@@ -143,10 +136,114 @@ public class Editor extends JFrame
 		rendererSplitPane.setContinuousLayout(true);
 		contentPane.add(rendererSplitPane, BorderLayout.CENTER);
 		
+		// popup menu
+		final PopupMenu popupMenu = createPopupMenu();
+		
+		// renderer
+		renderer = new Renderer(new EditorListener()
+		{
+			@Override
+			public void mouseRightClicked(int x, int y)
+			{
+				popupMenu.show(canvas.getCanvas(), x, y);
+			}
+			
+			@Override
+			public void showMsg(final String msg, final String title, final int msgType)
+			{
+				EventQueue.invokeLater(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						JOptionPane.showMessageDialog(Editor.window, msg, title, msgType);
+					}
+				});
+			}
+			
+			@Override
+			public void changePropertyTableModel(ComponentTableModel tableModel)
+			{
+				if(tableModel == null) // if componet doesn't have table model set default
+					table.setModel(new DefaultTableModel());
+				else
+				{
+					table.setModel(tableModel);
+					ColumnsAutoSizer.sizeColumnsToFit(table);
+				}
+			}
+		});
+		
+		canvas = new LwjglCanvas(renderer, true);
+		canvas.getCanvas().add(popupMenu);
+		rendererSplitPane.setLeftComponent(canvas.getCanvas());
+		// renderer end
+		
+		// property table
+		JSplitPane propertiesSplitPane = new JSplitPane();
+		propertiesSplitPane.setResizeWeight(0.7);
+		rendererSplitPane.setRightComponent(propertiesSplitPane);
+		
+		JPanel propertyPanel = new JPanel();
+		propertiesSplitPane.setLeftComponent(propertyPanel);
+		propertyPanel.setLayout(new BorderLayout());
+		
+		table = new PropertyTable(new DefaultTableModel());
+		
+		propertyPanel.add(table.getTableHeader(), BorderLayout.PAGE_START);
+		propertyPanel.add(table, BorderLayout.CENTER);
+		// propertytable end
+		
+		projectTable = new JTable();
+		propertiesSplitPane.setRightComponent(projectTable);
+		// propertiesSplitPane.setLeftComponent(table);
+	}
+	
+	@Override
+	public void dispose()
+	{
+		renderer.dispose(); // we have to manulay dispose renderer from this thread, or we will get "No OpenGL context found in the current thread."
+		super.dispose();
+	}
+	
+	private void createMenuBar()
+	{
+		JMenuBar menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+		
+		JMenu fileMenu = new JMenu("File");
+		menuBar.add(fileMenu);
+		
+		JMenu rendererMenu = new JMenu("Renderer");
+		menuBar.add(rendererMenu);
+		
+		JCheckBoxMenuItem chckRenderDebug = new JCheckBoxMenuItem("Render debug info");
+		rendererMenu.add(chckRenderDebug);
+		
+		JCheckBoxMenuItem chckRenderCurves = new JCheckBoxMenuItem("Render Curves");
+		chckRenderCurves.setSelected(true);
+		rendererMenu.add(chckRenderCurves);
+		
+		JMenuItem chckResetCamera = new JMenuItem("Reset camera");
+		chckResetCamera.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				renderer.resetCamera();
+			}
+		});
+		rendererMenu.add(chckResetCamera);
+	}
+	
+	public PopupMenu createPopupMenu()
+	{
+		PopupMenu popupMenu = new PopupMenu();
+		
 		MenuItem mAddText = new MenuItem("Add 'Text'");
 		MenuItem mAddChoice = new MenuItem("Add 'Choice'");
 		MenuItem mAddRandom = new MenuItem("Add 'Random'");
 		MenuItem mAddCallback = new MenuItem("Add 'Callback'");
+		MenuItem mAddRelay = new MenuItem("Add 'Relay'");
 		MenuItem mAddEnd = new MenuItem("Add 'End'");
 		
 		mAddText.addActionListener(new ActionListener()
@@ -187,6 +284,15 @@ public class Editor extends JFrame
 			}
 		});
 		
+		mAddRelay.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				renderer.addComponent(DComponentType.RELAY);
+			}
+		});
+		
 		mAddEnd.addActionListener(new ActionListener()
 		{
 			@Override
@@ -196,66 +302,13 @@ public class Editor extends JFrame
 			}
 		});
 		
-		final PopupMenu popupMenu = new PopupMenu();
 		popupMenu.add(mAddText);
 		popupMenu.add(mAddChoice);
 		popupMenu.add(mAddRandom);
 		popupMenu.add(mAddCallback);
+		popupMenu.add(mAddRelay);
 		popupMenu.add(mAddEnd);
 		
-		renderer = new Renderer(new EditorListener()
-		{
-			@Override
-			public void mouseRightClicked(int x, int y)
-			{
-				popupMenu.show(canvas.getCanvas(), x, y);
-			}
-			
-			@Override
-			public void showMsg(final String msg, final String title, final int msgType)
-			{
-				EventQueue.invokeLater(new Runnable()
-				{
-					@Override
-					public void run()
-					{
-						JOptionPane.showMessageDialog(Editor.window, msg, title, msgType);
-					}
-				});
-			}
-			
-			@Override
-			public void changePropertyTableModel(ComponentTableModel tableModel)
-			{
-				if(tableModel == null) // if componet doesn't have table model set default
-					table.setModel(new DefaultTableModel());
-				else
-				{
-					table.setModel(tableModel);
-					ColumnsAutoSizer.sizeColumnsToFit(table);
-				}
-			}
-		});
-		
-		canvas = new LwjglCanvas(renderer, true);
-		canvas.getCanvas().add(popupMenu);
-		rendererSplitPane.setLeftComponent(canvas.getCanvas());
-		
-		JSplitPane propertiesSplitPane = new JSplitPane();
-		propertiesSplitPane.setResizeWeight(0.7);
-		rendererSplitPane.setRightComponent(propertiesSplitPane);
-		
-		JPanel propertyPanel = new JPanel();
-		propertiesSplitPane.setLeftComponent(propertyPanel);
-		propertyPanel.setLayout(new BorderLayout());
-		
-		table = new PropertyTable(new DefaultTableModel());
-		
-		propertyPanel.add(table.getTableHeader(), BorderLayout.PAGE_START);
-		propertyPanel.add(table, BorderLayout.CENTER);
-		
-		table_1 = new JTable();
-		propertiesSplitPane.setRightComponent(table_1);
-		// propertiesSplitPane.setLeftComponent(table);
+		return popupMenu;
 	}
 }

@@ -21,7 +21,7 @@ import pl.kotcrab.dialoguelib.editor.components.ComponentTableModel;
 public interface EditorListener
 {
 	public void mouseRightClicked(int x, int y);
-
+	
 	public void showMsg(String msg, String title, int msgType);
 	
 	public void changePropertyTableModel(ComponentTableModel tableModel);

@@ -50,7 +50,7 @@ public class ColumnsAutoSizer
 		int[] minWidths = new int[table.getColumnCount()];
 		int[] maxWidths = new int[table.getColumnCount()];
 		
-		for (int columnIndex = 0; columnIndex < table.getColumnCount(); columnIndex++)
+		for(int columnIndex = 0; columnIndex < table.getColumnCount(); columnIndex++)
 		{
 			int headerWidth = headerFontMetrics.stringWidth(table.getColumnName(columnIndex));
 			
@@ -63,7 +63,7 @@ public class ColumnsAutoSizer
 		
 		adjustMaximumWidths(table, minWidths, maxWidths);
 		
-		for (int i = 0; i < 1; i++) //!!! We are adjusting ONLY one first column!
+		for(int i = 0; i < 1; i++) // !!! We are adjusting ONLY one first column!
 		{
 			if(minWidths[i] > 0)
 			{
@@ -113,7 +113,7 @@ public class ColumnsAutoSizer
 			cellRenderer = new DefaultTableCellRenderer();
 		}
 		
-		for (int row = 0; row < table.getModel().getRowCount(); row++)
+		for(int row = 0; row < table.getModel().getRowCount(); row++)
 		{
 			Component rendererComponent = cellRenderer.getTableCellRendererComponent(table, table.getModel().getValueAt(row, columnIndex), false, false, row, columnIndex);
 			
@@ -130,7 +130,7 @@ public class ColumnsAutoSizer
 		int largestIndex = 0;
 		int largestValue = 0;
 		
-		for (int i = 0; i < widths.length; i++)
+		for(int i = 0; i < widths.length; i++)
 		{
 			if(widths[i] > largestValue)
 			{
@@ -146,7 +146,7 @@ public class ColumnsAutoSizer
 	{
 		int sum = 0;
 		
-		for (int width : widths)
+		for(int width : widths)
 		{
 			sum += width;
 		}

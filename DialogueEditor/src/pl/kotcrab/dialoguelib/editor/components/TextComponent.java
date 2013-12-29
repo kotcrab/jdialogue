@@ -38,7 +38,7 @@ class TextComponentTableModel extends ComponentTableModel
 	private static final long serialVersionUID = 1L;
 	
 	public TextComponentTableModel()
-	{	
+	{
 		//@formatter:off
 		data = new Object[][]
 			{
@@ -46,5 +46,5 @@ class TextComponentTableModel extends ComponentTableModel
 			    {"Sayer", new Boolean(false)}
 			};
 		//@formatter:on
-	}	
+	}
 }

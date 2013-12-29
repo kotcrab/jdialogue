@@ -88,8 +88,6 @@ public class PropertyTable extends JTable
 		return super.getCellRenderer(row, column);
 	}
 	
-
-	
 	@SuppressWarnings("rawtypes")
 	static class LeftNumberEditor extends DefaultCellEditor // copy of JTable.GenericEditor because you cannot extend it...
 	{
@@ -116,11 +114,8 @@ public class PropertyTable extends JTable
 			// For Strings, return "" for backward compatibility.
 			if("".equals(s))
 			{
-				if(constructor.getDeclaringClass() == String.class)
-				{
-					s = "1";
-				}
-				super.stopCellEditing();
+				((JComponent) getComponent()).setBorder(new LineBorder(Color.red));
+				return false;
 			}
 			
 			try
@@ -133,7 +128,7 @@ public class PropertyTable extends JTable
 				return false;
 			}
 			
-			int a = new Integer(s); //added value checking
+			int a = new Integer(s); // added value checking
 			
 			if(a <= 0 || a > 999)
 			{
