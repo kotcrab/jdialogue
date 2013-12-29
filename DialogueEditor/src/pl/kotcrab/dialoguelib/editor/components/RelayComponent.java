@@ -23,9 +23,9 @@ public class RelayComponent extends DComponent
 {
 	private RelayComponentTableModel tableModel;
 	
-	public RelayComponent(int x, int y)
+	public RelayComponent(int x, int y, int id)
 	{
-		super("Relay", x, y, 3, 1);
+		super("Relay", x, y, 3, 1, id);
 		
 		tableModel = new RelayComponentTableModel();
 		

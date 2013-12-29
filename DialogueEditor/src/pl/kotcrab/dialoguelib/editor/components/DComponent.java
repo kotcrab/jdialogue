@@ -29,20 +29,22 @@ public abstract class DComponent
 {
 	private KotcrabText title;
 	
+	private int id; //id of this component, -1 for start, other in order 0,1,2,3,4...
+	
 	private int x, y;
 	private int ry; // bottom, left point of background
 	private int height, width;
-	// private int inputs, outputs;
 	
 	private Connector[] inputs;
 	private Connector[] outputs;
 	
 	public abstract ComponentTableModel getTableModel();
 	
-	public DComponent(String title, int x, int y, int inputs, int outputs)
+	public DComponent(String title, int x, int y, int inputs, int outputs, int id)
 	{
 		this.x = x;
 		this.y = y;
+		this.id = id;
 		
 		this.title = new KotcrabText(Assets.consolasFont, title, false, 0, 0);
 		this.title.setScale(0.7f);
@@ -294,5 +296,11 @@ public abstract class DComponent
 	{
 		return inputs;
 	}
+
+	public int getId()
+	{
+		return id;
+	}
+	
 	
 }

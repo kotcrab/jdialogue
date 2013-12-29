@@ -20,7 +20,7 @@ public class StartComponent extends DComponent
 {
 	public StartComponent(int x, int y)
 	{
-		super("Start", x, y, 0, 1);
+		super("Start", x, y, 0, 1, -1);
 	}
 	
 	@Override

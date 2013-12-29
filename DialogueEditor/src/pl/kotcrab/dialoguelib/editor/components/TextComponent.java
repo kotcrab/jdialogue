@@ -16,14 +16,16 @@
 
 package pl.kotcrab.dialoguelib.editor.components;
 
+import sun.beans.editors.IntEditor;
+
 public class TextComponent extends DComponent
 {
 	TextComponentTableModel tableModel;
 	
-	public TextComponent(int x, int y)
+	public TextComponent(int x, int y, int id)
 	{
-		super("Show Text", x, y, 1, 1);
-		tableModel = new TextComponentTableModel();
+		super("Show Text", x, y, 1, 1, id);
+		tableModel = new TextComponentTableModel(id);
 	}
 	
 	@Override
@@ -37,11 +39,12 @@ class TextComponentTableModel extends ComponentTableModel
 {
 	private static final long serialVersionUID = 1L;
 	
-	public TextComponentTableModel()
+	public TextComponentTableModel(int id)
 	{
 		//@formatter:off
 		data = new Object[][]
 			{
+				{"Id", new Integer(id)},
 			    {"Text", "Set Text"},
 			    {"Sayer", new Boolean(false)}
 			};

@@ -18,9 +18,9 @@ package pl.kotcrab.dialoguelib.editor.components;
 
 public class EndComponent extends DComponent
 {
-	public EndComponent(int x, int y)
+	public EndComponent(int x, int y, int id)
 	{
-		super("End", x, y, 1, 0);
+		super("End", x, y, 1, 0, id);
 	}
 	
 	@Override

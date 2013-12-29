@@ -20,9 +20,9 @@ public class CallbackComponent extends DComponent
 {
 	CallbackComponentTableModel tableModel;
 	
-	public CallbackComponent(int x, int y)
+	public CallbackComponent(int x, int y, int id)
 	{
-		super("Callback", x, y, 1, 1);
+		super("Callback", x, y, 1, 1, id);
 		tableModel = new CallbackComponentTableModel();
 	}
 	

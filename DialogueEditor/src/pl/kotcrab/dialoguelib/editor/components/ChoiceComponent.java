@@ -23,9 +23,9 @@ public class ChoiceComponent extends DComponent
 {
 	private ChoiceComponentTableModel tableModel;
 	
-	public ChoiceComponent(int x, int y)
+	public ChoiceComponent(int x, int y, int id)
 	{
-		super("Choice", x, y, 1, 3);
+		super("Choice", x, y, 1, 3, id);
 		
 		tableModel = new ChoiceComponentTableModel();
 		

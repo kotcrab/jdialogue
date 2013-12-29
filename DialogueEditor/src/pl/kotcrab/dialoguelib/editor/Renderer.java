@@ -60,7 +60,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	
 	private ArrayList<DComponent> componentList = new ArrayList<DComponent>();
 	
-	private Connector selectedConnection = null;
+	private Connector selectedConnector = null;
 	private ConnectionRenderer connectionRenderer;
 	
 	private DComponent selectedComponent = null;
@@ -71,6 +71,8 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	private RectangularSelection rectangularSelection;
 	
 	private boolean disposed = false;
+
+	private IDManager idManager;
 	
 	private boolean renderDebug = false;
 	private Matrix4 renderDebugMatrix;
@@ -93,6 +95,8 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		shapeRenderer = new ShapeRenderer();
 		batch = new SpriteBatch();
 		
+		idManager = new IDManager();
+		
 		rectangularSelection = new RectangularSelection(new RectangularSelectionListener()
 		{
 			@Override
@@ -108,16 +112,17 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		mul.addProcessor(rectangularSelection);
 		Gdx.input.setInputProcessor(mul);
 		
-		componentList.add(new TextComponent(200, 300));
-		
 		componentList.add(new StartComponent(0, 300));
-		componentList.add(new EndComponent(500, 300));
+		
+		componentList.add(new TextComponent(200, 300, idManager.getFreeId()));		
+		componentList.add(new EndComponent(500, 300, idManager.getFreeId()));
 		
 		connectionRenderer = new ConnectionRenderer();
 		
 		renderDebugMatrix = new Matrix4();
 		renderDebugMatrix.setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		renderDebugMatrix.scl(0.7f);
+		
 		
 	}
 	
@@ -137,9 +142,9 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		shapeRenderer.setProjectionMatrix(camera.combined);
 		batch.setProjectionMatrix(camera.combined);
 		
-		if(Gdx.input.isKeyPressed(Keys.CONTROL_LEFT) && selectedConnection != null && Gdx.input.isButtonPressed(Buttons.LEFT))
+		if(Gdx.input.isKeyPressed(Keys.CONTROL_LEFT) && selectedConnector != null && Gdx.input.isButtonPressed(Buttons.LEFT))
 		{
-			selectedConnection.detach();
+			selectedConnector.detach();
 		}
 	}
 	
@@ -165,13 +170,13 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 			batch.setShader(null);
 			
 			if(selectedComponent != null) selectedComponent.renderSelectionOutline(shapeRenderer, Color.ORANGE);
-			if(selectedConnection != null)
+			if(selectedConnector != null)
 			{
-				selectedConnection.renderAsSelected(shapeRenderer);
+				selectedConnector.renderAsSelected(shapeRenderer);
 				
 				if(Gdx.input.isButtonPressed(Buttons.LEFT))
 				{
-					connectionRenderer.render(shapeRenderer, selectedConnection, Touch.getX(), Touch.getY());
+					connectionRenderer.render(shapeRenderer, selectedConnector, Touch.getX(), Touch.getY());
 				}
 				
 			}
@@ -230,22 +235,22 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		switch (componentType)
 		{
 		case CHOICE:
-			componentList.add(new ChoiceComponent(Touch.getX(), Touch.getY()));
+			componentList.add(new ChoiceComponent(Touch.getX(), Touch.getY(), idManager.getFreeId()));
 			break;
 		case RANDOM:
-			componentList.add(new RandomComponent(Touch.getX(), Touch.getY()));
+			componentList.add(new RandomComponent(Touch.getX(), Touch.getY(), idManager.getFreeId()));
 			break;
 		case TEXT:
-			componentList.add(new TextComponent(Touch.getX(), Touch.getY()));
+			componentList.add(new TextComponent(Touch.getX(), Touch.getY(), idManager.getFreeId()));
 			break;
 		case CALLBACK:
-			componentList.add(new CallbackComponent(Touch.getX(), Touch.getY()));
+			componentList.add(new CallbackComponent(Touch.getX(), Touch.getY(), idManager.getFreeId()));
 			break;
 		case END:
-			componentList.add(new EndComponent(Touch.getX(), Touch.getY()));
+			componentList.add(new EndComponent(Touch.getX(), Touch.getY(), idManager.getFreeId()));
 			break;
 		case RELAY:
-			componentList.add(new RelayComponent(Touch.getX(), Touch.getY()));
+			componentList.add(new RelayComponent(Touch.getX(), Touch.getY(), idManager.getFreeId()));
 			break;
 		default:
 			break;
@@ -268,25 +273,26 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		boolean found = false;
 		for(DComponent comp : componentList)
 		{
-			Connector connection = comp.connectionContains(x, y);
-			if(connection != null)
+			Connector connector = comp.connectionContains(x, y);
+			if(connector != null) //in drawing mode
 			{
-				if(selectedConnection != null && selectedConnection != connection && selectedConnection.getParrentComponent() != connection.getParrentComponent() && touchUp)
+				if(selectedConnector != null && selectedConnector != connector && selectedConnector.getParrentComponent() != connector.getParrentComponent() && touchUp)
 				{
-					if(selectedConnection.isInput() != connection.isInput()) // to prevent connecting 2 outputs or 2 inputs
+					if(selectedConnector.isInput() != connector.isInput()) // to prevent connecting 2 outputs or 2 inputs
 					{
-						connection.addTarget(selectedConnection);
-						selectedConnection.addTarget(connection);
+						//proper target found, adding
+						connector.addTarget(selectedConnector);
+						selectedConnector.addTarget(connector);
 					}
 				}
 				
-				selectedConnection = connection;
+				selectedConnector = connector;
 				found = true;
 				break;
 			}
 		}
 		
-		if(found == false) selectedConnection = null;
+		if(found == false) selectedConnector = null;
 	}
 	
 	//@formatter:off
@@ -346,12 +352,24 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		return true;
 	}
 	
+	// pan is worse because you must drag mouse a little bit to fire this event
 	@Override
 	public boolean pan(float x, float y, float deltaX, float deltaY)
 	{
-		if(selectedComponent == null && selectedConnection == null && selectedComponentsList.size() == 0 && Gdx.input.isButtonPressed(Buttons.LEFT))
+		if(selectedComponentsList.size() > 0)
 		{
-			camera.position.x = camera.position.x + -deltaX * camera.zoom;
+			for(DComponent comp : selectedComponentsList)
+			{
+				comp.setX((int) (comp.getX() + deltaX * camera.zoom));
+				comp.setY((int) (comp.getY() - deltaY * camera.zoom));
+				
+			}
+			return true;
+		}
+		
+		if(selectedComponent == null && selectedConnector == null && selectedComponentsList.size() == 0 && Gdx.input.isButtonPressed(Buttons.LEFT))
+		{
+			camera.position.x = camera.position.x - deltaX * camera.zoom;
 			camera.position.y = camera.position.y + deltaY * camera.zoom;
 			return true;
 		}
@@ -371,20 +389,10 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	{
 		if(selectedComponentsList.size() > 0)
 		{
-			for(DComponent comp : selectedComponentsList) // FIXME
-			{
-				int diffX = comp.getX() - selectedComponent.getX();
-				int diffY = comp.getY() - selectedComponent.getY();
-				
-				comp.setX(Touch.calcX(screenX) - attachPointX + diffX);
-				comp.setY(Touch.calcY(screenY) - attachPointY + diffY);
-				
-			}
-			
-			return true;
+			return false;
 		}
 		
-		if(selectedComponent != null && selectedConnection == null && Gdx.input.isButtonPressed(Buttons.LEFT))
+		if(selectedComponent != null && selectedConnector == null && Gdx.input.isButtonPressed(Buttons.LEFT))
 		{
 			selectedComponent.setX(Touch.calcX(screenX) - attachPointX);
 			selectedComponent.setY(Touch.calcY(screenY) - attachPointY);
@@ -442,6 +450,8 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 				return false;
 			}
 			
+			idManager.freeID(selectedComponent.getId());
+			listener.changePropertyTableModel(null);
 			selectedComponent.detachAll();
 			
 			if(componentList.remove(selectedComponent))

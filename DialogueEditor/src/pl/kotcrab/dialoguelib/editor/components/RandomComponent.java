@@ -18,9 +18,9 @@ package pl.kotcrab.dialoguelib.editor.components;
 
 public class RandomComponent extends DComponent
 {
-	public RandomComponent(int x, int y)
+	public RandomComponent(int x, int y, int id)
 	{
-		super("Random", x, y, 1, 3);
+		super("Random", x, y, 1, 3, id);
 	}
 	
 	@Override
