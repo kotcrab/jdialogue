@@ -48,6 +48,7 @@ import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.thoughtworks.xstream.XStream;
 
 //TODO undo, redo
 public class Renderer implements ApplicationListener, InputProcessor, GestureListener
@@ -123,7 +124,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		renderDebugMatrix.setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		renderDebugMatrix.scl(0.7f);
 		
-		
+
 	}
 	
 	public void resetCamera()
@@ -310,6 +311,11 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		this.renderDebug = renderDebug;
 	}
 	
+	public ArrayList<DComponent> getComponentList()
+	{
+		return componentList;
+	}
+
 	// ==================================================================INPUT============================================================================
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button)
@@ -356,7 +362,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	@Override
 	public boolean pan(float x, float y, float deltaX, float deltaY)
 	{
-		if(selectedComponentsList.size() > 0)
+		if(selectedComponentsList.size() > 0) //FIXME gdy przesuwam kompoennty w lewo, one lekko przesuwaja sie w strone srodka, dlaczego? nie zawsze tak sie dzieje...
 		{
 			for(DComponent comp : selectedComponentsList)
 			{

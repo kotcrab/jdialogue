@@ -41,11 +41,17 @@ public class PropertyTable extends JTable
 	private static final long serialVersionUID = 1L;
 	
 	DefaultTableCellRenderer leftRenderer = new DefaultTableCellRenderer();
+	DefaultCellEditor textEditor;
 	
 	public PropertyTable(TableModel dm)
 	{
 		super(dm);
 		leftRenderer.setHorizontalAlignment(JLabel.LEFT);
+		
+		JTextField textField = new JTextField();
+		textField.setName("Table.editor");
+		
+		textEditor = new DefaultCellEditor(textField);
 	}
 	
 	@Override
@@ -60,6 +66,11 @@ public class PropertyTable extends JTable
 		{
 			return getDefaultEditor(Date.class);
 		}
+		if(value instanceof String)
+		{
+			return textEditor;
+		}
+		
 		if(value instanceof Integer)
 		{
 			return new LeftNumberEditor();
@@ -72,15 +83,13 @@ public class PropertyTable extends JTable
 	public TableCellRenderer getCellRenderer(int row, int column)
 	{
 		Object value = super.getValueAt(row, column);
+		
 		if(value instanceof Boolean)
 		{
 			return getDefaultRenderer(Boolean.class);
 		}
-		if(value instanceof Date)
-		{
-			return getDefaultRenderer(Date.class);
-		}
-		if(value instanceof Integer)
+		
+		if(value instanceof Integer || value instanceof String)
 		{
 			return leftRenderer;
 		}
@@ -89,7 +98,7 @@ public class PropertyTable extends JTable
 	}
 	
 	@SuppressWarnings("rawtypes")
-	static class LeftNumberEditor extends DefaultCellEditor // copy of JTable.GenericEditor because you cannot extend it...
+	static class LeftNumberEditor extends DefaultCellEditor //modifed copy of JTable.GenericEditor
 	{
 		private static final long serialVersionUID = 1L;
 		Class[] argTypes = new Class[] { String.class };

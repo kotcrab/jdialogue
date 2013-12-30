@@ -25,6 +25,9 @@ import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
@@ -47,6 +50,7 @@ import pl.kotcrab.dialoguelib.editor.components.ComponentTableModel;
 import pl.kotcrab.dialoguelib.editor.components.DComponentType;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglCanvas;
+import com.thoughtworks.xstream.XStream;
 
 public class Editor extends JFrame
 {
@@ -59,6 +63,8 @@ public class Editor extends JFrame
 	private JSplitPane rendererSplitPane;
 	private PropertyTable table;
 	private JTable projectTable;
+	
+	private XStream xstream;
 	
 	/**
 	 * Launch the application.
@@ -112,6 +118,8 @@ public class Editor extends JFrame
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 700, 500);
 		
+		xstream = new XStream();
+		
 		createMenuBar();
 		
 		contentPane = new JPanel();
@@ -126,6 +134,23 @@ public class Editor extends JFrame
 		contentPane.add(toolBar, BorderLayout.NORTH);
 		
 		JButton saveBtn = new JButton("Save");
+		saveBtn.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e) //TODO change this!!! only to test
+			{
+				try
+				{
+					PrintWriter writer = new PrintWriter("C:\\Users\\Headcrab\\Desktop\\test.xml", "UTF-8");
+					xstream.toXML(renderer.getComponentList(), writer);
+					writer.close();
+				}
+				catch (FileNotFoundException | UnsupportedEncodingException e1)
+				{
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} 
+			}
+		});
 		toolBar.add(saveBtn);
 		// toolbar end
 		

@@ -16,7 +16,6 @@
 
 package pl.kotcrab.dialoguelib.editor.components;
 
-import sun.beans.editors.IntEditor;
 
 public class TextComponent extends DComponent
 {
@@ -44,9 +43,9 @@ class TextComponentTableModel extends ComponentTableModel
 		//@formatter:off
 		data = new Object[][]
 			{
-				{"Id", new Integer(id)},
+				{"ID", new Integer(id)},
 			    {"Text", "Set Text"},
-			    {"Sayer", new Boolean(false)}
+			    {"Sayer", "TODO"}
 			};
 		//@formatter:on
 	}

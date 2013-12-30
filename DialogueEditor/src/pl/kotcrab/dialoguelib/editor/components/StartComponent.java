@@ -18,15 +18,32 @@ package pl.kotcrab.dialoguelib.editor.components;
 
 public class StartComponent extends DComponent
 {
+	private StartComponentTableModel tableModel;
+	
 	public StartComponent(int x, int y)
 	{
-		super("Start", x, y, 0, 1, -1);
+		super("Start", x, y, 0, 1, 0);
+		tableModel = new StartComponentTableModel();
 	}
 	
 	@Override
 	public ComponentTableModel getTableModel()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return tableModel;
+	}
+}
+
+class StartComponentTableModel extends ComponentTableModel
+{
+	private static final long serialVersionUID = 1L;
+	
+	public StartComponentTableModel()
+	{
+		//@formatter:off
+		data = new Object[][]
+			{
+				{"ID", new Integer(0)},
+			};
+		//@formatter:on
 	}
 }
