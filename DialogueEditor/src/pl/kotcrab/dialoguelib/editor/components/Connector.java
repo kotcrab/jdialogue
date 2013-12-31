@@ -48,10 +48,10 @@ public class Connector
 		shapeRenderer.end();
 	}
 	
-	public void renderAsSelected(ShapeRenderer shapeRenderer)
+	public void renderAsSelected(ShapeRenderer shapeRenderer, Color color)
 	{
 		shapeRenderer.begin(ShapeType.Filled);
-		shapeRenderer.setColor(Color.ORANGE);
+		shapeRenderer.setColor(color);
 		shapeRenderer.rect(x, y, 12, 12);
 		shapeRenderer.end();
 	}

@@ -27,9 +27,10 @@ import com.badlogic.gdx.math.Rectangle;
 
 public abstract class DComponent
 {
+	
 	private KotcrabText title;
 	
-	private int id; //id of this component, -1 for start, other in order 0,1,2,3,4...
+	private int id; // id of this component, -1 for start, other in order 0,1,2,3,4...
 	
 	private int x, y;
 	private int ry; // bottom, left point of background
@@ -38,7 +39,7 @@ public abstract class DComponent
 	private Connector[] inputs;
 	private Connector[] outputs;
 	
-	public abstract ComponentTableModel getTableModel();
+	protected ComponentTableModel tableModel;
 	
 	public DComponent(String title, int x, int y, int inputs, int outputs, int id)
 	{
@@ -174,7 +175,7 @@ public abstract class DComponent
 				
 				for(int i = inputs.length; i < newInputs.length; i++)
 					newInputs[i] = new Connector(this, true);
-						
+				
 				inputs = newInputs;
 			}
 		}
@@ -220,15 +221,15 @@ public abstract class DComponent
 		return this.x <= x && this.x + this.width >= x && this.y - this.height / 2 <= y && this.y + this.height / 2 >= y;
 	}
 	
-	public boolean contains (Rectangle rectangle) {
+	public boolean contains(Rectangle rectangle)
+	{
 		float xmin = rectangle.x;
 		float xmax = xmin + rectangle.width;
-
+		
 		float ymin = rectangle.y;
 		float ymax = ymin + rectangle.height;
-
-		return ((xmin > x && xmin < x + width) && (xmax > x && xmax < x + width))
-			&& ((ymin > y && ymin < y + height / 2) && (ymax > y && ymax < y + height / 2));
+		
+		return ((xmin > x && xmin < x + width) && (xmax > x && xmax < x + width)) && ((ymin > y && ymin < y + height / 2) && (ymax > y && ymax < y + height / 2));
 	}
 	
 	public Connector connectionContains(float x, float y)
@@ -296,11 +297,34 @@ public abstract class DComponent
 	{
 		return inputs;
 	}
+	
+	public void setInputs(Connector[] inputs)
+	{
+		this.inputs = inputs;
+	}
+
+	public void setOutputs(Connector[] outputs)
+	{
+		this.outputs = outputs;
+	}
 
 	public int getId()
 	{
 		return id;
 	}
 	
+	public ComponentTableModel getTableModel()
+	{
+		return tableModel;
+	}
 	
+	public void setTableModelData(Object[][] data)
+	{
+		tableModel.data = data;
+	}
+	
+	protected void setListeners()
+	{
+		
+	}
 }

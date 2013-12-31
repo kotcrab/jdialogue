@@ -14,19 +14,42 @@
  * limitations under the License.
  ******************************************************************************/
 
-package pl.kotcrab.dialoguelib.editor.components;
+package pl.kotcrab.dialoguelib.editor.components.types;
+
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+
+import pl.kotcrab.dialoguelib.editor.components.ComponentTableModel;
+import pl.kotcrab.dialoguelib.editor.components.DComponent;
 
 public class RandomComponent extends DComponent
 {
 	public RandomComponent(int x, int y, int id)
 	{
 		super("Random", x, y, 1, 3, id);
+		tableModel = new ComponentTableModel(
+			//@formatter:off
+			new Object[][]
+					{
+					    {"Outputs", new Integer(3)},
+					}
+			//@formatter:on
+		);
+		
+		setListeners();
 	}
 	
 	@Override
-	public ComponentTableModel getTableModel()
+	protected void setListeners()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		tableModel.addTableModelListener(new TableModelListener()
+		{
+			@Override
+			public void tableChanged(TableModelEvent e)
+			{
+				resize(getInputs().length, (int) tableModel.getValueAt(0, 1));
+			}
+		});
+		
 	}
 }

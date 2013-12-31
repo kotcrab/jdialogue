@@ -25,9 +25,15 @@ import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
@@ -47,6 +53,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
 import pl.kotcrab.dialoguelib.editor.components.ComponentTableModel;
+import pl.kotcrab.dialoguelib.editor.components.DComponent;
+import pl.kotcrab.dialoguelib.editor.components.DComponentConverter;
 import pl.kotcrab.dialoguelib.editor.components.DComponentType;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglCanvas;
@@ -119,6 +127,8 @@ public class Editor extends JFrame
 		setBounds(100, 100, 700, 500);
 		
 		xstream = new XStream();
+		xstream.autodetectAnnotations(true);
+		xstream.registerConverter(new DComponentConverter());
 		
 		createMenuBar();
 		
@@ -133,25 +143,45 @@ public class Editor extends JFrame
 		toolBar.setBorder(new LineBorder(new Color(0, 0, 0), 0));
 		contentPane.add(toolBar, BorderLayout.NORTH);
 		
-		JButton saveBtn = new JButton("Save");
-		saveBtn.addActionListener(new ActionListener()
+		JButton btnSave = new JButton("Save");
+		btnSave.addActionListener(new ActionListener()
 		{
-			public void actionPerformed(ActionEvent e) //TODO change this!!! only to test
+			public void actionPerformed(ActionEvent e) // TODO change this!!! only to test
 			{
 				try
 				{
-					PrintWriter writer = new PrintWriter("C:\\Users\\Headcrab\\Desktop\\test.xml", "UTF-8");
+					PrintWriter writer = new PrintWriter("C:\\Users\\Headcrab\\Desktop\\test2.xml", "UTF-8");
 					xstream.toXML(renderer.getComponentList(), writer);
 					writer.close();
 				}
 				catch (FileNotFoundException | UnsupportedEncodingException e1)
 				{
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
-				} 
+				}
 			}
 		});
-		toolBar.add(saveBtn);
+		toolBar.add(btnSave);
+		
+		JButton btnLoad = new JButton("Load");
+		btnLoad.addActionListener(new ActionListener()
+		{
+			@SuppressWarnings("unchecked")
+			public void actionPerformed(ActionEvent e)
+			{
+				try
+				{
+					BufferedReader reader = new BufferedReader(new FileReader("C:\\Users\\Headcrab\\Desktop\\test2.xml"));
+					renderer.setComponentList((ArrayList<DComponent>) xstream.fromXML(reader));
+					reader.close();
+				}
+				catch (IOException e1)
+				{
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		toolBar.add(btnLoad);
 		// toolbar end
 		
 		rendererSplitPane = new JSplitPane();

@@ -14,36 +14,24 @@
  * limitations under the License.
  ******************************************************************************/
 
-package pl.kotcrab.dialoguelib.editor.components;
+package pl.kotcrab.dialoguelib.editor.components.types;
 
-public class CallbackComponent extends DComponent
+import pl.kotcrab.dialoguelib.editor.components.ComponentTableModel;
+import pl.kotcrab.dialoguelib.editor.components.DComponent;
+
+public class StartComponent extends DComponent
 {
-	CallbackComponentTableModel tableModel;
-	
-	public CallbackComponent(int x, int y, int id)
+	public StartComponent(int x, int y)
 	{
-		super("Callback", x, y, 1, 1, id);
-		tableModel = new CallbackComponentTableModel();
-	}
-	
-	@Override
-	public ComponentTableModel getTableModel()
-	{
-		return tableModel;
+		super("Start", x, y, 0, 1, 0);
+		tableModel = new ComponentTableModel(
+			//@formatter:off
+			new Object[][]
+				{
+					{"ID", new Integer(0)},
+				}
+			//@formatter:on
+		);
 	}
 }
 
-class CallbackComponentTableModel extends ComponentTableModel
-{
-	private static final long serialVersionUID = 1L;
-	
-	public CallbackComponentTableModel()
-	{
-		//@formatter:off
-		data = new Object[][]
-			{
-			    {"Callback Text", "Set Text"},
-			};
-		//@formatter:on
-	}
-}

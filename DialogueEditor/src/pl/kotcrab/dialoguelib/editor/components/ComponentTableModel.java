@@ -18,13 +18,18 @@ package pl.kotcrab.dialoguelib.editor.components;
 
 import javax.swing.table.AbstractTableModel;
 
-public abstract class ComponentTableModel extends AbstractTableModel
+public class ComponentTableModel extends AbstractTableModel
 {
 	private static final long serialVersionUID = 1L;
 	
 	private String[] columnNames = { "Property", "Value" };
 	
 	protected Object[][] data = null;
+	
+	public ComponentTableModel(Object[][] data)
+	{
+		this.data = data;
+	}
 	
 	@Override
 	public int getColumnCount()
@@ -59,8 +64,7 @@ public abstract class ComponentTableModel extends AbstractTableModel
 	@Override
 	public boolean isCellEditable(int row, int col)
 	{
-		if(getValueAt(row, 0).equals("ID"))
-			return false;
+		if(getValueAt(row, 0).equals("ID")) return false;
 		
 		if(col == 1)
 			return true;
@@ -73,5 +77,10 @@ public abstract class ComponentTableModel extends AbstractTableModel
 	{
 		data[row][col] = value;
 		fireTableCellUpdated(row, col);
+	}
+	
+	public Object[][] getData()
+	{
+		return data;
 	}
 }

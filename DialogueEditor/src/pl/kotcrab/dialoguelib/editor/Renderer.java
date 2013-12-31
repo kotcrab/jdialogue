@@ -20,17 +20,18 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
-import pl.kotcrab.dialoguelib.editor.components.CallbackComponent;
-import pl.kotcrab.dialoguelib.editor.components.ChoiceComponent;
 import pl.kotcrab.dialoguelib.editor.components.ConnectionRenderer;
 import pl.kotcrab.dialoguelib.editor.components.Connector;
 import pl.kotcrab.dialoguelib.editor.components.DComponent;
 import pl.kotcrab.dialoguelib.editor.components.DComponentType;
-import pl.kotcrab.dialoguelib.editor.components.EndComponent;
-import pl.kotcrab.dialoguelib.editor.components.RandomComponent;
-import pl.kotcrab.dialoguelib.editor.components.RelayComponent;
-import pl.kotcrab.dialoguelib.editor.components.StartComponent;
-import pl.kotcrab.dialoguelib.editor.components.TextComponent;
+import pl.kotcrab.dialoguelib.editor.components.IDManager;
+import pl.kotcrab.dialoguelib.editor.components.types.CallbackComponent;
+import pl.kotcrab.dialoguelib.editor.components.types.ChoiceComponent;
+import pl.kotcrab.dialoguelib.editor.components.types.EndComponent;
+import pl.kotcrab.dialoguelib.editor.components.types.RandomComponent;
+import pl.kotcrab.dialoguelib.editor.components.types.RelayComponent;
+import pl.kotcrab.dialoguelib.editor.components.types.StartComponent;
+import pl.kotcrab.dialoguelib.editor.components.types.TextComponent;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -48,7 +49,6 @@ import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.thoughtworks.xstream.XStream;
 
 //TODO undo, redo
 public class Renderer implements ApplicationListener, InputProcessor, GestureListener
@@ -72,7 +72,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	private RectangularSelection rectangularSelection;
 	
 	private boolean disposed = false;
-
+	
 	private IDManager idManager;
 	
 	private boolean renderDebug = false;
@@ -115,7 +115,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		
 		componentList.add(new StartComponent(0, 300));
 		
-		componentList.add(new TextComponent(200, 300, idManager.getFreeId()));		
+		componentList.add(new TextComponent(200, 300, idManager.getFreeId()));
 		componentList.add(new EndComponent(500, 300, idManager.getFreeId()));
 		
 		connectionRenderer = new ConnectionRenderer();
@@ -124,7 +124,6 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		renderDebugMatrix.setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		renderDebugMatrix.scl(0.7f);
 		
-
 	}
 	
 	public void resetCamera()
@@ -173,7 +172,10 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 			if(selectedComponent != null) selectedComponent.renderSelectionOutline(shapeRenderer, Color.ORANGE);
 			if(selectedConnector != null)
 			{
-				selectedConnector.renderAsSelected(shapeRenderer);
+				if(Gdx.input.isKeyPressed(Keys.CONTROL_LEFT))
+					selectedConnector.renderAsSelected(shapeRenderer, Color.RED);
+				else
+					selectedConnector.renderAsSelected(shapeRenderer, Color.ORANGE);
 				
 				if(Gdx.input.isButtonPressed(Buttons.LEFT))
 				{
@@ -264,7 +266,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	 * @param x
 	 *            in screen cords
 	 * @param y
-	 *            in sreen cords
+	 *            in screen cords
 	 */
 	private void findConnection(float x, float y, boolean touchUp)
 	{
@@ -275,13 +277,13 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		for(DComponent comp : componentList)
 		{
 			Connector connector = comp.connectionContains(x, y);
-			if(connector != null) //in drawing mode
+			if(connector != null) // in drawing mode
 			{
 				if(selectedConnector != null && selectedConnector != connector && selectedConnector.getParrentComponent() != connector.getParrentComponent() && touchUp)
 				{
 					if(selectedConnector.isInput() != connector.isInput()) // to prevent connecting 2 outputs or 2 inputs
 					{
-						//proper target found, adding
+						// proper target found, adding
 						connector.addTarget(selectedConnector);
 						selectedConnector.addTarget(connector);
 					}
@@ -314,6 +316,15 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	public ArrayList<DComponent> getComponentList()
 	{
 		return componentList;
+	}
+	
+	
+	public void setComponentList(ArrayList<DComponent> componentList)
+	{
+		this.componentList = componentList;
+		rectangularSelection.setComponentList(componentList);
+		selectedComponent = null;
+		selectedConnector = null;
 	}
 
 	// ==================================================================INPUT============================================================================
@@ -362,13 +373,12 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	@Override
 	public boolean pan(float x, float y, float deltaX, float deltaY)
 	{
-		if(selectedComponentsList.size() > 0) //FIXME gdy przesuwam kompoennty w lewo, one lekko przesuwaja sie w strone srodka, dlaczego? nie zawsze tak sie dzieje...
+		if(selectedComponentsList.size() > 0) // FIXME gdy przesuwam kompoennty w lewo, one lekko przesuwaja sie w strone srodka, dlaczego? nie zawsze tak sie dzieje...
 		{
 			for(DComponent comp : selectedComponentsList)
 			{
 				comp.setX((int) (comp.getX() + deltaX * camera.zoom));
 				comp.setY((int) (comp.getY() - deltaY * camera.zoom));
-				
 			}
 			return true;
 		}
@@ -448,27 +458,54 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	@Override
 	public boolean keyDown(int keycode)
 	{
-		if(keycode == Keys.FORWARD_DEL && selectedComponent != null) // because forward_del is delete key, del is backspace!
+		if(keycode == Keys.FORWARD_DEL) // because forward_del is delete key, del is backspace!
 		{
-			if(selectedComponent instanceof StartComponent)
+			if(selectedComponent != null && selectedComponentsList.size() == 0)
 			{
-				listener.showMsg("This component cannot be deleted!", "Error", JOptionPane.ERROR_MESSAGE);
-				return false;
-			}
-			
-			idManager.freeID(selectedComponent.getId());
-			listener.changePropertyTableModel(null);
-			selectedComponent.detachAll();
-			
-			if(componentList.remove(selectedComponent))
-			{
+				if(selectedComponent instanceof StartComponent)
+				{
+					listener.showMsg("This component cannot be deleted!", "Error", JOptionPane.ERROR_MESSAGE);
+					return true;
+				}
+				
+				idManager.freeID(selectedComponent.getId());
+				listener.changePropertyTableModel(null);
+				selectedComponent.detachAll();
+				
+				componentList.remove(selectedComponent);
+				
 				selectedComponent = null;
 				selectedComponentsList.clear();
+				
+				return true;
 			}
-			else
-				throw new EditorException("Component not on list! Ilegal state!");
 			
-			return true;
+			if(selectedComponentsList.size() > 0)
+			{
+				for(DComponent comp : selectedComponentsList)
+				{
+					if(comp instanceof StartComponent)
+					{
+						listener.showMsg("Selection containts components that cannot be deleted!", "Error", JOptionPane.ERROR_MESSAGE);
+						selectedComponentsList.clear();
+						return true;
+					}
+				}					
+					
+				for(DComponent comp : selectedComponentsList)
+				{
+					idManager.freeID(comp.getId());
+					comp.detachAll();
+				}	
+				
+				componentList.removeAll(selectedComponentsList);
+				
+				selectedComponent = null;
+				selectedComponentsList.clear();
+				listener.changePropertyTableModel(null);
+				
+				return true;
+			}
 		}
 		
 		if(keycode == Keys.BACKSPACE && selectedComponent != null)

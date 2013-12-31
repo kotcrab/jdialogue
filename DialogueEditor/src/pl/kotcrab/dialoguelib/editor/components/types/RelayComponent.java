@@ -14,21 +14,35 @@
  * limitations under the License.
  ******************************************************************************/
 
-package pl.kotcrab.dialoguelib.editor.components;
+package pl.kotcrab.dialoguelib.editor.components.types;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
+import pl.kotcrab.dialoguelib.editor.components.ComponentTableModel;
+import pl.kotcrab.dialoguelib.editor.components.DComponent;
+
 public class RelayComponent extends DComponent
 {
-	private RelayComponentTableModel tableModel;
-	
 	public RelayComponent(int x, int y, int id)
 	{
 		super("Relay", x, y, 3, 1, id);
 		
-		tableModel = new RelayComponentTableModel();
+		tableModel = new ComponentTableModel(
+			//@formatter:off
+			new Object[][]
+				{
+				    {"Inputs", new Integer(3)},
+				}
+			//@formatter:on
+			);
 		
+		setListeners();
+	}
+	
+	@Override
+	protected void setListeners()
+	{
 		tableModel.addTableModelListener(new TableModelListener()
 		{
 			@Override
@@ -37,26 +51,5 @@ public class RelayComponent extends DComponent
 				resize((int) tableModel.getValueAt(0, 1), getOutputs().length);
 			}
 		});
-	}
-	
-	@Override
-	public ComponentTableModel getTableModel()
-	{
-		return tableModel;
-	}
-}
-
-class RelayComponentTableModel extends ComponentTableModel
-{
-	private static final long serialVersionUID = 1L;
-	
-	public RelayComponentTableModel()
-	{
-		//@formatter:off
-		data = new Object[][]
-			{
-			    {"Inputs", new Integer(3)},
-			};
-		//@formatter:on
 	}
 }

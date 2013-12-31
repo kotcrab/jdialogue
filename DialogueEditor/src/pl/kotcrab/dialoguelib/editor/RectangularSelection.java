@@ -66,6 +66,11 @@ public class RectangularSelection extends InputAdapter
 		}
 	}
 
+	public void setComponentList(ArrayList<DComponent> componentList)
+	{
+		this.componentList = componentList;
+	}
+
 	public void findContainedComponents()
 	{
 		//if(rectToDraw)

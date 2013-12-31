@@ -14,21 +14,35 @@
  * limitations under the License.
  ******************************************************************************/
 
-package pl.kotcrab.dialoguelib.editor.components;
+package pl.kotcrab.dialoguelib.editor.components.types;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
+import pl.kotcrab.dialoguelib.editor.components.ComponentTableModel;
+import pl.kotcrab.dialoguelib.editor.components.DComponent;
+
 public class ChoiceComponent extends DComponent
 {
-	private ChoiceComponentTableModel tableModel;
-	
 	public ChoiceComponent(int x, int y, int id)
 	{
 		super("Choice", x, y, 1, 3, id);
 		
-		tableModel = new ChoiceComponentTableModel();
+		tableModel = new ComponentTableModel(
+			//@formatter:off
+			new Object[][]
+					{
+					    {"Outputs", new Integer(3)},
+					}
+			//@formatter:on
+			);
 		
+		setListeners();
+	}
+	
+	@Override
+	protected void setListeners()
+	{
 		tableModel.addTableModelListener(new TableModelListener()
 		{
 			@Override
@@ -37,26 +51,5 @@ public class ChoiceComponent extends DComponent
 				resize(getInputs().length, (int) tableModel.getValueAt(0, 1));
 			}
 		});
-	}
-	
-	@Override
-	public ComponentTableModel getTableModel()
-	{
-		return tableModel;
-	}
-}
-
-class ChoiceComponentTableModel extends ComponentTableModel
-{
-	private static final long serialVersionUID = 1L;
-	
-	public ChoiceComponentTableModel()
-	{
-		//@formatter:off
-		data = new Object[][]
-			{
-			    {"Outputs", new Integer(3)},
-			};
-		//@formatter:on
 	}
 }

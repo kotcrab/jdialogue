@@ -14,36 +14,26 @@
  * limitations under the License.
  ******************************************************************************/
 
-package pl.kotcrab.dialoguelib.editor.components;
+package pl.kotcrab.dialoguelib.editor.components.types;
 
-public class StartComponent extends DComponent
-{
-	private StartComponentTableModel tableModel;
-	
-	public StartComponent(int x, int y)
-	{
-		super("Start", x, y, 0, 1, 0);
-		tableModel = new StartComponentTableModel();
-	}
-	
-	@Override
-	public ComponentTableModel getTableModel()
-	{
-		return tableModel;
-	}
-}
+import pl.kotcrab.dialoguelib.editor.components.ComponentTableModel;
+import pl.kotcrab.dialoguelib.editor.components.DComponent;
 
-class StartComponentTableModel extends ComponentTableModel
+public class TextComponent extends DComponent
 {
-	private static final long serialVersionUID = 1L;
-	
-	public StartComponentTableModel()
+	public TextComponent(int x, int y, int id)
 	{
+		super("Show Text", x, y, 1, 1, id);
+		tableModel = new ComponentTableModel(
 		//@formatter:off
-		data = new Object[][]
-			{
-				{"ID", new Integer(0)},
-			};
+		new Object[][]
+				{
+					{"ID", new Integer(id)},
+				    {"Text", "Set Text"},
+				    {"Sayer", "TODO"}
+				}
 		//@formatter:on
+		);
 	}
+	
 }

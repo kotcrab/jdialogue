@@ -14,37 +14,23 @@
  * limitations under the License.
  ******************************************************************************/
 
-package pl.kotcrab.dialoguelib.editor.components;
+package pl.kotcrab.dialoguelib.editor.components.types;
+
+import pl.kotcrab.dialoguelib.editor.components.ComponentTableModel;
+import pl.kotcrab.dialoguelib.editor.components.DComponent;
 
 public class EndComponent extends DComponent
 {
-	
-	private EndComponentTableModel tableModel;
-
 	public EndComponent(int x, int y, int id)
 	{
 		super("End", x, y, 1, 0, id);
-		tableModel = new EndComponentTableModel(id);
-	}
-	
-	@Override
-	public ComponentTableModel getTableModel()
-	{
-		return tableModel;
-	}
-}
-
-class EndComponentTableModel extends ComponentTableModel
-{
-	private static final long serialVersionUID = 1L;
-	
-	public EndComponentTableModel(int id)
-	{
-		//@formatter:off
-		data = new Object[][]
-			{
-				{"ID", new Integer(id)},
-			};
-		//@formatter:on
+		tableModel = new ComponentTableModel(
+			//@formatter:off
+			new Object[][]
+				{
+					{"ID", new Integer(id)},
+				}
+			//@formatter:on
+			);
 	}
 }

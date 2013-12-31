@@ -39,10 +39,11 @@ public class KotcrabText
 	
 	private Color color; // kolor
 	
-	protected BitmapFontCache bitmapFontCache;
-	protected TextBounds textBounds;
+	private BitmapFontCache bitmapFontCache;
+   	
+	private TextBounds textBounds;
 	
-	protected boolean autoSetOriginToMiddle; // automatyczne ustawianie originiu
+	private boolean autoSetOriginToMiddle; // automatyczne ustawianie originiu
 	
 	private Matrix4 oldMatrix; // stary matrix do przeksztalcen
 	private Matrix4 newMatrix; // nowy matrix do przeksztalcen
