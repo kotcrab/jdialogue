@@ -23,17 +23,18 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
+import java.awt.TextComponent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
+import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.zip.GZIPOutputStream;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
@@ -53,12 +54,20 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
 import pl.kotcrab.dialoguelib.editor.components.ComponentTableModel;
+import pl.kotcrab.dialoguelib.editor.components.Connector;
 import pl.kotcrab.dialoguelib.editor.components.DComponent;
 import pl.kotcrab.dialoguelib.editor.components.DComponentConverter;
 import pl.kotcrab.dialoguelib.editor.components.DComponentType;
+import pl.kotcrab.dialoguelib.editor.components.types.CallbackComponent;
+import pl.kotcrab.dialoguelib.editor.components.types.ChoiceComponent;
+import pl.kotcrab.dialoguelib.editor.components.types.EndComponent;
+import pl.kotcrab.dialoguelib.editor.components.types.RandomComponent;
+import pl.kotcrab.dialoguelib.editor.components.types.RelayComponent;
+import pl.kotcrab.dialoguelib.editor.components.types.StartComponent;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglCanvas;
 import com.thoughtworks.xstream.XStream;
+import javax.swing.JSeparator;
 
 public class Editor extends JFrame
 {
@@ -128,6 +137,16 @@ public class Editor extends JFrame
 		
 		xstream = new XStream();
 		xstream.autodetectAnnotations(true);
+		xstream.alias("connector", Connector.class);
+		
+		xstream.alias("dText", TextComponent.class);
+		xstream.alias("dChoice", ChoiceComponent.class);
+		xstream.alias("dStart", StartComponent.class);
+		xstream.alias("dEnd", EndComponent.class);
+		xstream.alias("dRelay", RelayComponent.class);
+		xstream.alias("dCallback", CallbackComponent.class);
+		xstream.alias("dRandom", RandomComponent.class);
+		
 		xstream.registerConverter(new DComponentConverter());
 		
 		createMenuBar();
@@ -150,11 +169,12 @@ public class Editor extends JFrame
 			{
 				try
 				{
-					PrintWriter writer = new PrintWriter("C:\\Users\\Headcrab\\Desktop\\test2.xml", "UTF-8");
+					GZIPOutputStream zOut = new GZIPOutputStream(new FileOutputStream("C:\\Users\\Headcrab\\Desktop\\gtest.xml"));
+					OutputStreamWriter writer = new OutputStreamWriter(zOut, "UTF-8");
 					xstream.toXML(renderer.getComponentList(), writer);
 					writer.close();
 				}
-				catch (FileNotFoundException | UnsupportedEncodingException e1)
+				catch (IOException e1)
 				{
 					e1.printStackTrace();
 				}
@@ -170,7 +190,7 @@ public class Editor extends JFrame
 			{
 				try
 				{
-					BufferedReader reader = new BufferedReader(new FileReader("C:\\Users\\Headcrab\\Desktop\\test2.xml"));
+					BufferedReader reader = new BufferedReader(new FileReader("C:\\Users\\Headcrab\\Desktop\\test.xml"));
 					renderer.setComponentList((ArrayList<DComponent>) xstream.fromXML(reader));
 					reader.close();
 				}
@@ -270,6 +290,35 @@ public class Editor extends JFrame
 		JMenu fileMenu = new JMenu("File");
 		fileMenu.getPopupMenu().setLightWeightPopupEnabled(false); // without this menu will render under canvas
 		menuBar.add(fileMenu);
+		
+		JMenuItem mntmNewMenuItem_3 = new JMenuItem("New Project");
+		mntmNewMenuItem_3.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				EventQueue.invokeLater(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						new NewProjectDialog(Editor.window);
+					}
+				});
+			}
+		});
+		fileMenu.add(mntmNewMenuItem_3);
+		
+		JMenuItem mntmNewMenuItem_1 = new JMenuItem("Load Project");
+		fileMenu.add(mntmNewMenuItem_1);
+		
+		JMenuItem mntmNewMenuItem_2 = new JMenuItem("Save Project");
+		fileMenu.add(mntmNewMenuItem_2);
+		
+		JSeparator separator = new JSeparator();
+		fileMenu.add(separator);
+		
+		JMenuItem mntmNewMenuItem = new JMenuItem("Exit");
+		fileMenu.add(mntmNewMenuItem);
 		
 		JMenu rendererMenu = new JMenu("Renderer");
 		rendererMenu.getPopupMenu().setLightWeightPopupEnabled(false); // without this menu will render under canvas

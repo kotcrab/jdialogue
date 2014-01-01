@@ -7,14 +7,21 @@ public class IDManager
 {
 	private ArrayList<Integer> freeIDs = new ArrayList<>(100);
 	
+	// FIXME idcounter koniecznie!
+	
 	private int IDCounter = 0;
 	
 	public IDManager()
 	{
-		for(int i = 0; i < 100; i++)
+		genertesIDs();
+	}
+	
+	private void genertesIDs()
+	{
+		int targetIDCounter = IDCounter + 100;
+		for(; IDCounter < targetIDCounter; IDCounter++)
 		{
-			freeIDs.add(i + 1);
-			IDCounter++;
+			freeIDs.add(IDCounter + 1);
 		}
 	}
 	
@@ -30,6 +37,8 @@ public class IDManager
 	
 	public int getFreeId()
 	{
+		if(freeIDs.size() == 0) genertesIDs(); //we ran out of ids, generate more!
+		
 		int id = freeIDs.get(0);
 		freeIDs.remove(0);
 		return id;
