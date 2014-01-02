@@ -19,6 +19,7 @@ package pl.kotcrab.dialoguelib.editor;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
+import javax.swing.plaf.basic.ComboPopup;
 
 import pl.kotcrab.dialoguelib.editor.components.ConnectionRenderer;
 import pl.kotcrab.dialoguelib.editor.components.Connector;
@@ -39,6 +40,7 @@ import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -78,6 +80,8 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	private boolean renderDebug = false;
 	private Matrix4 renderDebugMatrix;
 	
+	private Preferences prefs;
+	
 	public Renderer(EditorListener listener)
 	{
 		this.listener = listener;
@@ -113,10 +117,10 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		mul.addProcessor(rectangularSelection);
 		Gdx.input.setInputProcessor(mul);
 		
-		componentList.add(new StartComponent(0, 300));
+		// componentList.add(new StartComponent(0, 300));
 		
-		componentList.add(new TextComponent(200, 300, idManager.getFreeId()));
-		componentList.add(new EndComponent(500, 300, idManager.getFreeId()));
+		// componentList.add(new TextComponent(200, 300, idManager.getFreeId()));
+		// componentList.add(new EndComponent(500, 300, idManager.getFreeId()));
 		
 		connectionRenderer = new ConnectionRenderer();
 		
@@ -124,6 +128,9 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		renderDebugMatrix.setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		renderDebugMatrix.scl(0.7f);
 		
+		prefs = Gdx.app.getPreferences("pl.kotcrab.dialoguelib.editorprefs");
+		App.setPrefs(prefs);
+		App.loadPrefs();
 	}
 	
 	public void resetCamera()
@@ -200,8 +207,18 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 				batch.setProjectionMatrix(renderDebugMatrix);
 				batch.setShader(Assets.fontDistanceFieldShader);
 				batch.begin();
-				Assets.consolasFont.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, Gdx.graphics.getHeight() + 260);
-				Assets.consolasFont.draw(batch, "Components: " + componentList.size(), 10, Gdx.graphics.getHeight() + 230);
+				Assets.consolasFont.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, Gdx.graphics.getHeight() * 10 / 7); // 260
+				Assets.consolasFont.draw(batch, "Components: " + componentList.size(), 10, Gdx.graphics.getHeight() * 10 / 7 - 30); // 230
+				batch.end();
+				batch.setShader(null);
+			}
+			
+			if(componentList.size() == 0)
+			{
+				batch.setProjectionMatrix(renderDebugMatrix.cpy().scl(2f)); // TODO optimize this, not a big problem though
+				batch.setShader(Assets.fontDistanceFieldShader);
+				batch.begin();
+				Assets.consolasFont.draw(batch, "Load or create new project to begin!", (Gdx.graphics.getWidth() - 550 * 2) / 2, Gdx.graphics.getHeight() / 2); //TODO center text, not working with all resolutions
 				batch.end();
 				batch.setShader(null);
 			}
@@ -318,7 +335,6 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		return componentList;
 	}
 	
-	
 	public void setComponentList(ArrayList<DComponent> componentList)
 	{
 		this.componentList = componentList;
@@ -326,7 +342,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		selectedComponent = null;
 		selectedConnector = null;
 	}
-
+	
 	// ==================================================================INPUT============================================================================
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button)
@@ -490,13 +506,13 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 						selectedComponentsList.clear();
 						return true;
 					}
-				}					
-					
+				}
+				
 				for(DComponent comp : selectedComponentsList)
 				{
 					idManager.freeID(comp.getId());
 					comp.detachAll();
-				}	
+				}
 				
 				componentList.removeAll(selectedComponentsList);
 				

@@ -16,9 +16,17 @@
 
 package pl.kotcrab.dialoguelib.editor;
 
+import com.badlogic.gdx.Preferences;
+
 public class App
 {
+	public static final String prefsLastOpenedFolder = "lastOpenedFolder";
+	
+	private static Preferences prefs;
+	
 	private static int screenId = 0;
+	
+	private static String lastOpenedFolder = null;
 	
 	public static void parseArguments(String[] args)
 	{
@@ -50,6 +58,33 @@ public class App
 		}
 	}
 	
+	public static void loadPrefs()
+	{
+		lastOpenedFolder = prefs.getString(prefsLastOpenedFolder, null);
+	}
+	
+	public static String getLastOpenedFolderPath()
+	{
+		return lastOpenedFolder;
+	}
+
+	public static void setLastOpenedFolder(String lastOpenedFolder)
+	{
+		App.lastOpenedFolder = lastOpenedFolder;
+		prefs.putString(prefsLastOpenedFolder, lastOpenedFolder);
+		prefs.flush();
+	}
+
+	public static Preferences getPrefs()
+	{
+		return prefs;
+	}
+
+	public static void setPrefs(Preferences prefs)
+	{
+		App.prefs = prefs;
+	}
+
 	public static int getScreenId()
 	{
 		return screenId;

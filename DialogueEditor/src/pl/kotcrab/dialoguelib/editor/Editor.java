@@ -65,6 +65,7 @@ import pl.kotcrab.dialoguelib.editor.components.types.RandomComponent;
 import pl.kotcrab.dialoguelib.editor.components.types.RelayComponent;
 import pl.kotcrab.dialoguelib.editor.components.types.StartComponent;
 
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.lwjgl.LwjglCanvas;
 import com.thoughtworks.xstream.XStream;
 import javax.swing.JSeparator;
@@ -82,6 +83,8 @@ public class Editor extends JFrame
 	private JTable projectTable;
 	
 	private XStream xstream;
+	
+	private Preferences prefs;
 	
 	/**
 	 * Launch the application.
@@ -252,7 +255,7 @@ public class Editor extends JFrame
 		canvas.getCanvas().add(popupMenu);
 		
 		rendererSplitPane.setLeftComponent(canvas.getCanvas());
-		
+		prefs = App.getPrefs();
 		// renderer end
 		
 		// property table

@@ -6,9 +6,7 @@ import java.util.Collections;
 public class IDManager
 {
 	private ArrayList<Integer> freeIDs = new ArrayList<>(100);
-	
-	// FIXME idcounter koniecznie!
-	
+		
 	private int IDCounter = 0;
 	
 	public IDManager()
