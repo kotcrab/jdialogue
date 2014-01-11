@@ -127,6 +127,20 @@ public class KotcrabText
 		
 		translate();
 	}
+		
+	public void setX(float x)
+	{
+		position.x = x;
+		
+		translate();
+	}
+	
+	public void setY(float y)
+	{
+		position.y = y;
+		
+		translate();
+	}
 	
 	public Vector2 getOrigin()
 	{

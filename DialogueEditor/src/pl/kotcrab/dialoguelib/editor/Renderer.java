@@ -17,6 +17,7 @@
 package pl.kotcrab.dialoguelib.editor;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 import javax.swing.plaf.basic.ComboPopup;
@@ -63,6 +64,9 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	
 	private ArrayList<DComponent> componentList = new ArrayList<DComponent>();
 	
+	ArrayList<ArrayList<DComponent>> undoList = new ArrayList<ArrayList<DComponent>>();
+	ArrayList<ArrayList<DComponent>> redoList = new ArrayList<ArrayList<DComponent>>();
+	
 	private Connector selectedConnector = null;
 	private ConnectionRenderer connectionRenderer;
 	
@@ -78,9 +82,14 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	private IDManager idManager;
 	
 	private boolean renderDebug = false;
-	private Matrix4 renderDebugMatrix;
+	private Matrix4 renderDebugMatrix = new Matrix4();
+	private Matrix4 renderInfoTextMatrix = new Matrix4();
 	
 	private Preferences prefs;
+	
+	private KotcrabText infoText;
+	
+	private Project project = null;
 	
 	public Renderer(EditorListener listener)
 	{
@@ -91,6 +100,10 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	public void create()
 	{
 		Assets.load();
+		
+		prefs = Gdx.app.getPreferences("pl.kotcrab.dialoguelib.editorprefs");
+		App.setPrefs(prefs);
+		App.loadPrefs();
 		
 		camera = new OrthographicCamera(1280, 720);
 		camera.position.x = 1280 / 2;
@@ -117,20 +130,14 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		mul.addProcessor(rectangularSelection);
 		Gdx.input.setInputProcessor(mul);
 		
-		// componentList.add(new StartComponent(0, 300));
-		
-		// componentList.add(new TextComponent(200, 300, idManager.getFreeId()));
-		// componentList.add(new EndComponent(500, 300, idManager.getFreeId()));
-		
 		connectionRenderer = new ConnectionRenderer();
 		
-		renderDebugMatrix = new Matrix4();
-		renderDebugMatrix.setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		renderDebugMatrix.scl(0.7f);
+		project = new Project(null, null, false, false);
+		componentList.add(new StartComponent(200, 200));
 		
-		prefs = Gdx.app.getPreferences("pl.kotcrab.dialoguelib.editorprefs");
-		App.setPrefs(prefs);
-		App.loadPrefs();
+		infoText = new KotcrabText(Assets.consolasFont, "Load or create new project to begin!", false, 0, 0);
+		infoText.setScale(1.4f);
+		
 	}
 	
 	public void resetCamera()
@@ -207,18 +214,18 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 				batch.setProjectionMatrix(renderDebugMatrix);
 				batch.setShader(Assets.fontDistanceFieldShader);
 				batch.begin();
-				Assets.consolasFont.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, Gdx.graphics.getHeight() * 10 / 7); // 260
-				Assets.consolasFont.draw(batch, "Components: " + componentList.size(), 10, Gdx.graphics.getHeight() * 10 / 7 - 30); // 230
+				Assets.consolasFont.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, Gdx.graphics.getHeight() * 10 / 7);
+				Assets.consolasFont.draw(batch, "Components: " + componentList.size(), 10, Gdx.graphics.getHeight() * 10 / 7 - 30);
 				batch.end();
 				batch.setShader(null);
 			}
 			
 			if(componentList.size() == 0)
 			{
-				batch.setProjectionMatrix(renderDebugMatrix.cpy().scl(2f)); // TODO optimize this, not a big problem though
+				batch.setProjectionMatrix(renderInfoTextMatrix);
 				batch.setShader(Assets.fontDistanceFieldShader);
 				batch.begin();
-				Assets.consolasFont.draw(batch, "Load or create new project to begin!", (Gdx.graphics.getWidth() - 550 * 2) / 2, Gdx.graphics.getHeight() / 2); //TODO center text, not working with all resolutions
+				infoText.draw(batch);
 				batch.end();
 				batch.setShader(null);
 			}
@@ -248,33 +255,43 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		
 		renderDebugMatrix.setToOrtho2D(0, 0, width, height);
 		renderDebugMatrix.scl(0.7f);
+		
+		renderInfoTextMatrix.setToOrtho2D(0, 0, width, height);
+		
+		infoText.center(Gdx.graphics.getWidth());
+		infoText.setY(Gdx.graphics.getHeight() / 2);
 	}
 	
 	public void addComponent(DComponentType componentType)
 	{
-		switch (componentType)
+		if(project != null)
 		{
-		case CHOICE:
-			componentList.add(new ChoiceComponent(Touch.getX(), Touch.getY(), idManager.getFreeId()));
-			break;
-		case RANDOM:
-			componentList.add(new RandomComponent(Touch.getX(), Touch.getY(), idManager.getFreeId()));
-			break;
-		case TEXT:
-			componentList.add(new TextComponent(Touch.getX(), Touch.getY(), idManager.getFreeId()));
-			break;
-		case CALLBACK:
-			componentList.add(new CallbackComponent(Touch.getX(), Touch.getY(), idManager.getFreeId()));
-			break;
-		case END:
-			componentList.add(new EndComponent(Touch.getX(), Touch.getY(), idManager.getFreeId()));
-			break;
-		case RELAY:
-			componentList.add(new RelayComponent(Touch.getX(), Touch.getY(), idManager.getFreeId()));
-			break;
-		default:
-			break;
+			switch (componentType)
+			{
+			case CHOICE:
+				componentList.add(new ChoiceComponent(Touch.getX(), Touch.getY(), idManager.getFreeId()));
+				break;
+			case RANDOM:
+				componentList.add(new RandomComponent(Touch.getX(), Touch.getY(), idManager.getFreeId()));
+				break;
+			case TEXT:
+				componentList.add(new TextComponent(Touch.getX(), Touch.getY(), idManager.getFreeId()));
+				break;
+			case CALLBACK:
+				componentList.add(new CallbackComponent(Touch.getX(), Touch.getY(), idManager.getFreeId()));
+				break;
+			case END:
+				componentList.add(new EndComponent(Touch.getX(), Touch.getY(), idManager.getFreeId()));
+				break;
+			case RELAY:
+				componentList.add(new RelayComponent(Touch.getX(), Touch.getY(), idManager.getFreeId()));
+				break;
+			default:
+				break;
+			}
 		}
+		else
+			listener.showMsg("Create or load project to edit dialouge structure", "Error", JOptionPane.ERROR_MESSAGE);
 	}
 	
 	/**
@@ -342,6 +359,80 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		selectedComponent = null;
 		selectedConnector = null;
 	}
+	
+	public void undo()
+	{
+		if(undoList.size() > 0)
+		{
+			ArrayList<DComponent> undoComponents = undoList.get(undoList.size() - 1);
+			
+			redoList.add(undoComponents);
+			componentList.addAll(undoComponents);
+			
+			undoList.remove(undoList.size() - 1);
+		}
+	}
+	
+	public void redo()
+	{
+		if(redoList.size() > 0)
+		{
+			ArrayList<DComponent> redoComponents = redoList.get(redoList.size() - 1);
+			
+			removeComponentList(redoComponents);
+			
+			redoList.remove(redoList.size() - 1);
+		}
+	}
+	
+	public void removeComponent(DComponent comp)
+	{
+		if(selectedComponent instanceof StartComponent)
+		{
+			listener.showMsg("This component cannot be deleted!", "Error", JOptionPane.ERROR_MESSAGE);
+		}
+		
+		idManager.freeID(comp.getId());
+		listener.changePropertyTableModel(null);
+		comp.detachAll();
+		
+		componentList.remove(comp);
+		
+		ArrayList<DComponent> tempList = new ArrayList<DComponent>();
+		tempList.add(comp);
+		
+		undoList.add(tempList);
+		
+		selectedComponent = null;
+	}
+	
+	public void removeComponentList(ArrayList<DComponent> compList)
+	{
+		for(DComponent comp : compList)
+		{
+			if(comp instanceof StartComponent)
+			{
+				listener.showMsg("Selection containts components that cannot be deleted!", "Error", JOptionPane.ERROR_MESSAGE);
+				compList.clear();
+			}
+		}
+		
+		for(DComponent comp : compList)
+		{
+			idManager.freeID(comp.getId());
+			comp.detachAll();
+		}
+		
+		componentList.removeAll(compList);
+		
+		undoList.add(new ArrayList<DComponent>(compList));
+		
+		selectedComponent = null;
+		selectedComponentsList.clear();
+		listener.changePropertyTableModel(null);
+		
+	}
+	
 	
 	// ==================================================================INPUT============================================================================
 	@Override
@@ -478,49 +569,12 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		{
 			if(selectedComponent != null && selectedComponentsList.size() == 0)
 			{
-				if(selectedComponent instanceof StartComponent)
-				{
-					listener.showMsg("This component cannot be deleted!", "Error", JOptionPane.ERROR_MESSAGE);
-					return true;
-				}
-				
-				idManager.freeID(selectedComponent.getId());
-				listener.changePropertyTableModel(null);
-				selectedComponent.detachAll();
-				
-				componentList.remove(selectedComponent);
-				
-				selectedComponent = null;
-				selectedComponentsList.clear();
-				
-				return true;
+				removeComponent(selectedComponent);
 			}
 			
 			if(selectedComponentsList.size() > 0)
 			{
-				for(DComponent comp : selectedComponentsList)
-				{
-					if(comp instanceof StartComponent)
-					{
-						listener.showMsg("Selection containts components that cannot be deleted!", "Error", JOptionPane.ERROR_MESSAGE);
-						selectedComponentsList.clear();
-						return true;
-					}
-				}
-				
-				for(DComponent comp : selectedComponentsList)
-				{
-					idManager.freeID(comp.getId());
-					comp.detachAll();
-				}
-				
-				componentList.removeAll(selectedComponentsList);
-				
-				selectedComponent = null;
-				selectedComponentsList.clear();
-				listener.changePropertyTableModel(null);
-				
-				return true;
+				removeComponentList(selectedComponentsList);
 			}
 		}
 		

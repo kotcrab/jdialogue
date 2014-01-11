@@ -27,12 +27,10 @@ import java.awt.TextComponent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.zip.GZIPOutputStream;
 
@@ -73,7 +71,7 @@ import javax.swing.JSeparator;
 public class Editor extends JFrame
 {
 	private static final long serialVersionUID = 7300428735708717490L;
-	private static JFrame window;
+	private static Editor window;
 	
 	private JPanel contentPane;
 	private LwjglCanvas canvas;
@@ -205,6 +203,26 @@ public class Editor extends JFrame
 			}
 		});
 		toolBar.add(btnLoad);
+		
+		JButton btnUndo = new JButton("Undo");
+		btnUndo.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				renderer.undo();
+			}
+		});
+		toolBar.add(btnUndo);
+		
+		JButton btnRedo = new JButton("Redo");
+		btnRedo.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				renderer.redo();
+			}
+		});
+		toolBar.add(btnRedo);
 		// toolbar end
 		
 		rendererSplitPane = new JSplitPane();

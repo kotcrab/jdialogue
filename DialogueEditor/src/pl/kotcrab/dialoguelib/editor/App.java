@@ -16,6 +16,8 @@
 
 package pl.kotcrab.dialoguelib.editor;
 
+import java.util.Arrays;
+
 import com.badlogic.gdx.Preferences;
 
 public class App
@@ -30,6 +32,8 @@ public class App
 	
 	public static void parseArguments(String[] args)
 	{
+		System.out.println("Arguments: " + Arrays.toString(args));
+		
 		for(int i = 0; i < args.length; i++)
 		{
 			if(args[i].equals("-screen"))

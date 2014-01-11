@@ -31,7 +31,7 @@ public class NewProjectDialog extends JDialog
 	/**
 	 * Create the dialog.
 	 */
-	public NewProjectDialog(JFrame parrent)
+	public NewProjectDialog(Editor parrent)
 	{
 		super(parrent, true);
 		
@@ -40,7 +40,7 @@ public class NewProjectDialog extends JDialog
 		setTitle("New Project");
 		setResizable(false);
 		
-		setBounds(parrent.getX() + (parrent.getWidth() / 2) - (450 / 2), parrent.getY() + (parrent.getHeight() / 2) - (260 / 2), 450, 260); // TODO center dialog
+		setBounds(parrent.getX() + (parrent.getWidth() / 2) - (450 / 2), parrent.getY() + (parrent.getHeight() / 2) - (260 / 2), 450, 260);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		getContentPane().setLayout(null);
 		
