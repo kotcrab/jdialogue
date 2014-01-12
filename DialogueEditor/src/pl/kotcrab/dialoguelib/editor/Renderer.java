@@ -352,12 +352,19 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		return componentList;
 	}
 	
+	/**
+	 * Change componentList and perfom cleanup
+	 * 
+	 */
 	public void setComponentList(ArrayList<DComponent> componentList)
 	{
 		this.componentList = componentList;
 		rectangularSelection.setComponentList(componentList);
 		selectedComponent = null;
 		selectedConnector = null;
+		
+		undoList.clear();
+		redoList.clear();
 	}
 	
 	public void undo()
@@ -420,7 +427,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		for(DComponent comp : compList)
 		{
 			idManager.freeID(comp.getId());
-			comp.detachAll();
+			comp.detachAllNotOnList(selectedComponentsList);
 		}
 		
 		componentList.removeAll(compList);

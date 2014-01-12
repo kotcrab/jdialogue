@@ -98,31 +98,44 @@ public class Connector
 			targets.removeAll(targetsToRemove);
 			targetsToRemove.clear();
 		}
+	}
+	
+	public void detachNotOnList(ArrayList<DComponent> componentList)
+	{
+		for(Connector target : targets)
+		{
+			Connector[] targetConnectors = null;
+			try
+			{
+				if(isInput)
+					targetConnectors = target.getParrentComponent().getOutputs();
+				else
+					targetConnectors = target.getParrentComponent().getInputs();
+			}
+			catch (NullPointerException e) // target was not set, ignore
+			{
+				continue;
+			}
+			
+			for(int j = 0; j < targetConnectors.length; j++) // searching for matching output connector
+			{
+				if(componentList.contains(targetConnectors[j].getParrentComponent())) return;
+				
+				if(targetConnectors[j] == target) // found
+				{
+					Connector temp = targetConnectors[j];
+					targetConnectors[j].removeTarget(this); // detach
+					targetsToRemove.add(temp);
+					break;
+				}
+			}
+		}
 		
-		// if(isInput) //if its input we must detach from output component
-		// {
-		// Connector[] parrentOut = null;
-		// try
-		// {
-		// parrentOut = target.getParrentComponent().getOutputs();
-		// }
-		// catch (NullPointerException e) // target was not set, ignore
-		// {
-		// return;
-		// }
-		//
-		// for (int j = 0; j < parrentOut.length; j++) //searching for matching output connector
-		// {
-		// if(parrentOut[j] == target) //found
-		// {
-		// parrentOut[j].setTarget(null); //detach
-		// break;
-		// }
-		// }
-		// }
-		//
-		// addTarget(null);
-		//
+		if(targetsToRemove.size() > 0)
+		{
+			targets.removeAll(targetsToRemove);
+			targetsToRemove.clear();
+		}
 	}
 	
 	public void addTarget(Connector target)

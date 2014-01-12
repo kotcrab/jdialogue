@@ -16,6 +16,8 @@
 
 package pl.kotcrab.dialoguelib.editor.components;
 
+import java.util.ArrayList;
+
 import pl.kotcrab.dialoguelib.editor.Assets;
 import pl.kotcrab.dialoguelib.editor.KotcrabText;
 
@@ -71,17 +73,18 @@ public abstract class DComponent
 	{
 		float avY = height - 30; // avaiable space in y coordinate
 		
-		float avYIn = (avY - (12 * (inputs.length))) / (inputs.length); // i have no idea what i'm doing, no seriously why is this working?
+		// i have no idea what i'm doing, no seriously why is this working?
+		float avYIn = (avY - (12 * (inputs.length))) / (inputs.length); 
 		for(int i = 0; i < inputs.length; i++)
 			inputs[i].setPosition(x, ry + avYIn / 2 + ((avYIn + 12) * (inputs.length - 1 - i)));
 		
-		float avYOut = (avY - (12 * (outputs.length))) / (outputs.length); // i have no idea what i'm doing, no seriously why is this working?
+		float avYOut = (avY - (12 * (outputs.length))) / (outputs.length);
 		for(int i = 0; i < outputs.length; i++)
 			outputs[i].setPosition(x + width - 12, ry + avYOut / 2 + ((avYOut + 12) * (outputs.length - 1 - i)));
 		
 		// notes:
 		// 12 is connection height
-		// outputs.length - 1- i to reverse render order, important when we resize to disconnect compoent from bottom not from top
+		// outputs.length - 1 - i to reverse render order, important when we resize component to disconnect connection from bottom, not from top
 		// but still i don't know why is this working...
 	}
 	
@@ -140,6 +143,15 @@ public abstract class DComponent
 		
 		for(int i = 0; i < outputs.length; i++)
 			outputs[i].detach();
+	}
+	
+	public void detachAllNotOnList(ArrayList<DComponent> componentList)
+	{
+		for(int i = 0; i < inputs.length; i++)
+			inputs[i].detachNotOnList(componentList);
+		
+		for(int i = 0; i < outputs.length; i++)
+			outputs[i].detachNotOnList(componentList);
 	}
 	
 	/**
