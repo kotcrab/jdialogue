@@ -17,14 +17,36 @@
 package pl.kotcrab.dialoguelib.editor.components;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Rectangle;
 
 public class ConnectionRenderer
 {
 	private boolean renderCurves = true;
 	
-	public void render(ShapeRenderer shapeRenderer, DComponent comp)
+	private OrthographicCamera camera;
+	
+	Rectangle cameraRect;
+	
+	public ConnectionRenderer(OrthographicCamera camera)
+	{
+		this.camera = camera;
+	}
+	
+	public void cameraCalc()
+	{
+		float cameraWidth = camera.viewportWidth * camera.zoom;
+		float cameraHeight = camera.viewportHeight * camera.zoom;
+		
+		float cameraX = camera.position.x - cameraWidth / 2;
+		float cameraY = camera.position.y - cameraHeight / 2;
+		
+		cameraRect = new Rectangle(cameraX, cameraY, cameraWidth, cameraHeight);
+	}
+	
+	public void renderLines(ShapeRenderer shapeRenderer, DComponent comp)
 	{
 		Connector[] inputs = comp.getOutputs();
 		
@@ -40,6 +62,20 @@ public class ConnectionRenderer
 			float x2 = target.getX() + 6;
 			float y2 = target.getY() + 6;
 			
+			float startX;
+			if(x2 > x1)
+				startX = x1;
+			else
+				startX = x2;
+			
+			float startY;
+			if(y2 > y1)
+				startY = y1;
+			else
+				startY = y2;
+			
+			if(cameraRect.overlaps(new Rectangle(startX, startY, Math.abs(x2 - x1), Math.abs(y2 - y1))) == false) continue;
+			
 			float d = 0;
 			
 			if(renderCurves)
@@ -48,18 +84,29 @@ public class ConnectionRenderer
 				if(d > 100) d = 100; // limit
 			}
 			
-			shapeRenderer.setColor(Color.BLACK);
-			shapeRenderer.begin(ShapeType.Line);
-			
 			if(renderCurves)
 				shapeRenderer.curve(x1, y1, x1 + d, y1, x2 - d, y2, x2, y2, 32); // connection line
 			else
 				shapeRenderer.line(x1, y1, x2 - 12, y2);
+		}
+	}
+	
+	public void renderTraingles(ShapeRenderer shapeRenderer, DComponent comp)
+	{
+		Connector[] inputs = comp.getOutputs();
+		
+		for(int i = 0; i < inputs.length; i++)
+		{
+			Connector con = inputs[i];
+			Connector target = con.getTarget();
 			
-			shapeRenderer.end();
-			shapeRenderer.begin(ShapeType.Filled);
+			if(target == null) continue;
+			
+			if(cameraRect.overlaps(target.getParrentComponent().getBoundingRectangle()) == false && cameraRect.overlaps(con.getParrentComponent().getBoundingRectangle()) == false) continue;
+			
+			float y2 = target.getY() + 6;
+			
 			shapeRenderer.triangle(target.getX() - 8, target.getY(), target.getX() - 8, target.getY() + 12, target.getX() + 3, y2); // ending triangle
-			shapeRenderer.end();
 		}
 	}
 	

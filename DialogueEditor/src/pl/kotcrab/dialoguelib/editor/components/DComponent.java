@@ -37,6 +37,7 @@ public abstract class DComponent
 	private int x, y;
 	private int ry; // bottom, left point of background
 	private int height, width;
+	private Rectangle boundingRectangle = new Rectangle(0, 0, 0, 0);
 	
 	private Connector[] inputs;
 	private Connector[] outputs;
@@ -65,6 +66,7 @@ public abstract class DComponent
 		
 		ry = y - height / 2;
 		
+		
 		distributeConnections();
 		calcTextPos();
 	}
@@ -90,11 +92,14 @@ public abstract class DComponent
 	
 	private void calcSize(int inputs, int outputs)
 	{
-		this.width = (int) (this.title.getTextBounds().width + 30);
+		width = (int) (title.getTextBounds().width + 30);
 		if(inputs > outputs)
 			height = (inputs + 1) * 20 + 20;
 		else
 			height = (outputs + 1) * 20 + 20;
+		
+		boundingRectangle.set(x, ry, width, height);
+
 	}
 	
 	public void render(SpriteBatch batch)
@@ -115,12 +120,15 @@ public abstract class DComponent
 		shapeRenderer.line(x, ry + height - 30, x + width, ry + height - 30); // line under text
 		shapeRenderer.end();
 		
+		shapeRenderer.begin(ShapeType.Filled);
+		
 		for(int i = 0; i < inputs.length; i++)
 			inputs[i].render(shapeRenderer);
 		
 		for(int i = 0; i < outputs.length; i++)
 			outputs[i].render(shapeRenderer);
 		
+		shapeRenderer.end();
 	}
 	
 	public void renderSelectionOutline(ShapeRenderer shapeRenderer, Color color)
@@ -268,6 +276,7 @@ public abstract class DComponent
 	public void setX(int x)
 	{
 		this.x = x;
+		boundingRectangle.set(x, y, width, height);
 	}
 	
 	public void setY(int y)
@@ -277,7 +286,8 @@ public abstract class DComponent
 		
 		calcTextPos();
 		distributeConnections();
-		
+		boundingRectangle.set(x, y, width, height);
+	
 	}
 	
 	public int getX()
@@ -335,6 +345,11 @@ public abstract class DComponent
 		tableModel.data = data;
 	}
 	
+	public Rectangle getBoundingRectangle()
+	{
+		return boundingRectangle;
+	}
+
 	protected void setListeners()
 	{
 		

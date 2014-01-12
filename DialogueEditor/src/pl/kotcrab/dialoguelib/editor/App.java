@@ -16,6 +16,7 @@
 
 package pl.kotcrab.dialoguelib.editor;
 
+import java.io.File;
 import java.util.Arrays;
 
 import com.badlogic.gdx.Preferences;
@@ -26,9 +27,12 @@ public class App
 	
 	private static Preferences prefs;
 	
-	private static int screenId = 0;
 	
 	private static String lastOpenedFolder = null;
+	
+	//Argmuntes
+	private static int screenId = 0;
+	private static File projectFile = null;
 	
 	public static void parseArguments(String[] args)
 	{
@@ -52,6 +56,22 @@ public class App
 					System.err.println("-screen requires moniotr id. Example: -screen 1");
 					e.printStackTrace();
 				}
+				
+				i++;
+				continue;
+			}
+			
+			if(args[i].equals("-p"))
+			{
+				if(i + 1 > args.length - 1)
+				{
+					throw new ArgsParserException("-p requires moniotr path to project.xml file");
+				}
+				
+				projectFile = new File(args[i + 1]);
+				
+				if(projectFile.exists() == false)
+					throw new ArgsParserException("Provided file does not exist!");
 				
 				i++;
 				continue;
@@ -92,5 +112,10 @@ public class App
 	public static int getScreenId()
 	{
 		return screenId;
+	}
+
+	public static File getProjectFile()
+	{
+		return projectFile;
 	}
 }

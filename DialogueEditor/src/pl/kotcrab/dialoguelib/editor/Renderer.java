@@ -17,10 +17,8 @@
 package pl.kotcrab.dialoguelib.editor;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JOptionPane;
-import javax.swing.plaf.basic.ComboPopup;
 
 import pl.kotcrab.dialoguelib.editor.components.ConnectionRenderer;
 import pl.kotcrab.dialoguelib.editor.components.Connector;
@@ -47,13 +45,14 @@ import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
-//TODO undo, redo
+//TODO CTRL+C, CTRL+V, CTRL+A itp...
 public class Renderer implements ApplicationListener, InputProcessor, GestureListener
 {
 	private EditorListener listener;
@@ -130,10 +129,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		mul.addProcessor(rectangularSelection);
 		Gdx.input.setInputProcessor(mul);
 		
-		connectionRenderer = new ConnectionRenderer();
-		
-		project = new Project(null, null, false, false);
-		componentList.add(new StartComponent(200, 200));
+		connectionRenderer = new ConnectionRenderer(camera);
 		
 		infoText = new KotcrabText(Assets.consolasFont, "Load or create new project to begin!", false, 0, 0);
 		infoText.setScale(1.4f);
@@ -172,18 +168,27 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 			Gdx.gl.glClearColor(0.69f, 0.69f, 0.69f, 1);
 			Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 			
-			batch.setShader(Assets.fontDistanceFieldShader);
-			for(DComponent comp : componentList)
+			//why more loops == better
+			//we can draw more shapes/sprites in single batch, wich reduces lwgjl nSwapBuffers and imroves perofmence
+			
+			for(DComponent comp : componentList) 
 			{
 				comp.renderShapes(shapeRenderer);
-				
-				batch.begin();
-				comp.render(batch);
-				batch.end();
 			}
+			
+			batch.setShader(Assets.fontDistanceFieldShader);
+			batch.begin();
+			for(DComponent comp : componentList)
+			{
+				comp.render(batch);
+			}
+			batch.end();
 			batch.setShader(null);
 			
 			if(selectedComponent != null) selectedComponent.renderSelectionOutline(shapeRenderer, Color.ORANGE);
+			
+			//these if's are difrrent, easy to omit... 
+			
 			if(selectedConnector != null)
 			{
 				if(Gdx.input.isKeyPressed(Keys.CONTROL_LEFT))
@@ -204,11 +209,23 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 				comp.renderSelectionOutline(shapeRenderer, Color.RED);
 			}
 			
+			connectionRenderer.cameraCalc();
+			
+			shapeRenderer.setColor(Color.BLACK);
+			shapeRenderer.begin(ShapeType.Line);
 			for(DComponent comp : componentList)
 			{
-				connectionRenderer.render(shapeRenderer, comp);
+				connectionRenderer.renderLines(shapeRenderer, comp);
 			}
+			shapeRenderer.end();
 			
+			shapeRenderer.begin(ShapeType.Filled);
+			for(DComponent comp : componentList)
+			{
+				connectionRenderer.renderTraingles(shapeRenderer, comp);
+			}
+			shapeRenderer.end();
+
 			if(renderDebug)
 			{
 				batch.setProjectionMatrix(renderDebugMatrix);
@@ -229,7 +246,6 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 				batch.end();
 				batch.setShader(null);
 			}
-			
 		}
 	}
 	
@@ -367,6 +383,11 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		redoList.clear();
 	}
 	
+	public void setProject(Project project)
+	{
+		this.project = project;
+	}
+	
 	public void undo()
 	{
 		if(undoList.size() > 0)
@@ -397,6 +418,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		if(selectedComponent instanceof StartComponent)
 		{
 			listener.showMsg("This component cannot be deleted!", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
 		}
 		
 		idManager.freeID(comp.getId());
@@ -421,6 +443,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 			{
 				listener.showMsg("Selection containts components that cannot be deleted!", "Error", JOptionPane.ERROR_MESSAGE);
 				compList.clear();
+				return;
 			}
 		}
 		

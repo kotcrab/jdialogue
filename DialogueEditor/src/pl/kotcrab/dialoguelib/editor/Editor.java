@@ -27,6 +27,7 @@ import java.awt.TextComponent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -82,6 +83,8 @@ public class Editor extends JFrame
 	
 	private XStream xstream;
 	
+	private Project project;
+	
 	private Preferences prefs;
 	
 	/**
@@ -121,8 +124,11 @@ public class Editor extends JFrame
 				{
 					throw new RuntimeException("No Screens Found");
 				}
+				
 				window.setExtendedState(window.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 				
+				if(App.getProjectFile() != null)
+					window.loadProject(App.getProjectFile());
 			}
 		});
 	}
@@ -147,6 +153,7 @@ public class Editor extends JFrame
 		xstream.alias("dRelay", RelayComponent.class);
 		xstream.alias("dCallback", CallbackComponent.class);
 		xstream.alias("dRandom", RandomComponent.class);
+		xstream.alias("project", Project.class);
 		
 		xstream.registerConverter(new DComponentConverter());
 		
@@ -296,6 +303,52 @@ public class Editor extends JFrame
 		// propertiesSplitPane.setLeftComponent(table);
 	}
 	
+	public void newProject(final Project project)
+	{
+		this.project = project;
+		renderer.setProject(project);
+		
+		project.newProject();
+		project.save(xstream);
+		
+		EventQueue.invokeLater(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				new NewSequenceDialog(Editor.window, project, false);
+			}
+		});
+		
+	}
+	
+	public void loadProject(File projectConfigFile)
+	{
+		Project project = null;
+		
+		try
+		{
+			BufferedReader reader = new BufferedReader(new FileReader(projectConfigFile));
+			project = (Project) xstream.fromXML(reader);
+			reader.close();
+		}
+		catch (IOException e1)
+		{
+			e1.printStackTrace();
+		}
+		
+		if(project != null)
+		{
+			this.project = project;
+			renderer.setProject(project);
+		}
+		else
+		{
+			JOptionPane.showMessageDialog(this, "Failed to load project located under: " + projectConfigFile, "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+	}
+	
 	@Override
 	public void dispose()
 	{
@@ -312,8 +365,8 @@ public class Editor extends JFrame
 		fileMenu.getPopupMenu().setLightWeightPopupEnabled(false); // without this menu will render under canvas
 		menuBar.add(fileMenu);
 		
-		JMenuItem mntmNewMenuItem_3 = new JMenuItem("New Project");
-		mntmNewMenuItem_3.addActionListener(new ActionListener()
+		JMenuItem menuNewProject = new JMenuItem("New Project");
+		menuNewProject.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
@@ -327,19 +380,19 @@ public class Editor extends JFrame
 				});
 			}
 		});
-		fileMenu.add(mntmNewMenuItem_3);
+		fileMenu.add(menuNewProject);
 		
-		JMenuItem mntmNewMenuItem_1 = new JMenuItem("Load Project");
-		fileMenu.add(mntmNewMenuItem_1);
+		JMenuItem menuLoadProject = new JMenuItem("Load Project");
+		fileMenu.add(menuLoadProject);
 		
-		JMenuItem mntmNewMenuItem_2 = new JMenuItem("Save Project");
-		fileMenu.add(mntmNewMenuItem_2);
+		JMenuItem menuSaveProject = new JMenuItem("Save Project");
+		fileMenu.add(menuSaveProject);
 		
 		JSeparator separator = new JSeparator();
 		fileMenu.add(separator);
 		
-		JMenuItem mntmNewMenuItem = new JMenuItem("Exit");
-		fileMenu.add(mntmNewMenuItem);
+		JMenuItem menuExit = new JMenuItem("Exit");
+		fileMenu.add(menuExit);
 		
 		JMenu rendererMenu = new JMenu("Renderer");
 		rendererMenu.getPopupMenu().setLightWeightPopupEnabled(false); // without this menu will render under canvas

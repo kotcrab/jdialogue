@@ -9,7 +9,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
@@ -31,7 +30,7 @@ public class NewProjectDialog extends JDialog
 	/**
 	 * Create the dialog.
 	 */
-	public NewProjectDialog(Editor parrent)
+	public NewProjectDialog(final Editor parrent)
 	{
 		super(parrent, true);
 		
@@ -78,12 +77,12 @@ public class NewProjectDialog extends JDialog
 		btnBrowse.setBounds(345, 32, 89, 23);
 		getContentPane().add(btnBrowse);
 		
-		JCheckBox chckGzipProjectFiles = new JCheckBox("Use GZIP Compression on project files");
+		final JCheckBox chckGzipProjectFiles = new JCheckBox("Use GZIP Compression on project files");
 		chckGzipProjectFiles.setSelected(true);
 		chckGzipProjectFiles.setBounds(10, 57, 424, 23);
 		getContentPane().add(chckGzipProjectFiles);
 		
-		JCheckBox chckGzipExportedFiles = new JCheckBox("Use GZIP Compression on exported files");
+		final JCheckBox chckGzipExportedFiles = new JCheckBox("Use GZIP Compression on exported files");
 		chckGzipExportedFiles.setSelected(true);
 		chckGzipExportedFiles.setBounds(10, 83, 424, 23);
 		getContentPane().add(chckGzipExportedFiles);
@@ -121,6 +120,19 @@ public class NewProjectDialog extends JDialog
 		getContentPane().add(lblOutInfo);
 		
 		btnCreate = new JButton("Create");
+		btnCreate.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				Project project = new Project(textProjectName.getText(), textProjectLoc.getText(), chckGzipProjectFiles.isSelected(), chckGzipExportedFiles.isSelected());
+
+				if(chckUseCustomLoc.isSelected())
+					project.setCustomOut(textCustomOutLoc.getText());
+				
+				parrent.newProject(project);
+				instance.dispose();
+			}
+		});
 		btnCreate.setEnabled(false);
 		btnCreate.setBounds(345, 205, 89, 23);
 		getContentPane().add(btnCreate);
@@ -228,7 +240,6 @@ public class NewProjectDialog extends JDialog
 	
 	class ChangeListener implements DocumentListener
 	{
-		
 		@Override
 		public void insertUpdate(DocumentEvent e)
 		{
@@ -239,7 +250,6 @@ public class NewProjectDialog extends JDialog
 		public void removeUpdate(DocumentEvent e)
 		{
 			checkConditions();
-			
 		}
 		
 		@Override
@@ -247,6 +257,5 @@ public class NewProjectDialog extends JDialog
 		{
 			checkConditions();
 		}
-		
 	}
 }
