@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Pawel Pastuszak
+ * Copyright 2013 - 2014 Pawel Pastuszak
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,8 +63,8 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	
 	private ArrayList<DComponent> componentList = new ArrayList<DComponent>();
 	
-	ArrayList<ArrayList<DComponent>> undoList = new ArrayList<ArrayList<DComponent>>();
-	ArrayList<ArrayList<DComponent>> redoList = new ArrayList<ArrayList<DComponent>>();
+	private ArrayList<ArrayList<DComponent>> undoList = new ArrayList<ArrayList<DComponent>>();
+	private ArrayList<ArrayList<DComponent>> redoList = new ArrayList<ArrayList<DComponent>>();
 	
 	private Connector selectedConnector = null;
 	private ConnectionRenderer connectionRenderer;

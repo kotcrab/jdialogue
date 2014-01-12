@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright 2013 Pawel Pastuszak
+ * Copyright 2013 - 2014 Pawel Pastuszak
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
@@ -67,7 +68,6 @@ import pl.kotcrab.dialoguelib.editor.components.types.StartComponent;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.lwjgl.LwjglCanvas;
 import com.thoughtworks.xstream.XStream;
-import javax.swing.JSeparator;
 
 public class Editor extends JFrame
 {
