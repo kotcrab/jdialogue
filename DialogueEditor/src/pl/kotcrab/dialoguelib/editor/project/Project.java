@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package pl.kotcrab.dialoguelib.editor;
+package pl.kotcrab.dialoguelib.editor.project;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,8 +35,8 @@ public class Project
 	private boolean gzipExport;
 	
 	private File configFile;
-	private ArrayList<File> projectFiles = new ArrayList<File>();
-	private File activeFile = null;
+	private ArrayList<Sequence> projectFiles = new ArrayList<Sequence>();
+	private Sequence activeSequence = null;
 	
 	public Project(String projectName, String projectMainDir, boolean gzipProject, boolean gzipExport)
 	{
@@ -81,7 +81,13 @@ public class Project
 	
 	public void newSequence(String name, boolean setAsActive)
 	{
-		projectFiles.add(new File(mainDir + name + ".xml"));
-		activeFile = projectFiles.get(projectFiles.size() - 1);
+		projectFiles.add(new Sequence(mainDir + name + ".xml"));
+		activeSequence = projectFiles.get(projectFiles.size() - 1);
 	}
+
+	public Sequence getActiveSequence()
+	{
+		return activeSequence;
+	}
+	
 }

@@ -17,7 +17,6 @@
 package pl.kotcrab.dialoguelib.editor.components;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
@@ -26,28 +25,14 @@ public class ConnectionRenderer
 {
 	private boolean renderCurves = true;
 	
-	private OrthographicCamera camera;
-	
 	Rectangle cameraRect;
 	
-	public ConnectionRenderer(OrthographicCamera camera)
-	{
-		this.camera = camera;
-	}
+	private int rendered;
 	
-	public void cameraCalc()
+	public int renderLines(ShapeRenderer shapeRenderer, DComponent comp)
 	{
-		float cameraWidth = camera.viewportWidth * camera.zoom;
-		float cameraHeight = camera.viewportHeight * camera.zoom;
+		rendered = 0;
 		
-		float cameraX = camera.position.x - cameraWidth / 2;
-		float cameraY = camera.position.y - cameraHeight / 2;
-		
-		cameraRect = new Rectangle(cameraX, cameraY, cameraWidth, cameraHeight);
-	}
-	
-	public void renderLines(ShapeRenderer shapeRenderer, DComponent comp)
-	{
 		Connector[] inputs = comp.getOutputs();
 		
 		for(int i = 0; i < inputs.length; i++)
@@ -88,7 +73,11 @@ public class ConnectionRenderer
 				shapeRenderer.curve(x1, y1, x1 + d, y1, x2 - d, y2, x2, y2, 32); // connection line
 			else
 				shapeRenderer.line(x1, y1, x2 - 12, y2);
+			
+			rendered++;
 		}
+		
+		return rendered;
 	}
 	
 	public void renderTraingles(ShapeRenderer shapeRenderer, DComponent comp)
@@ -102,7 +91,7 @@ public class ConnectionRenderer
 			
 			if(target == null) continue;
 			
-			if(cameraRect.overlaps(target.getParrentComponent().getBoundingRectangle()) == false && cameraRect.overlaps(con.getParrentComponent().getBoundingRectangle()) == false) continue;
+			if(target.getParrentComponent().isVisible() == false && con.getParrentComponent().isVisible() == false) continue;
 			
 			float y2 = target.getY() + 6;
 			
@@ -144,9 +133,14 @@ public class ConnectionRenderer
 		shapeRenderer.end();
 	}
 	
+	public void setCameraCalc(Rectangle cameraRect)
+	{
+		this.cameraRect = cameraRect;
+	}
+	
 	public void setRenderCurves(boolean renderCurves)
 	{
 		this.renderCurves = renderCurves;
 	}
-	
+
 }

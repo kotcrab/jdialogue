@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package pl.kotcrab.dialoguelib.editor;
+package pl.kotcrab.dialoguelib.editor.project;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -29,6 +29,9 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
+import pl.kotcrab.dialoguelib.editor.App;
+import pl.kotcrab.dialoguelib.editor.Editor;
 
 public class NewProjectDialog extends JDialog
 {

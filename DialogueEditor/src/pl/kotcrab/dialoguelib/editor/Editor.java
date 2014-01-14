@@ -64,6 +64,9 @@ import pl.kotcrab.dialoguelib.editor.components.types.EndComponent;
 import pl.kotcrab.dialoguelib.editor.components.types.RandomComponent;
 import pl.kotcrab.dialoguelib.editor.components.types.RelayComponent;
 import pl.kotcrab.dialoguelib.editor.components.types.StartComponent;
+import pl.kotcrab.dialoguelib.editor.project.NewProjectDialog;
+import pl.kotcrab.dialoguelib.editor.project.NewSequenceDialog;
+import pl.kotcrab.dialoguelib.editor.project.Project;
 
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.lwjgl.LwjglCanvas;
@@ -127,8 +130,7 @@ public class Editor extends JFrame
 				
 				window.setExtendedState(window.getExtendedState() | JFrame.MAXIMIZED_BOTH);
 				
-				if(App.getProjectFile() != null)
-					window.loadProject(App.getProjectFile());
+				if(App.getProjectFile() != null) window.loadProject(App.getProjectFile());
 			}
 		});
 	}
@@ -274,7 +276,7 @@ public class Editor extends JFrame
 					ColumnsAutoSizer.sizeColumnsToFit(table);
 				}
 			}
-		});
+		}, xstream);
 		
 		canvas = new LwjglCanvas(renderer, true);
 		canvas.getCanvas().add(popupMenu);
@@ -306,20 +308,22 @@ public class Editor extends JFrame
 	public void newProject(final Project project)
 	{
 		this.project = project;
-		renderer.setProject(project);
+		//renderer.setProject(project);
+		
+		//EventQueue.invokeLater(new Runnable()
+		//{
+		//	@Override
+		//	public void run()
+		//	{
+				new NewSequenceDialog(Editor.window, project, false);
+		//	}
+		//});
 		
 		project.newProject();
+		
 		project.save(xstream);
 		
-		EventQueue.invokeLater(new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				new NewSequenceDialog(Editor.window, project, false);
-			}
-		});
-		
+		renderer.setComponentList(project.getActiveSequence().getComponentList());
 	}
 	
 	public void loadProject(File projectConfigFile)
@@ -340,7 +344,7 @@ public class Editor extends JFrame
 		if(project != null)
 		{
 			this.project = project;
-			renderer.setProject(project);
+			//renderer.setProject(project);
 		}
 		else
 		{

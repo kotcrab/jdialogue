@@ -43,6 +43,8 @@ public abstract class DComponent
 	private Connector[] outputs;
 	
 	protected ComponentTableModel tableModel;
+
+	private boolean visible;
 	
 	public DComponent(String title, int x, int y, int inputs, int outputs, int id)
 	{
@@ -109,18 +111,8 @@ public abstract class DComponent
 	
 	public void renderShapes(ShapeRenderer shapeRenderer)
 	{
-		shapeRenderer.begin(ShapeType.Filled); // background
 		shapeRenderer.setColor(Color.GRAY);
 		shapeRenderer.rect(x, ry, width, height);
-		shapeRenderer.end();
-		
-		shapeRenderer.begin(ShapeType.Line);
-		shapeRenderer.setColor(Color.BLACK);
-		shapeRenderer.rect(x, ry, width, height); // outline
-		shapeRenderer.line(x, ry + height - 30, x + width, ry + height - 30); // line under text
-		shapeRenderer.end();
-		
-		shapeRenderer.begin(ShapeType.Filled);
 		
 		for(int i = 0; i < inputs.length; i++)
 			inputs[i].render(shapeRenderer);
@@ -128,17 +120,20 @@ public abstract class DComponent
 		for(int i = 0; i < outputs.length; i++)
 			outputs[i].render(shapeRenderer);
 		
-		shapeRenderer.end();
+	}
+	
+	public void renderOutline(ShapeRenderer shapeRenderer)
+	{
+		shapeRenderer.setColor(Color.BLACK);
+		shapeRenderer.rect(x, ry, width, height); // outline
+		shapeRenderer.line(x, ry + height - 30, x + width, ry + height - 30); // line under text
 	}
 	
 	public void renderSelectionOutline(ShapeRenderer shapeRenderer, Color color)
 	{
-		
-		shapeRenderer.begin(ShapeType.Line);
 		shapeRenderer.setColor(color);
 		shapeRenderer.rect(x, y - height / 2, width, height);// outline
 		shapeRenderer.line(x, ry + height - 30, x + width, ry + height - 30); // line under text
-		shapeRenderer.end();
 	}
 	
 	/**
@@ -329,6 +324,15 @@ public abstract class DComponent
 	{
 		this.outputs = outputs;
 	}
+	
+	public void setId(int id)
+	{
+		this.id = id;
+		Object[][] data = tableModel.data;
+		
+		if(data[0][0].equals("ID"))
+			data[0][1] = new Integer(id);
+	}
 
 	public int getId()
 	{
@@ -353,5 +357,19 @@ public abstract class DComponent
 	protected void setListeners()
 	{
 		
+	}
+
+	public void calcVisible(Rectangle cameraRect)
+	{
+		if(cameraRect.overlaps(boundingRectangle))
+			visible = true;
+		else
+			visible = false;
+	}
+	
+
+	public boolean isVisible()
+	{
+		return visible;
 	}
 }

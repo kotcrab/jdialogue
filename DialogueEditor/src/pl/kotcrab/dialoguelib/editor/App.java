@@ -34,6 +34,7 @@ public class App
 	private static int screenId = 0;
 	private static File projectFile = null;
 	
+	//TODO nie potrzeba rzucaæ wyj¹tku, ale nie ma to az tak du¿ego znaczenia
 	public static void parseArguments(String[] args)
 	{
 		System.out.println("Arguments: " + Arrays.toString(args));
@@ -65,7 +66,7 @@ public class App
 			{
 				if(i + 1 > args.length - 1)
 				{
-					throw new ArgsParserException("-p requires moniotr path to project.xml file");
+					throw new ArgsParserException("-p requires path to project.xml file");
 				}
 				
 				projectFile = new File(args[i + 1]);

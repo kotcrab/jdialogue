@@ -32,6 +32,7 @@ import pl.kotcrab.dialoguelib.editor.components.types.RandomComponent;
 import pl.kotcrab.dialoguelib.editor.components.types.RelayComponent;
 import pl.kotcrab.dialoguelib.editor.components.types.StartComponent;
 import pl.kotcrab.dialoguelib.editor.components.types.TextComponent;
+import pl.kotcrab.dialoguelib.editor.project.Project;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -49,10 +50,13 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.thoughtworks.xstream.XStream;
 
-//TODO CTRL+C, CTRL+V, CTRL+A itp...
+//TODO rozmiar komponentów przy wczytytwaniu
+//TODO przesuwanie kamery, gdy przy rysowaniu zblizymy kursor do krawêdzie ekranu, u¿yteczna funkcja
 public class Renderer implements ApplicationListener, InputProcessor, GestureListener
 {
 	private EditorListener listener;
@@ -65,6 +69,8 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	
 	private ArrayList<ArrayList<DComponent>> undoList = new ArrayList<ArrayList<DComponent>>();
 	private ArrayList<ArrayList<DComponent>> redoList = new ArrayList<ArrayList<DComponent>>();
+	
+	private ArrayList<DComponent> clipboardList;
 	
 	private Connector selectedConnector = null;
 	private ConnectionRenderer connectionRenderer;
@@ -88,11 +94,16 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	
 	private KotcrabText infoText;
 	
-	private Project project = null;
+	//private Project project = null;
 	
-	public Renderer(EditorListener listener)
+	private XStream xstream;
+	
+	private Rectangle cameraRect;
+	
+	public Renderer(EditorListener listener, XStream xstream)
 	{
 		this.listener = listener;
+		this.xstream = xstream;
 	}
 	
 	@Override
@@ -108,6 +119,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		camera.position.x = 1280 / 2;
 		camera.position.y = 720 / 2;
 		Touch.setCamera(camera);
+		cameraRect = CameraUtils.calcCameraBoundingRectangle(camera);
 		
 		shapeRenderer = new ShapeRenderer();
 		batch = new SpriteBatch();
@@ -129,7 +141,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		mul.addProcessor(rectangularSelection);
 		Gdx.input.setInputProcessor(mul);
 		
-		connectionRenderer = new ConnectionRenderer(camera);
+		connectionRenderer = new ConnectionRenderer();
 		
 		infoText = new KotcrabText(Assets.consolasFont, "Load or create new project to begin!", false, 0, 0);
 		infoText.setScale(1.4f);
@@ -148,10 +160,18 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	public void update()
 	{
 		camera.update();
+		cameraRect = CameraUtils.calcCameraBoundingRectangle(camera);
 		
 		shapeRenderer.setProjectionMatrix(camera.combined);
 		batch.setProjectionMatrix(camera.combined);
 		
+		for(DComponent comp : componentList)
+		{
+			comp.calcVisible(cameraRect);
+		}
+		
+		// this is here for simplicity, because we are using a key and a mouse button
+		// keyDown, will only provide us with key pressed event, and we will have to create flags for keyPressed and ButtonPressed
 		if(Gdx.input.isKeyPressed(Keys.CONTROL_LEFT) && selectedConnector != null && Gdx.input.isButtonPressed(Buttons.LEFT))
 		{
 			selectedConnector.detach();
@@ -165,16 +185,32 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		{
 			update();
 			
+			int renderedComponents = 0;
+			int renderedConnections = 0;
+			
 			Gdx.gl.glClearColor(0.69f, 0.69f, 0.69f, 1);
 			Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 			
-			//why more loops == better
-			//we can draw more shapes/sprites in single batch, wich reduces lwgjl nSwapBuffers and imroves perofmence
+			// why more loops == better
+			// we can draw more shapes/sprites in single batch, wich reduces lwgjl nSwapBuffers and imroves perofmence
 			
-			for(DComponent comp : componentList) 
+			shapeRenderer.begin(ShapeType.Filled);
+			for(DComponent comp : componentList)
 			{
-				comp.renderShapes(shapeRenderer);
+				if(comp.isVisible())
+				{
+					comp.renderShapes(shapeRenderer);
+					renderedComponents++;
+				}
 			}
+			shapeRenderer.end();
+			
+			shapeRenderer.begin(ShapeType.Line);
+			for(DComponent comp : componentList)
+			{
+				if(comp.isVisible()) comp.renderOutline(shapeRenderer);
+			}
+			shapeRenderer.end();
 			
 			batch.setShader(Assets.fontDistanceFieldShader);
 			batch.begin();
@@ -185,9 +221,11 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 			batch.end();
 			batch.setShader(null);
 			
+			shapeRenderer.begin(ShapeType.Line);
 			if(selectedComponent != null) selectedComponent.renderSelectionOutline(shapeRenderer, Color.ORANGE);
+			shapeRenderer.end();
 			
-			//these if's are difrrent, easy to omit... 
+			// these if's are difrrent, easy to omit...
 			
 			if(selectedConnector != null)
 			{
@@ -200,22 +238,24 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 				{
 					connectionRenderer.render(shapeRenderer, selectedConnector, Touch.getX(), Touch.getY());
 				}
-				
 			}
 			
 			rectangularSelection.render(shapeRenderer);
+			
+			shapeRenderer.begin(ShapeType.Line);
 			for(DComponent comp : selectedComponentsList)
 			{
 				comp.renderSelectionOutline(shapeRenderer, Color.RED);
 			}
+			shapeRenderer.end();
 			
-			connectionRenderer.cameraCalc();
+			connectionRenderer.setCameraCalc(cameraRect);
 			
 			shapeRenderer.setColor(Color.BLACK);
 			shapeRenderer.begin(ShapeType.Line);
 			for(DComponent comp : componentList)
 			{
-				connectionRenderer.renderLines(shapeRenderer, comp);
+				renderedConnections += connectionRenderer.renderLines(shapeRenderer, comp); //we are counitng how many connections we had drawn
 			}
 			shapeRenderer.end();
 			
@@ -225,14 +265,16 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 				connectionRenderer.renderTraingles(shapeRenderer, comp);
 			}
 			shapeRenderer.end();
-
+			
 			if(renderDebug)
 			{
 				batch.setProjectionMatrix(renderDebugMatrix);
 				batch.setShader(Assets.fontDistanceFieldShader);
 				batch.begin();
 				Assets.consolasFont.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 10, Gdx.graphics.getHeight() * 10 / 7);
-				Assets.consolasFont.draw(batch, "Components: " + componentList.size(), 10, Gdx.graphics.getHeight() * 10 / 7 - 30);
+				Assets.consolasFont.draw(batch, "Components: " + componentList.size(), 10, Gdx.graphics.getHeight() * 10 / 7 - (23 * 1));
+				Assets.consolasFont.draw(batch, "Rendered components: " + renderedComponents, 10, Gdx.graphics.getHeight() * 10 / 7 - (23 * 2));
+				Assets.consolasFont.draw(batch, "Rendered connections: " + renderedConnections, 10, Gdx.graphics.getHeight() * 10 / 7 - (23 * 3));
 				batch.end();
 				batch.setShader(null);
 			}
@@ -280,7 +322,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	
 	public void addComponent(DComponentType componentType)
 	{
-		if(project != null)
+		if(componentList.size() > 0) //if list is empty, we don't have any sequnce loaded(sequnce must have start component)
 		{
 			switch (componentType)
 			{
@@ -326,6 +368,9 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		boolean found = false;
 		for(DComponent comp : componentList)
 		{
+			if(comp.isVisible() == false)
+				continue;
+			
 			Connector connector = comp.connectionContains(x, y);
 			if(connector != null) // in drawing mode
 			{
@@ -344,7 +389,6 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 				break;
 			}
 		}
-		
 		if(found == false) selectedConnector = null;
 	}
 	
@@ -375,18 +419,23 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	public void setComponentList(ArrayList<DComponent> componentList)
 	{
 		this.componentList = componentList;
-		rectangularSelection.setComponentList(componentList);
+		rectangularSelection.setComponentList(componentList); //rectangularselection potrzebuje listy do znajdywania kompponentów
 		selectedComponent = null;
 		selectedConnector = null;
 		
 		undoList.clear();
 		redoList.clear();
+		
+		for(DComponent comp : componentList) //TODO rezerwowaæ id, czy ustaiwaæ je od nowa, teoretycznie bez znaczenia, ale mo¿na sprawdziæ.
+		{
+			comp.setId(idManager.getFreeId());
+		}
 	}
 	
-	public void setProject(Project project)
-	{
-		this.project = project;
-	}
+//	public void setProject(Project project)
+//	{
+//		this.project = project;
+//	}
 	
 	public void undo()
 	{
@@ -395,6 +444,10 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 			ArrayList<DComponent> undoComponents = undoList.get(undoList.size() - 1);
 			
 			redoList.add(undoComponents);
+			
+			for(DComponent comp : undoComponents)
+				comp.setId(idManager.getFreeId());
+			
 			componentList.addAll(undoComponents);
 			
 			undoList.remove(undoList.size() - 1);
@@ -462,7 +515,6 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		listener.changePropertyTableModel(null);
 		
 	}
-	
 	
 	// ==================================================================INPUT============================================================================
 	@Override
@@ -592,6 +644,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		return false;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean keyDown(int keycode)
 	{
@@ -612,6 +665,44 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		{
 			selectedComponent.detachAll();
 			return true;
+		}
+		
+		if(Gdx.input.isKeyPressed(Keys.CONTROL_LEFT) && Gdx.input.isKeyPressed(Keys.A))
+		{
+			selectedComponentsList.clear();
+			selectedComponentsList.addAll(componentList);
+		}
+		
+		if(selectedComponentsList.size() > 0 && Gdx.input.isKeyPressed(Keys.CONTROL_LEFT) && Gdx.input.isKeyPressed(Keys.C))
+		{
+			clipboardList = new ArrayList<DComponent>(selectedComponentsList);
+		}
+		
+		if(clipboardList != null && Gdx.input.isKeyPressed(Keys.CONTROL_LEFT) && Gdx.input.isKeyPressed(Keys.V))
+		{
+			// TODO better positing system
+			int x = clipboardList.get(0).getX(); // we will need this to position component later
+			int y = clipboardList.get(0).getY();
+			
+			// probably the best way to deep copy object is to serialize it and deserialize, we can use xstream for that
+			String result = xstream.toXML(clipboardList);
+			clipboardList = (ArrayList<DComponent>) xstream.fromXML(result);
+			
+			for(DComponent comp : clipboardList) // we need to asign new id's to components
+			{
+				if(comp.getClass() == StartComponent.class)
+				{
+					comp.detachAll();
+					continue;
+				}
+				
+				comp.detachAllNotOnList(clipboardList);
+				comp.setId(idManager.getFreeId());
+				comp.setX(Touch.getX() + (comp.getX() - x)); // move new component to cursor pos
+				comp.setY(Touch.getY() + (comp.getY() - y));
+			}
+			
+			componentList.addAll(clipboardList);
 		}
 		
 		return false;

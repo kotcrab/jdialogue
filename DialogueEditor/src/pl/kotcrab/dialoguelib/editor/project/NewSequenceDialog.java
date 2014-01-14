@@ -14,7 +14,7 @@
  * limitations under the License.
  ******************************************************************************/
 
-package pl.kotcrab.dialoguelib.editor;
+package pl.kotcrab.dialoguelib.editor.project;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -26,6 +26,8 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
+import pl.kotcrab.dialoguelib.editor.Editor;
 
 public class NewSequenceDialog extends JDialog
 {
@@ -40,6 +42,7 @@ public class NewSequenceDialog extends JDialog
 	public NewSequenceDialog(Editor parrent, final Project project, boolean cancelable)
 	{
 		super(parrent, true);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		setTitle("New sequence");
 		setResizable(false);
 		setBounds(parrent.getX() + (parrent.getWidth() / 2) - (436 / 2), parrent.getY() + (parrent.getHeight() / 2) - (109 / 2), 436, 109);
@@ -47,7 +50,7 @@ public class NewSequenceDialog extends JDialog
 		getContentPane().setLayout(null);
 		
 		textName = new JTextField();
-		textName.setBounds(10, 26, 414, 20);
+		textName.setBounds(10, 26, 414, 23);
 		getContentPane().add(textName);
 		textName.setColumns(10);
 		
@@ -64,7 +67,7 @@ public class NewSequenceDialog extends JDialog
 		getContentPane().add(btnCreate);
 		
 		JLabel lblEnterSequenceName = new JLabel("Enter sequence name:");
-		lblEnterSequenceName.setBounds(10, 11, 414, 14);
+		lblEnterSequenceName.setBounds(10, 13, 414, 14);
 		getContentPane().add(lblEnterSequenceName);
 		
 		JButton btnCancel = new JButton("Cancel");
