@@ -22,7 +22,10 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
+import pl.kotcrab.dialoguelib.editor.IOUtils;
+
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 public class Project
 {
@@ -35,8 +38,12 @@ public class Project
 	private boolean gzipExport;
 	
 	private File configFile;
+	
+	@XStreamOmitField
 	private ArrayList<Sequence> projectFiles = new ArrayList<Sequence>();
+	@XStreamOmitField
 	private Sequence activeSequence = null;
+	private String activeSequenceName = null;
 	
 	public Project(String projectName, String projectMainDir, boolean gzipProject, boolean gzipExport)
 	{
@@ -48,13 +55,12 @@ public class Project
 		
 		prepareProject();
 	}
-
+	
 	private void prepareProject()
 	{
 		if(mainDir.endsWith(File.separator) == false) mainDir += File.separator;
 		configFile = new File(mainDir + "project.xml");
 	}
-	
 	
 	public void setCustomOut(String projectOut)
 	{
@@ -65,29 +71,39 @@ public class Project
 	{
 	}
 	
+	public void loadProject(XStream xstream)
+	{
+		for(Sequence seq : projectFiles)
+		{
+			if(seq.getName().equals(activeSequenceName))
+			{
+				seq.load(xstream, gzipProject);
+				return;
+			}
+		}
+		
+		System.out.println("error");
+		// TODO throw exception, active seq not found, project is broken etc.
+	}
+	
 	public void save(XStream xstream)
 	{
-		try
-		{
-			PrintWriter writer = new PrintWriter(configFile, "UTF-8");
-			xstream.toXML(this, writer);
-			writer.close();
-		}
-		catch (FileNotFoundException | UnsupportedEncodingException e)
-		{
-			e.printStackTrace();
-		}
+		IOUtils.saveNormal(xstream, configFile, this);
+	}
+	
+	public void saveActiveSeqeunce(XStream xstream)
+	{
+		activeSequence.save(xstream, gzipProject);
 	}
 	
 	public void newSequence(String name, boolean setAsActive)
 	{
-		projectFiles.add(new Sequence(mainDir + name + ".xml"));
+		projectFiles.add(new Sequence(mainDir + name + ".xml", name));
 		activeSequence = projectFiles.get(projectFiles.size() - 1);
 	}
-
+	
 	public Sequence getActiveSequence()
 	{
 		return activeSequence;
 	}
-	
 }

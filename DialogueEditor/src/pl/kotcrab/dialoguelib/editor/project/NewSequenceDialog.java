@@ -50,7 +50,7 @@ public class NewSequenceDialog extends JDialog
 		getContentPane().setLayout(null);
 		
 		textName = new JTextField();
-		textName.setBounds(10, 26, 414, 23);
+		textName.setBounds(10, 21, 414, 24);
 		getContentPane().add(textName);
 		textName.setColumns(10);
 		
@@ -67,7 +67,7 @@ public class NewSequenceDialog extends JDialog
 		getContentPane().add(btnCreate);
 		
 		JLabel lblEnterSequenceName = new JLabel("Enter sequence name:");
-		lblEnterSequenceName.setBounds(10, 13, 414, 14);
+		lblEnterSequenceName.setBounds(10, 6, 414, 14);
 		getContentPane().add(lblEnterSequenceName);
 		
 		JButton btnCancel = new JButton("Cancel");

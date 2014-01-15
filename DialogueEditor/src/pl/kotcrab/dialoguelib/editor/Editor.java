@@ -175,19 +175,10 @@ public class Editor extends JFrame
 		JButton btnSave = new JButton("Save");
 		btnSave.addActionListener(new ActionListener()
 		{
-			public void actionPerformed(ActionEvent e) // TODO change this!!! only to test
+			public void actionPerformed(ActionEvent e)
 			{
-				try
-				{
-					GZIPOutputStream zOut = new GZIPOutputStream(new FileOutputStream("C:\\Users\\Headcrab\\Desktop\\gtest.xml"));
-					OutputStreamWriter writer = new OutputStreamWriter(zOut, "UTF-8");
-					xstream.toXML(renderer.getComponentList(), writer);
-					writer.close();
-				}
-				catch (IOException e1)
-				{
-					e1.printStackTrace();
-				}
+				
+				//TODO save
 			}
 		});
 		toolBar.add(btnSave);
@@ -198,17 +189,8 @@ public class Editor extends JFrame
 			@SuppressWarnings("unchecked")
 			public void actionPerformed(ActionEvent e)
 			{
-				try
-				{
-					BufferedReader reader = new BufferedReader(new FileReader("C:\\Users\\Headcrab\\Desktop\\test.xml"));
-					renderer.setComponentList((ArrayList<DComponent>) xstream.fromXML(reader));
-					reader.close();
-				}
-				catch (IOException e1)
-				{
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				//TODO load
+
 			}
 		});
 		toolBar.add(btnLoad);
@@ -323,6 +305,8 @@ public class Editor extends JFrame
 		
 		project.save(xstream);
 		
+		project.saveActiveSeqeunce(xstream);
+		
 		renderer.setComponentList(project.getActiveSequence().getComponentList());
 	}
 	
@@ -344,6 +328,7 @@ public class Editor extends JFrame
 		if(project != null)
 		{
 			this.project = project;
+			project.loadProject(xstream);
 			//renderer.setProject(project);
 		}
 		else
