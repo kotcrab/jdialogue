@@ -23,6 +23,12 @@ public class Sequence
 		componentList.add(new StartComponent(200, 200));
 	}
 	
+	public Sequence(File file)
+	{
+		this.file = file;
+		name = file.getName().split("\\.")[0]; //because . is reserved for regular expression
+	}
+	
 	@SuppressWarnings("unchecked")
 	public void load(XStream xstream, boolean gzip)
 	{
@@ -50,6 +56,9 @@ public class Sequence
 		return name;
 	}
 	
-
-	
+	@Override
+	public String toString()
+	{
+		return name;
+	}
 }

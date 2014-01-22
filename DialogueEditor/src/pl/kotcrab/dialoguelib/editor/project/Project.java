@@ -17,9 +17,6 @@
 package pl.kotcrab.dialoguelib.editor.project;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import pl.kotcrab.dialoguelib.editor.IOUtils;
@@ -30,6 +27,8 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 public class Project
 {
 	private String name;
+	
+	@XStreamOmitField
 	private String mainDir;
 	
 	private String customOut;
@@ -37,12 +36,14 @@ public class Project
 	private boolean gzipProject;
 	private boolean gzipExport;
 	
+	@XStreamOmitField
 	private File configFile;
 	
 	@XStreamOmitField
-	private ArrayList<Sequence> projectFiles = new ArrayList<Sequence>();
+	private ArrayList<Sequence> sequences = new ArrayList<Sequence>();
 	@XStreamOmitField
 	private Sequence activeSequence = null;
+	
 	private String activeSequenceName = null;
 	
 	public Project(String projectName, String projectMainDir, boolean gzipProject, boolean gzipExport)
@@ -71,13 +72,20 @@ public class Project
 	{
 	}
 	
-	public void loadProject(XStream xstream)
+	public void loadProject(File projectConfigFile, XStream xstream)
 	{
-		for(Sequence seq : projectFiles)
+		sequences = new ArrayList<Sequence>();
+		configFile = projectConfigFile;
+		mainDir = configFile.getParent();
+		
+		refreshSequences();
+		
+		for(Sequence seq : sequences)
 		{
 			if(seq.getName().equals(activeSequenceName))
 			{
-				seq.load(xstream, gzipProject);
+				activeSequence = seq;
+				activeSequence.load(xstream, gzipProject);
 				return;
 			}
 		}
@@ -86,9 +94,21 @@ public class Project
 		// TODO throw exception, active seq not found, project is broken etc.
 	}
 	
+	public void refreshSequences()
+	{
+		File[] list = new File(mainDir).listFiles();
+		for(int i = 0; i < list.length; i++)
+		{
+			if(list[i].getName().equals("project.xml")) continue;
+			
+			sequences.add(new Sequence(list[i]));
+		}
+	}
+	
 	public void save(XStream xstream)
 	{
 		IOUtils.saveNormal(xstream, configFile, this);
+		activeSequence.save(xstream, gzipProject);
 	}
 	
 	public void saveActiveSeqeunce(XStream xstream)
@@ -98,12 +118,20 @@ public class Project
 	
 	public void newSequence(String name, boolean setAsActive)
 	{
-		projectFiles.add(new Sequence(mainDir + name + ".xml", name));
-		activeSequence = projectFiles.get(projectFiles.size() - 1);
+		sequences.add(new Sequence(mainDir + name + ".xml", name));
+		activeSequence = sequences.get(sequences.size() - 1);
+		activeSequenceName = activeSequence.getName();
 	}
 	
 	public Sequence getActiveSequence()
 	{
 		return activeSequence;
 	}
+
+	public ArrayList<Sequence> getSequences()
+	{
+		return sequences;
+	}
+	
+	
 }

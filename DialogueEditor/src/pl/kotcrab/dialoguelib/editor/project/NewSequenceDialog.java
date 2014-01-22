@@ -55,6 +55,7 @@ public class NewSequenceDialog extends JDialog
 		textName.setColumns(10);
 		
 		btnCreate = new JButton("Create");
+		btnCreate.setEnabled(false);
 		btnCreate.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)

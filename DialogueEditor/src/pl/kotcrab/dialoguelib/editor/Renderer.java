@@ -32,7 +32,6 @@ import pl.kotcrab.dialoguelib.editor.components.types.RandomComponent;
 import pl.kotcrab.dialoguelib.editor.components.types.RelayComponent;
 import pl.kotcrab.dialoguelib.editor.components.types.StartComponent;
 import pl.kotcrab.dialoguelib.editor.components.types.TextComponent;
-import pl.kotcrab.dialoguelib.editor.project.Project;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -55,7 +54,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.thoughtworks.xstream.XStream;
 
-//TODO rozmiar komponentów przy wczytytwaniu
+//TODO rozmiar komponentów przy wczytytwaniu (to chyba nie problem, bo rozmair itak jest zapisywany w xml'u)
 //TODO przesuwanie kamery, gdy przy rysowaniu zblizymy kursor do krawêdzie ekranu, u¿yteczna funkcja
 public class Renderer implements ApplicationListener, InputProcessor, GestureListener
 {

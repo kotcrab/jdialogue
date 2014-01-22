@@ -28,12 +28,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.zip.GZIPOutputStream;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
@@ -55,7 +51,6 @@ import javax.swing.table.DefaultTableModel;
 
 import pl.kotcrab.dialoguelib.editor.components.ComponentTableModel;
 import pl.kotcrab.dialoguelib.editor.components.Connector;
-import pl.kotcrab.dialoguelib.editor.components.DComponent;
 import pl.kotcrab.dialoguelib.editor.components.DComponentConverter;
 import pl.kotcrab.dialoguelib.editor.components.DComponentType;
 import pl.kotcrab.dialoguelib.editor.components.types.CallbackComponent;
@@ -67,9 +62,11 @@ import pl.kotcrab.dialoguelib.editor.components.types.StartComponent;
 import pl.kotcrab.dialoguelib.editor.project.NewProjectDialog;
 import pl.kotcrab.dialoguelib.editor.project.NewSequenceDialog;
 import pl.kotcrab.dialoguelib.editor.project.Project;
+import pl.kotcrab.dialoguelib.editor.project.SequenceSelectionDialog;
 
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.lwjgl.LwjglCanvas;
+import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.thoughtworks.xstream.XStream;
 
 public class Editor extends JFrame
@@ -82,7 +79,6 @@ public class Editor extends JFrame
 	private Renderer renderer;
 	private JSplitPane rendererSplitPane;
 	private PropertyTable table;
-	private JTable projectTable;
 	
 	private XStream xstream;
 	
@@ -177,8 +173,7 @@ public class Editor extends JFrame
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				
-				//TODO save
+				project.save(xstream);
 			}
 		});
 		toolBar.add(btnSave);
@@ -186,11 +181,10 @@ public class Editor extends JFrame
 		JButton btnLoad = new JButton("Load");
 		btnLoad.addActionListener(new ActionListener()
 		{
-			@SuppressWarnings("unchecked")
 			public void actionPerformed(ActionEvent e)
 			{
-				//TODO load
-
+				// TODO load
+				
 			}
 		});
 		toolBar.add(btnLoad);
@@ -280,31 +274,45 @@ public class Editor extends JFrame
 		
 		propertyPanel.add(table.getTableHeader(), BorderLayout.PAGE_START);
 		propertyPanel.add(table, BorderLayout.CENTER);
-		// propertytable end
 		
-		projectTable = new JTable();
-		propertiesSplitPane.setRightComponent(projectTable);
+		JPanel panel = new JPanel();
+		propertiesSplitPane.setRightComponent(panel);
+		
+		JButton btnSequences = new JButton("Sequences");
+		btnSequences.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				EventQueue.invokeLater(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						new SequenceSelectionDialog(Editor.window, project.getSequences());
+					}
+				});
+			}
+		});
+		panel.add(btnSequences);
 		// propertiesSplitPane.setLeftComponent(table);
 	}
 	
 	public void newProject(final Project project)
 	{
 		this.project = project;
-		//renderer.setProject(project);
+		// renderer.setProject(project);
 		
-		//EventQueue.invokeLater(new Runnable()
-		//{
-		//	@Override
-		//	public void run()
-		//	{
-				new NewSequenceDialog(Editor.window, project, false);
-		//	}
-		//});
+		// EventQueue.invokeLater(new Runnable()
+		// {
+		// @Override
+		// public void run()
+		// {
+		new NewSequenceDialog(Editor.window, project, false);
+		// }
+		// });
 		
 		project.newProject();
-		
 		project.save(xstream);
-		
 		project.saveActiveSeqeunce(xstream);
 		
 		renderer.setComponentList(project.getActiveSequence().getComponentList());
@@ -328,8 +336,8 @@ public class Editor extends JFrame
 		if(project != null)
 		{
 			this.project = project;
-			project.loadProject(xstream);
-			//renderer.setProject(project);
+			project.loadProject(projectConfigFile, xstream);
+			renderer.setComponentList(project.getActiveSequence().getComponentList());
 		}
 		else
 		{
