@@ -1,17 +1,19 @@
 /*******************************************************************************
- * Copyright 2013 - 2014 Pawel Pastuszak
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+    DialogueEditor
+    Copyright (C) 2013-2014 Pawel Pastuszak
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
 package pl.kotcrab.dialoguelib.editor.components;
@@ -42,7 +44,7 @@ public abstract class DComponent
 	private Connector[] outputs;
 	
 	protected ComponentTableModel tableModel;
-
+	
 	private boolean visible;
 	
 	public DComponent(String title, int x, int y, int inputs, int outputs, int id)
@@ -67,7 +69,16 @@ public abstract class DComponent
 		
 		ry = y - height / 2;
 		
-		
+		distributeConnections();
+		calcTextPos();
+	}
+	
+	/**
+	 * Finishes desarialization of this object
+	 */
+	public void setup()
+	{
+		calcSize(inputs.length, outputs.length);
 		distributeConnections();
 		calcTextPos();
 	}
@@ -77,7 +88,7 @@ public abstract class DComponent
 		float avY = height - 30; // avaiable space in y coordinate
 		
 		// i have no idea what i'm doing, no seriously why is this working?
-		float avYIn = (avY - (12 * (inputs.length))) / (inputs.length); 
+		float avYIn = (avY - (12 * (inputs.length))) / (inputs.length);
 		for(int i = 0; i < inputs.length; i++)
 			inputs[i].setPosition(x, ry + avYIn / 2 + ((avYIn + 12) * (inputs.length - 1 - i)));
 		
@@ -99,8 +110,8 @@ public abstract class DComponent
 		else
 			height = (outputs + 1) * 20 + 20;
 		
-		boundingRectangle.set(x, ry, width, height);
-
+		boundingRectangle.set(x, y - height / 2, width, height);
+		
 	}
 	
 	public void render(SpriteBatch batch)
@@ -133,6 +144,11 @@ public abstract class DComponent
 		shapeRenderer.setColor(color);
 		shapeRenderer.rect(x, y - height / 2, width, height);// outline
 		shapeRenderer.line(x, ry + height - 30, x + width, ry + height - 30); // line under text
+	}
+	
+	public void renderDebug(ShapeRenderer shapeRenderer)
+	{
+		shapeRenderer.rect(boundingRectangle.x, boundingRectangle.y, boundingRectangle.width, boundingRectangle.height);
 	}
 	
 	/**
@@ -270,7 +286,6 @@ public abstract class DComponent
 	public void setX(int x)
 	{
 		this.x = x;
-		boundingRectangle.set(x, y, width, height);
 	}
 	
 	public void setY(int y)
@@ -280,8 +295,8 @@ public abstract class DComponent
 		
 		calcTextPos();
 		distributeConnections();
-		boundingRectangle.set(x, y, width, height);
-	
+		boundingRectangle.set(x, ry, width, height);
+		
 	}
 	
 	public int getX()
@@ -318,7 +333,7 @@ public abstract class DComponent
 	{
 		this.inputs = inputs;
 	}
-
+	
 	public void setOutputs(Connector[] outputs)
 	{
 		this.outputs = outputs;
@@ -329,10 +344,9 @@ public abstract class DComponent
 		this.id = id;
 		Object[][] data = tableModel.data;
 		
-		if(data[0][0].equals("ID"))
-			data[0][1] = new Integer(id);
+		if(data[0][0].equals("ID")) data[0][1] = new Integer(id);
 	}
-
+	
 	public int getId()
 	{
 		return id;
@@ -352,12 +366,12 @@ public abstract class DComponent
 	{
 		return boundingRectangle;
 	}
-
+	
 	protected void setListeners()
 	{
 		
 	}
-
+	
 	public void calcVisible(Rectangle cameraRect)
 	{
 		if(cameraRect.overlaps(boundingRectangle))
@@ -366,7 +380,6 @@ public abstract class DComponent
 			visible = false;
 	}
 	
-
 	public boolean isVisible()
 	{
 		return visible;

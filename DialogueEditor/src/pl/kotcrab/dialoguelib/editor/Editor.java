@@ -1,17 +1,19 @@
 /*******************************************************************************
- * Copyright 2013 - 2014 Pawel Pastuszak
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+    DialogueEditor
+    Copyright (C) 2013-2014 Pawel Pastuszak
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
 package pl.kotcrab.dialoguelib.editor;
@@ -26,6 +28,8 @@ import java.awt.PopupMenu;
 import java.awt.TextComponent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -41,7 +45,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
-import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -66,7 +69,6 @@ import pl.kotcrab.dialoguelib.editor.project.SequenceSelectionDialog;
 
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.lwjgl.LwjglCanvas;
-import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 import com.thoughtworks.xstream.XStream;
 
 public class Editor extends JFrame
@@ -137,6 +139,15 @@ public class Editor extends JFrame
 	public Editor()
 	{
 		super("Dialogue Editor");
+		addWindowListener(new WindowAdapter()
+		{
+			@Override
+			public void windowClosing(WindowEvent e)
+			{
+				if(renderer.isDirty())
+					showSaveProjectDialog();
+			}
+		});
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 700, 500);
 		
@@ -174,6 +185,7 @@ public class Editor extends JFrame
 			public void actionPerformed(ActionEvent e)
 			{
 				project.save(xstream);
+				renderer.setDirty(false);
 			}
 		});
 		toolBar.add(btnSave);
@@ -252,6 +264,12 @@ public class Editor extends JFrame
 					ColumnsAutoSizer.sizeColumnsToFit(table);
 				}
 			}
+			
+			@Override
+			public void showSaveDialog()
+			{
+				showSaveProjectDialog();
+			}
 		}, xstream);
 		
 		canvas = new LwjglCanvas(renderer, true);
@@ -288,7 +306,10 @@ public class Editor extends JFrame
 					@Override
 					public void run()
 					{
-						new SequenceSelectionDialog(Editor.window, project.getSequences());
+						if(project != null)
+							new SequenceSelectionDialog(Editor.window, project);
+						else
+							JOptionPane.showMessageDialog(Editor.window, "Create or load project to edit sequences", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				});
 			}
@@ -297,10 +318,19 @@ public class Editor extends JFrame
 		// propertiesSplitPane.setLeftComponent(table);
 	}
 	
+	private void showSaveProjectDialog()
+	{
+		// default icon, custom title
+		int n = JOptionPane.showConfirmDialog(this, "Project or sequence has been modified. Save changes?", "Save", JOptionPane.YES_NO_OPTION);
+		
+		if(n == JOptionPane.CLOSED_OPTION || n == JOptionPane.NO_OPTION) return;
+		if(n == JOptionPane.YES_OPTION) project.save(xstream);
+	}
+	
 	public void newProject(final Project project)
 	{
 		this.project = project;
-		// renderer.setProject(project);
+		renderer.setProject(project);
 		
 		// EventQueue.invokeLater(new Runnable()
 		// {
@@ -313,7 +343,6 @@ public class Editor extends JFrame
 		
 		project.newProject();
 		project.save(xstream);
-		project.saveActiveSeqeunce(xstream);
 		
 		renderer.setComponentList(project.getActiveSequence().getComponentList());
 	}

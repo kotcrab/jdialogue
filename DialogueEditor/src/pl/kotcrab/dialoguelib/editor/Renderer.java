@@ -1,17 +1,19 @@
 /*******************************************************************************
- * Copyright 2013 - 2014 Pawel Pastuszak
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+    DialogueEditor
+    Copyright (C) 2013-2014 Pawel Pastuszak
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
 package pl.kotcrab.dialoguelib.editor;
@@ -32,6 +34,7 @@ import pl.kotcrab.dialoguelib.editor.components.types.RandomComponent;
 import pl.kotcrab.dialoguelib.editor.components.types.RelayComponent;
 import pl.kotcrab.dialoguelib.editor.components.types.StartComponent;
 import pl.kotcrab.dialoguelib.editor.components.types.TextComponent;
+import pl.kotcrab.dialoguelib.editor.project.Project;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -59,10 +62,12 @@ import com.thoughtworks.xstream.XStream;
 public class Renderer implements ApplicationListener, InputProcessor, GestureListener
 {
 	private EditorListener listener;
+	private Preferences prefs;
 	
 	private OrthographicCamera camera;
 	private ShapeRenderer shapeRenderer;
 	private SpriteBatch batch;
+	private Rectangle cameraRect;
 	
 	private ArrayList<DComponent> componentList = new ArrayList<DComponent>();
 	
@@ -89,15 +94,13 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	private Matrix4 renderDebugMatrix = new Matrix4();
 	private Matrix4 renderInfoTextMatrix = new Matrix4();
 	
-	private Preferences prefs;
-	
 	private KotcrabText infoText;
 	
-	//private Project project = null;
+	private Project project;
 	
 	private XStream xstream;
 	
-	private Rectangle cameraRect;
+	private boolean dirty;
 	
 	public Renderer(EditorListener listener, XStream xstream)
 	{
@@ -254,7 +257,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 			shapeRenderer.begin(ShapeType.Line);
 			for(DComponent comp : componentList)
 			{
-				renderedConnections += connectionRenderer.renderLines(shapeRenderer, comp); //we are counitng how many connections we had drawn
+				renderedConnections += connectionRenderer.renderLines(shapeRenderer, comp); // we are counitng how many connections we had drawn
 			}
 			shapeRenderer.end();
 			
@@ -321,7 +324,8 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	
 	public void addComponent(DComponentType componentType)
 	{
-		if(componentList.size() > 0) //if list is empty, we don't have any sequnce loaded(sequnce must have start component)
+		dirty = true;
+		if(componentList.size() > 0) // if list is empty, we don't have any sequnce loaded(sequnce must have start component)
 		{
 			switch (componentType)
 			{
@@ -367,8 +371,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		boolean found = false;
 		for(DComponent comp : componentList)
 		{
-			if(comp.isVisible() == false)
-				continue;
+			if(comp.isVisible() == false) continue;
 			
 			Connector connector = comp.connectionContains(x, y);
 			if(connector != null) // in drawing mode
@@ -417,24 +420,29 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	 */
 	public void setComponentList(ArrayList<DComponent> componentList)
 	{
+		if(dirty)
+		{
+			listener.showSaveDialog();
+		}
+		idManager = new IDManager();
 		this.componentList = componentList;
-		rectangularSelection.setComponentList(componentList); //rectangularselection potrzebuje listy do znajdywania kompponentów
+		rectangularSelection.setComponentList(componentList); // rectangularselection potrzebuje listy do znajdywania kompponentów
 		selectedComponent = null;
 		selectedConnector = null;
 		
 		undoList.clear();
 		redoList.clear();
 		
-		for(DComponent comp : componentList) //TODO rezerwowaæ id, czy ustaiwaæ je od nowa, teoretycznie bez znaczenia, ale mo¿na sprawdziæ.
+		for(DComponent comp : componentList) // TODO rezerwowaæ id, czy ustaiwaæ je od nowa, teoretycznie bez znaczenia, ale mo¿na sprawdziæ.
 		{
 			comp.setId(idManager.getFreeId());
 		}
 	}
 	
-//	public void setProject(Project project)
-//	{
-//		this.project = project;
-//	}
+	// public void setProject(Project project)
+	// {
+	// this.project = project;
+	// }
 	
 	public void undo()
 	{
@@ -467,6 +475,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	
 	public void removeComponent(DComponent comp)
 	{
+		dirty = true;
 		if(selectedComponent instanceof StartComponent)
 		{
 			listener.showMsg("This component cannot be deleted!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -489,6 +498,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	
 	public void removeComponentList(ArrayList<DComponent> compList)
 	{
+		dirty = true;
 		for(DComponent comp : compList)
 		{
 			if(comp instanceof StartComponent)
@@ -515,6 +525,21 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		
 	}
 	
+	public void setProject(Project project)
+	{
+		this.project = project;
+	}
+	
+	public boolean isDirty()
+	{
+		return dirty;
+	}
+
+	public void setDirty(boolean dirty)
+	{
+		this.dirty = dirty;
+	}
+
 	// ==================================================================INPUT============================================================================
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button)
@@ -561,7 +586,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	@Override
 	public boolean pan(float x, float y, float deltaX, float deltaY)
 	{
-		if(selectedComponentsList.size() > 0) // FIXME gdy przesuwam kompoennty w lewo, one lekko przesuwaja sie w strone srodka, dlaczego? nie zawsze tak sie dzieje...
+		if(selectedComponentsList.size() > 0 && selectedConnector == null) // FIXME gdy przesuwam kompoennty w lewo, one lekko przesuwaja sie w strone srodka, dlaczego? nie zawsze tak sie dzieje...
 		{
 			for(DComponent comp : selectedComponentsList)
 			{
@@ -616,6 +641,8 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		{
 			if(comp.contains(x, y))
 			{
+				dirty = true;
+				
 				if(selectedComponentsList.contains(comp))
 				{
 					if(selectedComponent != null) return false;
@@ -662,23 +689,27 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		
 		if(keycode == Keys.BACKSPACE && selectedComponent != null)
 		{
+			dirty = true;
 			selectedComponent.detachAll();
 			return true;
 		}
 		
 		if(Gdx.input.isKeyPressed(Keys.CONTROL_LEFT) && Gdx.input.isKeyPressed(Keys.A))
 		{
+			dirty = true;
 			selectedComponentsList.clear();
 			selectedComponentsList.addAll(componentList);
 		}
 		
 		if(selectedComponentsList.size() > 0 && Gdx.input.isKeyPressed(Keys.CONTROL_LEFT) && Gdx.input.isKeyPressed(Keys.C))
 		{
+			dirty = true;
 			clipboardList = new ArrayList<DComponent>(selectedComponentsList);
 		}
 		
 		if(clipboardList != null && Gdx.input.isKeyPressed(Keys.CONTROL_LEFT) && Gdx.input.isKeyPressed(Keys.V))
 		{
+			dirty = true;
 			// TODO better positing system
 			int x = clipboardList.get(0).getX(); // we will need this to position component later
 			int y = clipboardList.get(0).getY();
