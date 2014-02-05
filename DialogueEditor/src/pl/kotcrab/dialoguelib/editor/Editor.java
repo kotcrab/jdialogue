@@ -20,6 +20,7 @@ package pl.kotcrab.dialoguelib.editor;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.event.ActionEvent;
@@ -42,7 +43,6 @@ import javax.swing.table.DefaultTableModel;
 
 import pl.kotcrab.dialoguelib.editor.components.DComponentType;
 import pl.kotcrab.dialoguelib.editor.gui.AddComponentMenuItem;
-import pl.kotcrab.dialoguelib.editor.project.NewSequenceDialog;
 import pl.kotcrab.dialoguelib.editor.project.Project;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglCanvas;
@@ -59,6 +59,8 @@ public class Editor extends JFrame
 	
 	private JSplitPane rendererSplitPane;
 	private PropertyTable table;
+
+	private PopupMenu popupMenu;
 	
 	/**
 	 * Create the frame.
@@ -72,62 +74,18 @@ public class Editor extends JFrame
 		addWindowListener(logic.winAdapater);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 700, 500);
-		
-		createMenuBar();
+		setMinimumSize(new Dimension(950, 425));
 		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 		
-		// toolbar
-		JToolBar toolBar = new JToolBar();
-		toolBar.setFloatable(false);
-		toolBar.setBorder(new LineBorder(new Color(0, 0, 0), 0));
-		contentPane.add(toolBar, BorderLayout.NORTH);
+		createMenuBar();
+		createToolbar();
+		createPopupMenu();
 		
-		JButton btnSave = new JButton("Save");
-		btnSave.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				logic.project.save(logic.xstream);
-				logic.renderer.setDirty(false);
-			}
-		});
-		toolBar.add(btnSave);
-		
-		JButton btnLoad = new JButton("Load");
-		btnLoad.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				// TODO load
-				
-			}
-		});
-		toolBar.add(btnLoad);
-		
-		JButton btnUndo = new JButton("Undo");
-		btnUndo.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				logic.renderer.undo();
-			}
-		});
-		toolBar.add(btnUndo);
-		
-		JButton btnRedo = new JButton("Redo");
-		btnRedo.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				logic.renderer.redo();
-			}
-		});
-		toolBar.add(btnRedo);
-		// toolbar end
+		logic.createRenderer();
 		
 		rendererSplitPane = new JSplitPane();
 		rendererSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
@@ -135,24 +93,10 @@ public class Editor extends JFrame
 		rendererSplitPane.setContinuousLayout(true);
 		contentPane.add(rendererSplitPane, BorderLayout.CENTER);
 		
-		// popup menu
-		PopupMenu popupMenu = createPopupMenu();
-		logic.popupMenu = popupMenu;
-		
-		logic.createRenderer();
-		
-		logic.canvas = new LwjglCanvas(logic.renderer, true);
-		logic.canvas.getCanvas().add(popupMenu);
-		
-		rendererSplitPane.setLeftComponent(logic.canvas.getCanvas());
-		
-		// property table
 		JSplitPane propertiesSplitPane = new JSplitPane();
 		propertiesSplitPane.setResizeWeight(0.7);
-		rendererSplitPane.setRightComponent(propertiesSplitPane);
 		
 		JPanel propertyPanel = new JPanel();
-		propertiesSplitPane.setLeftComponent(propertyPanel);
 		propertyPanel.setLayout(new BorderLayout());
 		
 		table = new PropertyTable(new DefaultTableModel());
@@ -161,30 +105,40 @@ public class Editor extends JFrame
 		propertyPanel.add(table.getTableHeader(), BorderLayout.PAGE_START);
 		propertyPanel.add(table, BorderLayout.CENTER);
 		
-		JPanel panel = new JPanel();
-		propertiesSplitPane.setRightComponent(panel);
+		JPanel buttonsPanel = new JPanel();
 		
 		JButton btnSequences = new JButton("Sequences");
 		btnSequences.addActionListener(logic.sequencesBtnListner);
-		panel.add(btnSequences);
-		// propertiesSplitPane.setLeftComponent(table);
+		buttonsPanel.add(btnSequences);
+		
+		propertiesSplitPane.setRightComponent(buttonsPanel);
+		propertiesSplitPane.setLeftComponent(propertyPanel);
+		rendererSplitPane.setRightComponent(propertiesSplitPane);
+		rendererSplitPane.setLeftComponent(logic.canvas.getCanvas());
+
 	}
 	
-	public void loadProject(File projectConfigFile)
+	private void createToolbar()
 	{
-		logic.loadProject(projectConfigFile);
-	}
-	
-	public void newProject(Project project)
-	{
-		logic.newProject(project);
-	}
-	
-	@Override
-	public void dispose()
-	{
-		logic.renderer.dispose(); // we have to manulay dispose renderer from this thread, or we will get "No OpenGL context found in the current thread."
-		super.dispose();
+		JToolBar toolBar = new JToolBar();
+		toolBar.setFloatable(false);
+		toolBar.setBorder(new LineBorder(new Color(0, 0, 0), 0));
+		contentPane.add(toolBar, BorderLayout.NORTH);
+		
+		JButton btnSave = new JButton("Save");
+		JButton btnLoad = new JButton("Load");
+		JButton btnUndo = new JButton("Undo");
+		JButton btnRedo = new JButton("Redo");
+		
+		btnSave.addActionListener(logic.toolbarSaveListener);
+		btnLoad.addActionListener(logic.toolbarLoadListener);
+		btnUndo.addActionListener(logic.toolbarUndoListener);
+		btnRedo.addActionListener(logic.toolbarRedoListener);
+		
+		toolBar.add(btnSave);
+		toolBar.add(btnLoad);
+		toolBar.add(btnUndo);
+		toolBar.add(btnRedo);
 	}
 	
 	private void createMenuBar()
@@ -197,19 +151,16 @@ public class Editor extends JFrame
 		menuBar.add(fileMenu);
 		
 		JMenuItem menuNewProject = new JMenuItem("New Project");
-		menuNewProject.addActionListener(logic.menubarNewProjectListener);
-		fileMenu.add(menuNewProject);
-		
 		JMenuItem menuLoadProject = new JMenuItem("Load Project");
-		fileMenu.add(menuLoadProject);
-		
 		JMenuItem menuSaveProject = new JMenuItem("Save Project");
-		fileMenu.add(menuSaveProject);
-		
-		JSeparator separator = new JSeparator();
-		fileMenu.add(separator);
-		
 		JMenuItem menuExit = new JMenuItem("Exit");
+		
+		menuNewProject.addActionListener(logic.menubarNewProjectListener);
+		
+		fileMenu.add(menuNewProject);
+		fileMenu.add(menuLoadProject);
+		fileMenu.add(menuSaveProject);
+		fileMenu.add(new JSeparator());
 		fileMenu.add(menuExit);
 		
 		JMenu rendererMenu = new JMenu("Renderer");
@@ -217,20 +168,21 @@ public class Editor extends JFrame
 		menuBar.add(rendererMenu);
 		
 		JCheckBoxMenuItem chckRenderDebug = new JCheckBoxMenuItem("Render Debug Info");
-		chckRenderDebug.addActionListener(logic.toolbarRenderDebugListener);
-		rendererMenu.add(chckRenderDebug);
-		
 		JCheckBoxMenuItem chckRenderCurves = new JCheckBoxMenuItem("Render Curves");
-		chckRenderCurves.addActionListener(logic.toolbarRenderCurvesListener);
-		chckRenderCurves.setSelected(true);
-		rendererMenu.add(chckRenderCurves);
-		
 		JMenuItem chckResetCamera = new JMenuItem("Reset Camera");
-		chckResetCamera.addActionListener(logic.toolbarResetCameraListener);
+		
+		chckRenderCurves.setSelected(true);
+		
+		chckRenderDebug.addActionListener(logic.menubarRenderDebugListener);
+		chckRenderCurves.addActionListener(logic.menubarRenderCurvesListener);
+		chckResetCamera.addActionListener(logic.menubarResetCameraListener);
+		
+		rendererMenu.add(chckRenderDebug);
+		rendererMenu.add(chckRenderCurves);
 		rendererMenu.add(chckResetCamera);
 	}
 	
-	public PopupMenu createPopupMenu()
+	public void createPopupMenu()
 	{
 		PopupMenu popupMenu = new PopupMenu();
 		
@@ -255,6 +207,24 @@ public class Editor extends JFrame
 		popupMenu.add(mAddRelay);
 		popupMenu.add(mAddEnd);
 		
-		return popupMenu;
+		logic.popupMenu = popupMenu;
+		this.popupMenu = popupMenu;
+	}
+	
+	public void loadProject(File projectConfigFile)
+	{
+		logic.loadProject(projectConfigFile);
+	}
+	
+	public void newProject(Project project)
+	{
+		logic.newProject(project);
+	}
+	
+	@Override
+	public void dispose()
+	{
+		logic.renderer.dispose(); // we have to manulay dispose renderer from this thread, or we will get "No OpenGL context found in the current thread."
+		super.dispose();
 	}
 }

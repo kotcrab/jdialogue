@@ -55,11 +55,16 @@ public class EditorLogic
 	
 	public ActionListener sequencesBtnListner;
 	
-	public ActionListener toolbarResetCameraListener;
-	public ActionListener toolbarRenderCurvesListener;
-	public ActionListener toolbarRenderDebugListener;
+	public ActionListener menubarResetCameraListener;
+	public ActionListener menubarRenderCurvesListener;
+	public ActionListener menubarRenderDebugListener;
 	
 	public ActionListener menubarNewProjectListener;
+	
+	public ActionListener toolbarSaveListener;
+	public ActionListener toolbarLoadListener;
+	public ActionListener toolbarUndoListener;
+	public ActionListener toolbarRedoListener;
 	
 	public EditorLogic(Editor window)
 	{
@@ -118,12 +123,50 @@ public class EditorLogic
 		};
 		
 		prepareToolbar();
-		prepareMenuBar();
+		prepareMenuBarRenderer();
+		prepareMenuBarFile();
 	}
 	
 	private void prepareToolbar()
 	{
-		toolbarRenderDebugListener = new ActionListener()
+		toolbarSaveListener = new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				project.save(xstream);
+				renderer.setDirty(false);
+			}
+		};
+		
+		toolbarLoadListener = new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				// TODO load
+				
+			}
+		};
+		
+		toolbarUndoListener = new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				renderer.undo();
+			}
+		};
+		
+		toolbarRedoListener = new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				renderer.redo();
+			}
+		};
+	}
+	
+	private void prepareMenuBarRenderer()
+	{
+		menubarRenderDebugListener = new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
@@ -132,7 +175,7 @@ public class EditorLogic
 			}
 		};
 		
-		toolbarRenderCurvesListener = new ActionListener()
+		menubarRenderCurvesListener = new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
@@ -141,7 +184,7 @@ public class EditorLogic
 			}
 		};
 		
-		toolbarResetCameraListener = new ActionListener()
+		menubarResetCameraListener = new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
@@ -150,7 +193,7 @@ public class EditorLogic
 		};
 	}
 	
-	private void prepareMenuBar()
+	private void prepareMenuBarFile()
 	{
 		menubarNewProjectListener = new ActionListener()
 		{
@@ -210,6 +253,10 @@ public class EditorLogic
 				showSaveProjectDialog();
 			}
 		}, xstream);
+		
+		canvas = new LwjglCanvas(renderer, true);
+		canvas.getCanvas().add(popupMenu);
+		
 	}
 	
 	public void loadProject(File projectConfigFile)
