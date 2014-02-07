@@ -75,6 +75,7 @@ public class Sequence
 	{
 		DComponentConverter.exportMode = true;
 		
+		
 		if(checkForEnd() == false)
 		{
 			JOptionPane.showMessageDialog(Editor.window, "Could not find 'End' component, please fix errors before exporting", "Error", JOptionPane.ERROR_MESSAGE);
@@ -87,17 +88,29 @@ public class Sequence
 			return;
 		}
 		
+		optimizeIDs();
+		
 		if(gzipExport)
 			IOUtils.saveGzip(xstream, new File(exportPath + name + ".xml"), componentList);
 		else
 			IOUtils.saveNormal(xstream, new File(exportPath + name + ".xml"), componentList);
 		
+		System.out.println(exportPath + name + ".xml");
+
 		DComponentConverter.exportMode = false;
 		
 		JOptionPane.showMessageDialog(Editor.window, "Finished exporting", "Export", JOptionPane.INFORMATION_MESSAGE);
 
 	}
 	
+	private void optimizeIDs()
+	{
+		for(DComponent comp : componentList)
+		{
+			
+		}
+	}
+
 	private boolean checkForEnd()
 	{
 		for(DComponent comp : componentList)

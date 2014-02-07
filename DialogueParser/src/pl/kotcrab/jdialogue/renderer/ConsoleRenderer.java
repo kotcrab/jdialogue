@@ -1,5 +1,6 @@
 package pl.kotcrab.jdialogue.renderer;
 
+import pl.kotcrab.jdialogue.parser.ComponentType;
 import pl.kotcrab.jdialogue.parser.DialogueParser;
 
 /**
@@ -13,13 +14,19 @@ public class ConsoleRenderer implements DialogueRenderer
 	
 	public ConsoleRenderer(DialogueParser parser)
 	{
-		//parser = new 
+		this.parser = parser;
 	}
-
+	
 	@Override
 	public void render()
 	{
-		// TODO Auto-generated method stub
-		
+		do
+		{
+			if(parser.getNextType() == ComponentType.TEXT)
+			{
+				System.out.println(parser.getNextMsg());
+				parser.nextComponent();
+			}
+		} while (parser.getNextType() != ComponentType.END);
 	}
 }

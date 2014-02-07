@@ -24,7 +24,7 @@ public class JDOMDialogueParser extends DialogueParser
 		try
 		{
 			SAXBuilder builder = new SAXBuilder();
-			document = (Document) builder.build(projectFile.getFile());
+			document = builder.build(projectFile.getFile());
 			Element rootNode = document.getRootElement();
 
 			elementList = rootNode.getChildren();

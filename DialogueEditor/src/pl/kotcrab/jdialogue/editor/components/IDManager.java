@@ -37,7 +37,7 @@ public class IDManager
 		int targetIDCounter = IDCounter + 100;
 		for(; IDCounter < targetIDCounter; IDCounter++)
 		{
-			freeIDs.add(IDCounter + 1);
+			freeIDs.add(IDCounter);
 		}
 	}
 	
