@@ -29,11 +29,15 @@ public abstract class DialogueParser
 		this.maxChars = maxChars;
 	}
 	
-	public abstract String startSequence();
+	public abstract void startSequence();
 	
-	public abstract MsgType getNextType();
+	public abstract ComponentType getNextType();
+	
+	public abstract void nextComponent();
 	
 	public abstract String getNextMsg();
+	public abstract boolean isCurrentMsgFinished();
+	
 	public abstract String getNextCharacterData();
 	public abstract String getNextData();
 }

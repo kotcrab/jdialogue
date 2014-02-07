@@ -71,7 +71,7 @@ public class Sequence
 			IOUtils.saveNormal(xstream, file, componentList);
 	}
 	
-	public void export(XStream xstream, boolean gzipExport, String exportPath)
+	public void export(XStream xstream, boolean gzipExport, String exportPath) //TODO organize components list by id
 	{
 		DComponentConverter.exportMode = true;
 		

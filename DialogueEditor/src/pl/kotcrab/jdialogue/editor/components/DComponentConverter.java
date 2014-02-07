@@ -37,6 +37,7 @@ public class DComponentConverter implements Converter
 {
 	public static boolean exportMode = false;
 	
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean canConvert(Class type)
 	{
@@ -60,26 +61,12 @@ public class DComponentConverter implements Converter
 	{
 		DComponent comp = (DComponent) source;
 		
-		if(comp.getClass().equals(TextComponent.class))
-			writer.addAttribute("type", "text");
-		else if(comp.getClass().equals(ChoiceComponent.class))
-			writer.addAttribute("type", "choice");
-		else if(comp.getClass().equals(RelayComponent.class))
-			writer.addAttribute("type", "relay");
-		else if(comp.getClass().equals(StartComponent.class))
-			writer.addAttribute("type", "start");
-		else if(comp.getClass().equals(EndComponent.class))
-			writer.addAttribute("type", "end");
-		else if(comp.getClass().equals(CallbackComponent.class))
-			writer.addAttribute("type", "callback");
-		else if(comp.getClass().equals(RandomComponent.class))
-			writer.addAttribute("type", "random");
-		else
-			writer.addAttribute("type", "unknown");
 		
 		if(exportMode)
 		{
-			writer.addAttribute("id", Integer.toString(comp.getId()));
+			writer.startNode("id");
+			writer.setValue(Integer.toString(comp.getId()));
+			writer.endNode();
 			
 			Connector[] outputs = comp.getOutputs();
 			
@@ -103,6 +90,23 @@ public class DComponentConverter implements Converter
 		}
 		else
 		{
+			if(comp.getClass().equals(TextComponent.class)) //probably not needed
+				writer.addAttribute("type", "text");
+			else if(comp.getClass().equals(ChoiceComponent.class))
+				writer.addAttribute("type", "choice");
+			else if(comp.getClass().equals(RelayComponent.class))
+				writer.addAttribute("type", "relay");
+			else if(comp.getClass().equals(StartComponent.class))
+				writer.addAttribute("type", "start");
+			else if(comp.getClass().equals(EndComponent.class))
+				writer.addAttribute("type", "end");
+			else if(comp.getClass().equals(CallbackComponent.class))
+				writer.addAttribute("type", "callback");
+			else if(comp.getClass().equals(RandomComponent.class))
+				writer.addAttribute("type", "random");
+			else
+				writer.addAttribute("type", "unknown");
+			
 			writer.startNode("x");
 			writer.setValue(Integer.toString(comp.getX()));
 			writer.endNode();
