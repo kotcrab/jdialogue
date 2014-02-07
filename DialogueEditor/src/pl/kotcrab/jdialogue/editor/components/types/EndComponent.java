@@ -22,16 +22,9 @@ import pl.kotcrab.jdialogue.editor.components.DComponent;
 
 public class EndComponent extends DComponent
 {
-	public EndComponent(int x, int y, int id)
+	public EndComponent(int x, int y)
 	{
-		super("End", x, y, 1, 0, id);
-		tableModel = new ComponentTableModel(
-			//@formatter:off
-			new Object[][]
-				{
-					{"ID", new Integer(id)},
-				}
-			//@formatter:on
-			);
+		super("End", x, y, 1, 0);
+		tableModel = new ComponentTableModel(null);
 	}
 }

@@ -26,9 +26,9 @@ import pl.kotcrab.jdialogue.editor.components.DComponent;
 
 public class RelayComponent extends DComponent
 {
-	public RelayComponent(int x, int y, int id)
+	public RelayComponent(int x, int y)
 	{
-		super("Relay", x, y, 3, 1, id);
+		super("Relay", x, y, 3, 1);
 		
 		tableModel = new ComponentTableModel(
 			//@formatter:off

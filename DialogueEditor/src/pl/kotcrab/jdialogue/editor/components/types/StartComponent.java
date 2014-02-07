@@ -25,15 +25,8 @@ public class StartComponent extends DComponent
 {
 	public StartComponent(int x, int y)
 	{
-		super("Start", x, y, 0, 1, 0);
-		tableModel = new ComponentTableModel(
-			//@formatter:off
-			new Object[][]
-				{
-					{"ID", new Integer(0)},
-				}
-			//@formatter:on
-		);
+		super("Start", x, y, 0, 1);
+		tableModel = new ComponentTableModel(null);
 	}
 }
 

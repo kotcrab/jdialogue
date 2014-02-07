@@ -33,7 +33,11 @@ public abstract class DComponent
 	
 	private KotcrabText title;
 	
-	private int id; // id of this component, -1 for start, other in order 0,1,2,3,4...
+	/**
+	 * Id of this component, 0 for start, other in order 1,2,3,4...
+	 * Set only when exporting, after exporting it's may be incorrect
+	 */
+	private int id;
 	
 	private int x, y;
 	private int ry; // bottom, left point of background
@@ -47,11 +51,10 @@ public abstract class DComponent
 	
 	private boolean visible;
 	
-	public DComponent(String title, int x, int y, int inputs, int outputs, int id)
+	public DComponent(String title, int x, int y, int inputs, int outputs)
 	{
 		this.x = x;
 		this.y = y;
-		this.id = id;
 		
 		this.title = new KotcrabText(Assets.consolasFont, title, false, 0, 0);
 		this.title.setScale(0.7f);
@@ -342,9 +345,6 @@ public abstract class DComponent
 	public void setId(int id)
 	{
 		this.id = id;
-		Object[][] data = tableModel.data;
-		
-		if(data[0][0].equals("ID")) data[0][1] = new Integer(id);
 	}
 	
 	public int getId()

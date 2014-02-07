@@ -26,15 +26,14 @@ import pl.kotcrab.jdialogue.editor.components.DComponent;
 
 public class ChoiceComponent extends DComponent
 {
-	public ChoiceComponent(int x, int y, int id)
+	public ChoiceComponent(int x, int y)
 	{
-		super("Choice", x, y, 1, 3, id);
+		super("Choice", x, y, 1, 3);
 		
 		tableModel = new ComponentTableModel(
 			//@formatter:off
 			new Object[][]
 					{
-						{"ID", new Integer(id)},
 					    {"Outputs", new Integer(3)},
 					}
 			//@formatter:on

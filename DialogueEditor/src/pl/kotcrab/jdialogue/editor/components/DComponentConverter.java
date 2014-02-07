@@ -61,7 +61,6 @@ public class DComponentConverter implements Converter
 	{
 		DComponent comp = (DComponent) source;
 		
-		
 		if(exportMode)
 		{
 			writer.startNode("id");
@@ -80,17 +79,20 @@ public class DComponentConverter implements Converter
 			
 			Object[][] data = comp.getTableModel().getData();
 			
-			for(int i = 0; i < data.length; i++)
+			if(data != null)
 			{
-				if(data[i][0].equals("ID")) continue;
-				writer.startNode(data[i][0].toString().toLowerCase());
-				writer.setValue(data[i][1].toString());
-				writer.endNode();
+				for(int i = 0; i < data.length; i++)
+				{
+					if(data[i][0].equals("Info")) continue;
+					writer.startNode(data[i][0].toString().toLowerCase());
+					writer.setValue(data[i][1].toString());
+					writer.endNode();
+				}
 			}
 		}
 		else
 		{
-			if(comp.getClass().equals(TextComponent.class)) //probably not needed
+			if(comp.getClass().equals(TextComponent.class)) // probably not needed
 				writer.addAttribute("type", "text");
 			else if(comp.getClass().equals(ChoiceComponent.class))
 				writer.addAttribute("type", "choice");
@@ -136,19 +138,19 @@ public class DComponentConverter implements Converter
 		DComponent comp;
 		
 		if(type.equals("text"))
-			comp = new TextComponent(0, 0, 0);
+			comp = new TextComponent(0, 0);
 		else if(type.equals("choice"))
-			comp = new ChoiceComponent(0, 0, 0);
+			comp = new ChoiceComponent(0, 0);
 		else if(type.equals("relay"))
-			comp = new RelayComponent(0, 0, 0);
+			comp = new RelayComponent(0, 0);
 		else if(type.equals("start"))
 			comp = new StartComponent(0, 0);
 		else if(type.equals("end"))
-			comp = new EndComponent(0, 0, 0);
+			comp = new EndComponent(0, 0);
 		else if(type.equals("callback"))
-			comp = new CallbackComponent(0, 0, 0);
+			comp = new CallbackComponent(0, 0);
 		else if(type.equals("random"))
-			comp = new RandomComponent(0, 0, 0);
+			comp = new RandomComponent(0, 0);
 		else
 			throw new EditorException("Error while loading XML file. Unrecognized component type: " + type); // TODO change to normaln exception from runtime exception
 			

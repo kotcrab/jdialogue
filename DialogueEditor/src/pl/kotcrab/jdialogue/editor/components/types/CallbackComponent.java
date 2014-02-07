@@ -23,9 +23,9 @@ import pl.kotcrab.jdialogue.editor.components.DComponent;
 
 public class CallbackComponent extends DComponent
 {
-	public CallbackComponent(int x, int y, int id)
+	public CallbackComponent(int x, int y)
 	{
-		super("Callback", x, y, 1, 1, id);
+		super("Callback", x, y, 1, 1);
 		tableModel = new ComponentTableModel(
 			//@formatter:off
 			new Object[][]

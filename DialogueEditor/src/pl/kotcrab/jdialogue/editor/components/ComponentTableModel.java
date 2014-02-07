@@ -28,9 +28,19 @@ public class ComponentTableModel extends AbstractTableModel
 	
 	protected Object[][] data = null;
 	
-	public ComponentTableModel(Object[][] data)
+	public ComponentTableModel(Object[][] tableData)
 	{
-		this.data = data;
+		this.data = tableData;
+		
+		if(data == null)
+		{
+			//@formatter:off
+			data = new Object[][]
+					{
+					    {"Info", "This component does not contain any properties"}
+					};
+			//@formatter:on
+		}
 	}
 	
 	@Override
@@ -66,8 +76,6 @@ public class ComponentTableModel extends AbstractTableModel
 	@Override
 	public boolean isCellEditable(int row, int col)
 	{
-		if(getValueAt(row, 0).equals("ID")) return false;
-		
 		if(col == 1)
 			return true;
 		else

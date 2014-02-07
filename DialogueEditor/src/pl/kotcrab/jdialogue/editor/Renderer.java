@@ -88,8 +88,6 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	
 	private boolean disposed = false;
 	
-	private IDManager idManager;
-	
 	private boolean renderDebug = false;
 	private Matrix4 renderDebugMatrix = new Matrix4();
 	private Matrix4 renderInfoTextMatrix = new Matrix4();
@@ -125,8 +123,6 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		
 		shapeRenderer = new ShapeRenderer();
 		batch = new SpriteBatch();
-		
-		idManager = new IDManager();
 		
 		rectangularSelection = new RectangularSelection(new RectangularSelectionListener()
 		{
@@ -330,22 +326,22 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 			switch (componentType)
 			{
 			case CHOICE:
-				componentList.add(new ChoiceComponent(Touch.getX(), Touch.getY(), idManager.getFreeId()));
+				componentList.add(new ChoiceComponent(Touch.getX(), Touch.getY()));
 				break;
 			case RANDOM:
-				componentList.add(new RandomComponent(Touch.getX(), Touch.getY(), idManager.getFreeId()));
+				componentList.add(new RandomComponent(Touch.getX(), Touch.getY()));
 				break;
 			case TEXT:
-				componentList.add(new TextComponent(Touch.getX(), Touch.getY(), idManager.getFreeId()));
+				componentList.add(new TextComponent(Touch.getX(), Touch.getY()));
 				break;
 			case CALLBACK:
-				componentList.add(new CallbackComponent(Touch.getX(), Touch.getY(), idManager.getFreeId()));
+				componentList.add(new CallbackComponent(Touch.getX(), Touch.getY()));
 				break;
 			case END:
-				componentList.add(new EndComponent(Touch.getX(), Touch.getY(), idManager.getFreeId()));
+				componentList.add(new EndComponent(Touch.getX(), Touch.getY()));
 				break;
 			case RELAY:
-				componentList.add(new RelayComponent(Touch.getX(), Touch.getY(), idManager.getFreeId()));
+				componentList.add(new RelayComponent(Touch.getX(), Touch.getY()));
 				break;
 			default:
 				break;
@@ -424,7 +420,6 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		{
 			listener.showSaveDialog();
 		}
-		idManager = new IDManager();
 		this.componentList = componentList;
 		rectangularSelection.setComponentList(componentList); // rectangularselection potrzebuje listy do znajdywania kompponentów
 		selectedComponent = null;
@@ -432,11 +427,6 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		
 		undoList.clear();
 		redoList.clear();
-		
-		for(DComponent comp : componentList) // TODO rezerwowaæ id, czy ustaiwaæ je od nowa, teoretycznie bez znaczenia, ale mo¿na sprawdziæ.
-		{
-			comp.setId(idManager.getFreeId());
-		}
 	}
 	
 	// public void setProject(Project project)
@@ -451,9 +441,6 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 			ArrayList<DComponent> undoComponents = undoList.get(undoList.size() - 1);
 			
 			redoList.add(undoComponents);
-			
-			for(DComponent comp : undoComponents)
-				comp.setId(idManager.getFreeId());
 			
 			componentList.addAll(undoComponents);
 			
@@ -482,7 +469,6 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 			return;
 		}
 		
-		idManager.freeID(comp.getId());
 		listener.changePropertyTableModel(null);
 		comp.detachAll();
 		
@@ -511,7 +497,6 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		
 		for(DComponent comp : compList)
 		{
-			idManager.freeID(comp.getId());
 			comp.detachAllNotOnList(selectedComponentsList);
 		}
 		
@@ -534,12 +519,12 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	{
 		return dirty;
 	}
-
+	
 	public void setDirty(boolean dirty)
 	{
 		this.dirty = dirty;
 	}
-
+	
 	// ==================================================================INPUT============================================================================
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button)
@@ -727,7 +712,6 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 				}
 				
 				comp.detachAllNotOnList(clipboardList);
-				comp.setId(idManager.getFreeId());
 				comp.setX(Touch.getX() + (comp.getX() - x)); // move new component to cursor pos
 				comp.setY(Touch.getY() + (comp.getY() - y));
 			}

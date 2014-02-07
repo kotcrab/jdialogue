@@ -95,8 +95,6 @@ public class Sequence
 		else
 			IOUtils.saveNormal(xstream, new File(exportPath + name + ".xml"), componentList);
 		
-		System.out.println(exportPath + name + ".xml");
-
 		DComponentConverter.exportMode = false;
 		
 		JOptionPane.showMessageDialog(Editor.window, "Finished exporting", "Export", JOptionPane.INFORMATION_MESSAGE);
@@ -105,9 +103,11 @@ public class Sequence
 	
 	private void optimizeIDs()
 	{
+		int id = 0;
 		for(DComponent comp : componentList)
 		{
-			
+			comp.setId(id);
+			id++;
 		}
 	}
 

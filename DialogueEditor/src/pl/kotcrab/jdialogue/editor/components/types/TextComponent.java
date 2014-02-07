@@ -23,14 +23,13 @@ import pl.kotcrab.jdialogue.editor.components.DComponent;
 
 public class TextComponent extends DComponent
 {
-	public TextComponent(int x, int y, int id)
+	public TextComponent(int x, int y)
 	{
-		super("Show Text", x, y, 1, 1, id);
+		super("Show Text", x, y, 1, 1);
 		tableModel = new ComponentTableModel(
 		//@formatter:off
 		new Object[][]
 				{
-					{"ID", new Integer(id)},
 				    {"Text", "Set Text"},
 				    {"Character", "TODO"}
 				}
