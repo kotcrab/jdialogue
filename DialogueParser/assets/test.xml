@@ -1,0 +1,11 @@
+<list>
+  <dStart type="start" id="1">
+    <target0>3</target0>
+  </dStart>
+  <dEnd type="end" id="2"/>
+  <dText type="text" id="3">
+    <target0>2</target0>
+    <text>Hello!</text>
+    <character>TODO</character>
+  </dText>
+</list>

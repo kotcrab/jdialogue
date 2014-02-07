@@ -14,25 +14,9 @@
  * limitations under the License.
  ******************************************************************************/
 
-package pl.kotcrab.jdialogue.loader;
+package pl.kotcrab.jdialogue.parser;
 
-import java.io.File;
-
-import com.badlogic.gdx.files.FileHandle;
-
-public class GdxLoader implements Loader
+public enum MsgType
 {
-	FileHandle file;
-	
-	public GdxLoader(FileHandle file)
-	{
-		this.file = file;
-	}
-	
-	@Override
-	public File getFile()
-	{
-		return new File(file.path());
-	}
-	
+	TEXT, CHOICE, RANDOM, CALLBACK, END, RELAY
 }

@@ -28,8 +28,8 @@ public class JavaLoader implements Loader
 	}
 	
 	@Override
-	public String getPath()
+	public File getFile()
 	{
-		return file.getPath();
+		return file;
 	}
 }

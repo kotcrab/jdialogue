@@ -14,10 +14,11 @@
  * limitations under the License.
  ******************************************************************************/
 
-
 package pl.kotcrab.jdialogue.loader;
+
+import java.io.File;
 
 public interface Loader
 {
-	public String getPath();
+	public File getFile();
 }

@@ -14,25 +14,26 @@
  * limitations under the License.
  ******************************************************************************/
 
-package pl.kotcrab.jdialogue.loader;
+package pl.kotcrab.jdialogue.parser;
 
-import java.io.File;
+import pl.kotcrab.jdialogue.loader.Loader;
 
-import com.badlogic.gdx.files.FileHandle;
-
-public class GdxLoader implements Loader
+public abstract class DialogueParser
 {
-	FileHandle file;
+	public static final int INFINITY = -1;
 	
-	public GdxLoader(FileHandle file)
+	int maxChars;
+	
+	public DialogueParser(Loader projectFile, int maxChars)
 	{
-		this.file = file;
+		this.maxChars = maxChars;
 	}
 	
-	@Override
-	public File getFile()
-	{
-		return new File(file.path());
-	}
+	public abstract String startSequence();
 	
+	public abstract MsgType getNextType();
+	
+	public abstract String getNextMsg();
+	public abstract String getNextCharacterData();
+	public abstract String getNextData();
 }
