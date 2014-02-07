@@ -32,7 +32,7 @@ public class TextComponent extends DComponent
 				{
 					{"ID", new Integer(id)},
 				    {"Text", "Set Text"},
-				    {"Sayer", "TODO"}
+				    {"Character", "TODO"}
 				}
 		//@formatter:on
 		);

@@ -20,9 +20,16 @@ package pl.kotcrab.dialoguelib.editor.project;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.jar.JarOutputStream;
 
+import javax.swing.JOptionPane;
+
+import pl.kotcrab.dialoguelib.editor.Editor;
 import pl.kotcrab.dialoguelib.editor.IOUtils;
+import pl.kotcrab.dialoguelib.editor.components.Connector;
 import pl.kotcrab.dialoguelib.editor.components.DComponent;
+import pl.kotcrab.dialoguelib.editor.components.DComponentConverter;
+import pl.kotcrab.dialoguelib.editor.components.types.EndComponent;
 import pl.kotcrab.dialoguelib.editor.components.types.StartComponent;
 
 import com.thoughtworks.xstream.XStream;
@@ -44,7 +51,7 @@ public class Sequence
 	public Sequence(File file)
 	{
 		this.file = file;
-		name = file.getName().split("\\.")[0]; //because . is reserved for regular expression
+		name = file.getName().split("\\.")[0]; // because . is reserved for regular expression
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -64,6 +71,61 @@ public class Sequence
 			IOUtils.saveNormal(xstream, file, componentList);
 	}
 	
+	public void export(XStream xstream, boolean gzipExport, String exportPath)
+	{
+		DComponentConverter.exportMode = true;
+		
+		if(checkForEnd() == false)
+		{
+			JOptionPane.showMessageDialog(Editor.window, "Could not find 'End' component, please fix errors before exporting", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		if(checkConnectors() == false)
+		{
+			JOptionPane.showMessageDialog(Editor.window, "Some components are not connected, please fix errors before exporting", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		
+		if(gzipExport)
+			IOUtils.saveGzip(xstream, new File(exportPath + name + ".xml"), componentList);
+		else
+			IOUtils.saveNormal(xstream, new File(exportPath + name + ".xml"), componentList);
+		
+		DComponentConverter.exportMode = false;
+		
+		JOptionPane.showMessageDialog(Editor.window, "Finished exporting", "Export", JOptionPane.INFORMATION_MESSAGE);
+
+	}
+	
+	private boolean checkForEnd()
+	{
+		for(DComponent comp : componentList)
+		{
+			if(comp instanceof EndComponent) return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean checkConnectors()
+	{
+		for(DComponent comp : componentList)
+		{
+			Connector[] inputs = comp.getInputs();
+			
+			for(int i = 0; i < inputs.length; i++)
+				if(inputs[i].getTarget() == null) return false;
+			
+			Connector[] outputs = comp.getOutputs();
+			
+			for(int i = 0; i < outputs.length; i++)
+				if(outputs[i].getTarget() == null) return false;
+		}
+		
+		return true;
+	}
+	
 	public ArrayList<DComponent> getComponentList()
 	{
 		return componentList;
@@ -79,4 +141,5 @@ public class Sequence
 	{
 		return name;
 	}
+	
 }

@@ -23,8 +23,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.JButton;
@@ -45,8 +43,6 @@ import pl.kotcrab.dialoguelib.editor.components.DComponentType;
 import pl.kotcrab.dialoguelib.editor.gui.AddComponentMenuItem;
 import pl.kotcrab.dialoguelib.editor.project.Project;
 
-import com.badlogic.gdx.backends.lwjgl.LwjglCanvas;
-
 public class Editor extends JFrame
 {
 	private static final long serialVersionUID = 1L;
@@ -60,8 +56,6 @@ public class Editor extends JFrame
 	private JSplitPane rendererSplitPane;
 	private PropertyTable table;
 
-	private PopupMenu popupMenu;
-	
 	/**
 	 * Create the frame.
 	 */
@@ -108,7 +102,12 @@ public class Editor extends JFrame
 		JPanel buttonsPanel = new JPanel();
 		
 		JButton btnSequences = new JButton("Sequences");
+		JButton btnCharacters = new JButton("Characters");
+		
 		btnSequences.addActionListener(logic.sequencesBtnListner);
+		btnCharacters.addActionListener(logic.charactersBtnListner);
+		
+		buttonsPanel.add(btnCharacters);
 		buttonsPanel.add(btnSequences);
 		
 		propertiesSplitPane.setRightComponent(buttonsPanel);
@@ -129,16 +128,19 @@ public class Editor extends JFrame
 		JButton btnLoad = new JButton("Load");
 		JButton btnUndo = new JButton("Undo");
 		JButton btnRedo = new JButton("Redo");
+		JButton btnRun = new JButton("Run");
 		
-		btnSave.addActionListener(logic.toolbarSaveListener);
+		btnSave.addActionListener(logic.saveButtonListener);
 		btnLoad.addActionListener(logic.toolbarLoadListener);
 		btnUndo.addActionListener(logic.toolbarUndoListener);
 		btnRedo.addActionListener(logic.toolbarRedoListener);
+		btnRun.addActionListener(null); //TODO setup listeners
 		
 		toolBar.add(btnSave);
 		toolBar.add(btnLoad);
 		toolBar.add(btnUndo);
 		toolBar.add(btnRedo);
+		toolBar.add(btnRun);
 	}
 	
 	private void createMenuBar()
@@ -153,13 +155,18 @@ public class Editor extends JFrame
 		JMenuItem menuNewProject = new JMenuItem("New Project");
 		JMenuItem menuLoadProject = new JMenuItem("Load Project");
 		JMenuItem menuSaveProject = new JMenuItem("Save Project");
+		JMenuItem menuExportProject = new JMenuItem("Export Project");
 		JMenuItem menuExit = new JMenuItem("Exit");
 		
 		menuNewProject.addActionListener(logic.menubarNewProjectListener);
+		menuSaveProject.addActionListener(logic.saveButtonListener);
+		menuExportProject.addActionListener(logic.menubarExportProjectListener);
 		
 		fileMenu.add(menuNewProject);
 		fileMenu.add(menuLoadProject);
 		fileMenu.add(menuSaveProject);
+		fileMenu.add(new JSeparator());
+		fileMenu.add(menuExportProject);
 		fileMenu.add(new JSeparator());
 		fileMenu.add(menuExit);
 		
@@ -208,7 +215,6 @@ public class Editor extends JFrame
 		popupMenu.add(mAddEnd);
 		
 		logic.popupMenu = popupMenu;
-		this.popupMenu = popupMenu;
 	}
 	
 	public void loadProject(File projectConfigFile)

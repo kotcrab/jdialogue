@@ -35,6 +35,8 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 public class DComponentConverter implements Converter
 {
+	public static boolean exportMode = false;
+	
 	public DComponentConverter()
 	{
 	}
@@ -79,27 +81,41 @@ public class DComponentConverter implements Converter
 		else
 			writer.addAttribute("type", "unknown");
 		
-		writer.startNode("x");
-		writer.setValue(Integer.toString(comp.getX()));
-		writer.endNode();
-		
-		writer.startNode("y");
-		writer.setValue(Integer.toString(comp.getY()));
-		writer.endNode();
-		
-		writer.startNode("outputs");
-		context.convertAnother(comp.getOutputs());
-		writer.endNode();
-		
-		writer.startNode("inputs");
-		context.convertAnother(comp.getInputs());
-		writer.endNode();
-		
-		writer.startNode("data");
-		context.convertAnother(comp.getTableModel().getData());
-		writer.endNode();
-		
-		// writer.startNode(")
+		if(exportMode)
+		{
+			writer.addAttribute("id", Integer.toString(comp.getId()));
+			
+			Connector[] outputs = comp.getOutputs();
+			
+			for(int i = 0; i < outputs.length; i++)
+			{
+				writer.startNode("target" + i);
+				writer.setValue(Integer.toString(outputs[i].getTarget().getParrentComponent().getId()));
+				writer.endNode();
+			}
+		}
+		else
+		{
+			writer.startNode("x");
+			writer.setValue(Integer.toString(comp.getX()));
+			writer.endNode();
+			
+			writer.startNode("y");
+			writer.setValue(Integer.toString(comp.getY()));
+			writer.endNode();
+			
+			writer.startNode("outputs");
+			context.convertAnother(comp.getOutputs());
+			writer.endNode();
+			
+			writer.startNode("inputs");
+			context.convertAnother(comp.getInputs());
+			writer.endNode();
+			
+			writer.startNode("data");
+			context.convertAnother(comp.getTableModel().getData());
+			writer.endNode();
+		}
 	}
 	
 	@Override
@@ -123,7 +139,7 @@ public class DComponentConverter implements Converter
 		else if(type.equals("random"))
 			comp = new RandomComponent(0, 0, 0);
 		else
-			throw new EditorException("Error while loading XML file. Unrecognized component type: " + type); //TODO change to normaln exception from runtime exception
+			throw new EditorException("Error while loading XML file. Unrecognized component type: " + type); // TODO change to normaln exception from runtime exception
 			
 		reader.moveDown();
 		int x = Integer.valueOf(reader.getValue());

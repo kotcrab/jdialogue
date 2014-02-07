@@ -34,10 +34,11 @@ public class ChoiceComponent extends DComponent
 			//@formatter:off
 			new Object[][]
 					{
+						{"ID", new Integer(id)},
 					    {"Outputs", new Integer(3)},
 					}
 			//@formatter:on
-			);
+		);
 		
 		setListeners();
 	}

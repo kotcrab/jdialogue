@@ -26,6 +26,7 @@ import pl.kotcrab.dialoguelib.editor.components.types.RelayComponent;
 import pl.kotcrab.dialoguelib.editor.components.types.StartComponent;
 import pl.kotcrab.dialoguelib.editor.components.types.TextComponent;
 import pl.kotcrab.dialoguelib.editor.gui.AddComponentMenuItem;
+import pl.kotcrab.dialoguelib.editor.project.CharacterConfigDialog;
 import pl.kotcrab.dialoguelib.editor.project.NewProjectDialog;
 import pl.kotcrab.dialoguelib.editor.project.NewSequenceDialog;
 import pl.kotcrab.dialoguelib.editor.project.Project;
@@ -54,14 +55,17 @@ public class EditorLogic
 	public ActionListener popupMenuListener;
 	
 	public ActionListener sequencesBtnListner;
+	public ActionListener charactersBtnListner;
 	
 	public ActionListener menubarResetCameraListener;
 	public ActionListener menubarRenderCurvesListener;
 	public ActionListener menubarRenderDebugListener;
 	
 	public ActionListener menubarNewProjectListener;
+	public ActionListener menubarExportProjectListener;
 	
-	public ActionListener toolbarSaveListener;
+	public ActionListener saveButtonListener;
+	
 	public ActionListener toolbarLoadListener;
 	public ActionListener toolbarUndoListener;
 	public ActionListener toolbarRedoListener;
@@ -122,6 +126,26 @@ public class EditorLogic
 			}
 		};
 		
+		charactersBtnListner = new ActionListener()
+		{
+			
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				EventQueue.invokeLater(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						if(project != null)
+							new CharacterConfigDialog(Editor.window, project);
+						else
+							JOptionPane.showMessageDialog(Editor.window, "Create or load project to edit characters", "Error", JOptionPane.ERROR_MESSAGE);
+					}
+				});				
+			}
+		};
+		
 		prepareToolbar();
 		prepareMenuBarRenderer();
 		prepareMenuBarFile();
@@ -129,12 +153,18 @@ public class EditorLogic
 	
 	private void prepareToolbar()
 	{
-		toolbarSaveListener = new ActionListener()
+		saveButtonListener = new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				project.save(xstream);
-				renderer.setDirty(false);
+				if(project != null)
+				{
+					project.save(xstream);
+					renderer.setDirty(false);
+				}
+				else
+					JOptionPane.showMessageDialog(Editor.window, "Create or load project before saving", "Error", JOptionPane.ERROR_MESSAGE);
+				
 			}
 		};
 		
@@ -207,6 +237,21 @@ public class EditorLogic
 						new NewProjectDialog(Editor.window);
 					}
 				});
+			}
+		};
+		
+		menubarExportProjectListener = new ActionListener()
+		{
+			
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				if(project != null)
+				{
+					project.exportProject(xstream);
+				}
+				else
+					JOptionPane.showMessageDialog(Editor.window, "Create or load project before exporting", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		};
 	}

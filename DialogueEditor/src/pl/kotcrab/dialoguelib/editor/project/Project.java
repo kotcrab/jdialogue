@@ -62,7 +62,11 @@ public class Project
 	private void prepareProject()
 	{
 		if(mainDir.endsWith(File.separator) == false) mainDir += File.separator;
+		if(customOut.endsWith(File.separator) == false) customOut  += File.separator;
+		
 		configFile = new File(mainDir + "project.xml");
+		
+		if(customOut == null) new File(mainDir + "out").mkdir();
 	}
 	
 	public void setCustomOut(String projectOut)
@@ -79,6 +83,10 @@ public class Project
 		sequences = new ArrayList<Sequence>();
 		configFile = projectConfigFile;
 		mainDir = configFile.getParent();
+		if(mainDir.endsWith(File.separator) == false) mainDir += File.separator;
+		
+		if(customOut != null && customOut.equals(""))
+			customOut = null;
 		
 		refreshSequences();
 		
@@ -101,7 +109,7 @@ public class Project
 		File[] list = new File(mainDir).listFiles();
 		for(int i = 0; i < list.length; i++)
 		{
-			if(list[i].getName().equals("project.xml")) continue;
+			if(list[i].getName().equals("project.xml") || list[i].getName().equals("out") ) continue;
 			
 			sequences.add(new Sequence(list[i]));
 		}
@@ -129,11 +137,17 @@ public class Project
 	{
 		return activeSequence;
 	}
-
+	
 	public ArrayList<Sequence> getSequences()
 	{
 		return sequences;
 	}
 	
-	
+	public void exportProject(XStream xstream) // TODO export all sequencees and project file
+	{
+		if(customOut != null)
+			activeSequence.export(xstream, gzipExport, customOut);
+		else
+			activeSequence.export(xstream, gzipExport, mainDir + "out" + File.separator);
+	}
 }
