@@ -14,7 +14,23 @@
  * limitations under the License.
  ******************************************************************************/
 
-public abstract class License
+package pl.kotcrab.jdialogue.loader;
+
+import com.badlogic.gdx.files.FileHandle;
+
+public class GdxLoader implements Loader
 {
+	FileHandle file;
+	
+	public GdxLoader(FileHandle file)
+	{
+		this.file = file;
+	}
+	
+	@Override
+	public String getPath()
+	{
+		return file.path();
+	}
 	
 }
