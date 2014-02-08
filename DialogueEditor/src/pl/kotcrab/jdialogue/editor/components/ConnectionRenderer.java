@@ -35,11 +35,11 @@ public class ConnectionRenderer
 	{
 		rendered = 0;
 		
-		Connector[] inputs = comp.getOutputs();
+		Connector[] outputs = comp.getOutputs();
 		
-		for(int i = 0; i < inputs.length; i++)
+		for(int i = 0; i < outputs.length; i++)
 		{
-			Connector con = inputs[i];
+			Connector con = outputs[i];
 			Connector target = con.getTarget();
 			
 			if(target == null) continue;
@@ -51,9 +51,15 @@ public class ConnectionRenderer
 			
 			float startX;
 			if(x2 > x1)
+			{
 				startX = x1;
+				shapeRenderer.setColor(Color.BLACK);
+			}
 			else
+			{
+				shapeRenderer.setColor(Color.BLUE);
 				startX = x2;
+			}
 			
 			float startY;
 			if(y2 > y1)
@@ -61,7 +67,7 @@ public class ConnectionRenderer
 			else
 				startY = y2;
 			
-			if(cameraRect.overlaps(new Rectangle(startX, startY, Math.abs(x2 - x1), Math.abs(y2 - y1))) == false) continue;
+			if(cameraRect.overlaps(new Rectangle(startX, startY, Math.abs(x2 - x1), Math.abs(y2 - y1))) == false) return rendered;
 			
 			float d = 0;
 			
@@ -144,5 +150,5 @@ public class ConnectionRenderer
 	{
 		this.renderCurves = renderCurves;
 	}
-
+	
 }
