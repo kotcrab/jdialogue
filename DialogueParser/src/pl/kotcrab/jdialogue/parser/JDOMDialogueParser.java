@@ -26,10 +26,10 @@ public class JDOMDialogueParser extends DialogueParser
 			SAXBuilder builder = new SAXBuilder();
 			document = builder.build(projectFile.getFile());
 			Element rootNode = document.getRootElement();
-
+			
 			elementList = rootNode.getChildren();
 			
-			Element startNode =  rootNode.getChildren("dStart").get(0);
+			Element startNode = rootNode.getChildren("dStart").get(0);
 			target = Integer.valueOf(startNode.getChildText("target0"));
 		}
 		catch (JDOMException | IOException e)
@@ -37,7 +37,7 @@ public class JDOMDialogueParser extends DialogueParser
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
- 
+		
 	}
 	
 	@Override
@@ -51,25 +51,43 @@ public class JDOMDialogueParser extends DialogueParser
 	{
 		currentElement = elementList.get(target);
 		
-		if(currentElement.getName().equals("dText"))
-			return ComponentType.TEXT;
+		if(currentElement.getName().equals("dText")) return ComponentType.TEXT;
 		
-		if(currentElement.getName().equals("dEnd"))
-			return ComponentType.END;
+		if(currentElement.getName().equals("dEnd")) return ComponentType.END;
+		
+		if(currentElement.getName().equals("dChoice")) return ComponentType.CHOICE;
 		
 		return null;
 	}
 	
 	@Override
-	public void nextComponent()
+	public void nextComponent(int target)
 	{
-		target = Integer.valueOf(currentElement.getChildText("target0"));
+		this.target = Integer.valueOf(currentElement.getChildText("target" + target));
 	}
 	
 	@Override
-	public String getNextMsg() //TODO implement maxChars
+	public void nextComponent()
+	{
+		nextComponent(0);
+	}
+	
+	@Override
+	public String getNextMsg() // TODO implement maxChars
 	{
 		return currentElement.getChildText("text");
+	}
+	
+	@Override
+	public String[] getChoiceData()
+	{
+		List<Element> choiceList = currentElement.getChildren("choiceData").get(0).getChildren("string");
+		String[] choiceData = new String[choiceList.size()];
+		
+		for(int i = 0; i < choiceData.length; i++)
+			choiceData[i] = choiceList.get(i).getText();
+		
+		return choiceData;
 	}
 	
 	@Override
@@ -85,13 +103,12 @@ public class JDOMDialogueParser extends DialogueParser
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 	@Override
 	public boolean isCurrentMsgFinished()
 	{
 		// TODO Auto-generated method stub
 		return false;
 	}
-
 	
 }

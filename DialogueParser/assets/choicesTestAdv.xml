@@ -1,0 +1,75 @@
+<list>
+  <dStart>
+    <id>0</id>
+    <target0>10</target0>
+  </dStart>
+  <dEnd>
+    <id>1</id>
+  </dEnd>
+  <dChoice>
+    <id>2</id>
+    <target0>3</target0>
+    <target1>4</target1>
+    <target2>5</target2>
+    <text>Wbyierz opcje:</text>
+    <choiceData>
+      <string>Masz coś na sprzedaż?</string>
+      <string>Powiedz o sobie coś wiecej.</string>
+      <string>Musze lecieć.</string>
+    </choiceData>
+  </dChoice>
+  <dText>
+    <id>3</id>
+    <target0>2</target0>
+    <text>tu powinnien być callback ale jeszcze nie działa</text>
+    <character>TODO</character>
+  </dText>
+  <dText>
+    <id>4</id>
+    <target0>6</target0>
+    <text>Co chcesz wiedzieć</text>
+    <character>TODO</character>
+  </dText>
+  <dText>
+    <id>5</id>
+    <target0>1</target0>
+    <text>Narazie</text>
+    <character>TODO</character>
+  </dText>
+  <dChoice>
+    <id>6</id>
+    <target0>7</target0>
+    <target1>8</target1>
+    <target2>9</target2>
+    <text>Wbyierz opcje:</text>
+    <choiceData>
+      <string>Czy wiesz coś o czymkolwiek?</string>
+      <string>Skad jestes?</string>
+      <string>Pogadajmy o czymś innym</string>
+    </choiceData>
+  </dChoice>
+  <dText>
+    <id>7</id>
+    <target0>6</target0>
+    <text>Nie, spytaj sie kogos innego</text>
+    <character>TODO</character>
+  </dText>
+  <dText>
+    <id>8</id>
+    <target0>6</target0>
+    <text>Pochodze z tego miasta</text>
+    <character>TODO</character>
+  </dText>
+  <dText>
+    <id>9</id>
+    <target0>2</target0>
+    <text>Ok</text>
+    <character>TODO</character>
+  </dText>
+  <dText>
+    <id>10</id>
+    <target0>2</target0>
+    <text>Witaj podrózniku</text>
+    <character>TODO</character>
+  </dText>
+</list>

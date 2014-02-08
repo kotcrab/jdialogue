@@ -1,0 +1,40 @@
+<list>
+  <dStart>
+    <id>0</id>
+    <target0>2</target0>
+  </dStart>
+  <dEnd>
+    <id>1</id>
+  </dEnd>
+  <dChoice>
+    <id>2</id>
+    <target0>3</target0>
+    <target1>4</target1>
+    <target2>5</target2>
+    <outputs>3</outputs>
+    <text>Super mega test, wybierz sobie opcje:</text>
+    <choiceData>
+      <string>Wybierz mnie!</string>
+      <string>Nie mnie!</string>
+      <string>Mnie mnie mnie!</string>
+    </choiceData>
+  </dChoice>
+  <dText>
+    <id>3</id>
+    <target0>1</target0>
+    <text>Wybrales opcje 1</text>
+    <character>TODO</character>
+  </dText>
+  <dText>
+    <id>4</id>
+    <target0>1</target0>
+    <text>Wybrales opcje 2</text>
+    <character>TODO</character>
+  </dText>
+  <dText>
+    <id>5</id>
+    <target0>1</target0>
+    <text>Wybrales opcje 3</text>
+    <character>TODO</character>
+  </dText>
+</list>
