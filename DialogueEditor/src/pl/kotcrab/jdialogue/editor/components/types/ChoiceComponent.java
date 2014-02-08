@@ -21,20 +21,26 @@ package pl.kotcrab.jdialogue.editor.components.types;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
+import pl.kotcrab.jdialogue.editor.components.ChoiceComponentChoices;
 import pl.kotcrab.jdialogue.editor.components.ComponentTableModel;
 import pl.kotcrab.jdialogue.editor.components.DComponent;
 
 public class ChoiceComponent extends DComponent
 {
+	private ChoiceComponentChoices choices;
+	
 	public ChoiceComponent(int x, int y)
 	{
 		super("Choice", x, y, 1, 3);
 		
+		choices = new ChoiceComponentChoices(3);
 		tableModel = new ComponentTableModel(
-			//@formatter:off
+//@formatter:off
 			new Object[][]
 					{
 					    {"Outputs", new Integer(3)},
+					    {"Text", "Set Text"},
+					    {"Choices text", choices},
 					}
 			//@formatter:on
 		);
@@ -50,8 +56,24 @@ public class ChoiceComponent extends DComponent
 			@Override
 			public void tableChanged(TableModelEvent e)
 			{
-				resize(getInputs().length, (int) tableModel.getValueAt(0, 1));
+				if(e.getFirstRow() == 0 && e.getLastRow() == 0)
+				{
+					resize(getInputs().length, (int) tableModel.getValueAt(0, 1));
+					choices.resize(getOutputs().length);
+					tableModel.fireTableRowsUpdated(3, 3);
+				}
 			}
 		});
 	}
+	
+	public ChoiceComponentChoices getChoices()
+	{
+		return choices;
+	}
+	
+	public void setChoices(ChoiceComponentChoices choices)
+	{
+		this.choices = choices;
+	}
+	
 }

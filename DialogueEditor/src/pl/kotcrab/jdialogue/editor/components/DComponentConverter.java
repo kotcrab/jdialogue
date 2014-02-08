@@ -84,10 +84,20 @@ public class DComponentConverter implements Converter
 				for(int i = 0; i < data.length; i++)
 				{
 					if(data[i][0].equals("Info")) continue;
+					if(data[i][0].equals("Choices text")) continue;
+					
 					writer.startNode(data[i][0].toString().toLowerCase());
 					writer.setValue(data[i][1].toString());
 					writer.endNode();
 				}
+			}
+			
+			if(comp instanceof ChoiceComponent)
+			{
+				ChoiceComponent choiceComp = (ChoiceComponent) comp;
+				writer.startNode("choiceData");
+				context.convertAnother(choiceComp.getChoices().getChoicesTable());
+				writer.endNode();
 			}
 		}
 		else
@@ -128,6 +138,14 @@ public class DComponentConverter implements Converter
 			writer.startNode("data");
 			context.convertAnother(comp.getTableModel().getData());
 			writer.endNode();
+			
+			if(comp instanceof ChoiceComponent)
+			{
+				ChoiceComponent choiceComp = (ChoiceComponent) comp;
+				writer.startNode("choicesData");
+				context.convertAnother(choiceComp.getChoices());
+				writer.endNode();
+			}
 		}
 	}
 	
@@ -178,6 +196,14 @@ public class DComponentConverter implements Converter
 		Object[][] data = (Object[][]) context.convertAnother(comp, Object[][].class);
 		comp.setTableModelData(data);
 		reader.moveUp();
+		
+		if(comp instanceof ChoiceComponent)
+		{
+			ChoiceComponent choiceComp = (ChoiceComponent) comp;
+			reader.moveDown();
+			choiceComp.setChoices((ChoiceComponentChoices) context.convertAnother(comp, ChoiceComponentChoices.class));
+			reader.moveUp();
+		}
 		
 		comp.setup();
 		

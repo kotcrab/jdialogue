@@ -26,7 +26,6 @@ import pl.kotcrab.jdialogue.editor.components.ConnectionRenderer;
 import pl.kotcrab.jdialogue.editor.components.Connector;
 import pl.kotcrab.jdialogue.editor.components.DComponent;
 import pl.kotcrab.jdialogue.editor.components.DComponentType;
-import pl.kotcrab.jdialogue.editor.components.IDManager;
 import pl.kotcrab.jdialogue.editor.components.types.CallbackComponent;
 import pl.kotcrab.jdialogue.editor.components.types.ChoiceComponent;
 import pl.kotcrab.jdialogue.editor.components.types.EndComponent;

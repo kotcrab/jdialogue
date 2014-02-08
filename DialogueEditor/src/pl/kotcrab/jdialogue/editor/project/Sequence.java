@@ -20,8 +20,6 @@ package pl.kotcrab.jdialogue.editor.project;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.jar.JarOutputStream;
-
 import javax.swing.JOptionPane;
 
 import pl.kotcrab.jdialogue.editor.Editor;
