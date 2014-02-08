@@ -1,5 +1,6 @@
 package pl.kotcrab.jdialogue.renderer;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import pl.kotcrab.jdialogue.parser.ComponentType;
@@ -31,40 +32,53 @@ public class ConsoleRenderer implements DialogueRenderer
 			
 			if(nextType == ComponentType.TEXT)
 			{
-				print(parser.getNextMsg());
+				println(parser.getNextMsg());
 				parser.nextComponent();
 			}
 			
 			if(nextType == ComponentType.CHOICE)
 			{
-				print(parser.getNextMsg());
+				println("===" + parser.getNextMsg() + "===");
 				
 				String[] choices = parser.getChoiceData();
 				
 				for(int i = 0; i < choices.length; i++)
 				{
-					print(i + 1 + ". " + choices[i]);
+					println(i + 1 + ". " + choices[i]);
 				}
 				
-				int chosen;
+				print("Option: ");
+				int chosen = -1;
 				do
 				{
-					chosen = scanner.nextInt() - 1;
+					try
+					{
+						chosen = scanner.nextInt() - 1;
+					}
+					catch (InputMismatchException e)
+					{
+						scanner.nextLine();
+					}
 					
-					if(chosen >= choices.length || chosen < 0)
-						print("Option not found, try again");
+					if(chosen >= choices.length || chosen < 0) println("Option not found, try again");
 					
 				} while (chosen >= choices.length || chosen < 0);
 				
 				parser.nextComponent(chosen);
+				println("====================");
 			}
 		} while (nextType != ComponentType.END);
 		
 		scanner.close();
 	}
 	
-	private void print(String line)
+	private void println(String line)
 	{
 		System.out.println(line);
+	}
+	
+	private void print(String text)
+	{
+		System.out.print(text);
 	}
 }
