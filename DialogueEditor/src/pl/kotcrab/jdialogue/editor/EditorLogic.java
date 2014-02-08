@@ -30,6 +30,8 @@ import pl.kotcrab.jdialogue.editor.project.CharacterConfigDialog;
 import pl.kotcrab.jdialogue.editor.project.NewProjectDialog;
 import pl.kotcrab.jdialogue.editor.project.NewSequenceDialog;
 import pl.kotcrab.jdialogue.editor.project.Project;
+import pl.kotcrab.jdialogue.editor.project.ProjectCallback;
+import pl.kotcrab.jdialogue.editor.project.Sequence;
 import pl.kotcrab.jdialogue.editor.project.SequenceSelectionDialog;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglCanvas;
@@ -69,6 +71,8 @@ public class EditorLogic
 	public ActionListener toolbarLoadListener;
 	public ActionListener toolbarUndoListener;
 	public ActionListener toolbarRedoListener;
+	
+	public ProjectCallback projectCallback;
 	
 	public EditorLogic(Editor window)
 	{
@@ -142,7 +146,16 @@ public class EditorLogic
 						else
 							JOptionPane.showMessageDialog(Editor.window, "Create or load project to edit characters", "Error", JOptionPane.ERROR_MESSAGE);
 					}
-				});				
+				});
+			}
+		};
+		
+		projectCallback = new ProjectCallback()
+		{
+			@Override
+			public void sequenceChanged(Sequence newSequence)
+			{
+				renderer.setComponentList(newSequence.getComponentList());
 			}
 		};
 		
@@ -312,6 +325,7 @@ public class EditorLogic
 		{
 			BufferedReader reader = new BufferedReader(new FileReader(projectConfigFile));
 			project = (Project) xstream.fromXML(reader);
+			project.setListener(projectCallback);
 			reader.close();
 		}
 		catch (IOException e1)
@@ -341,6 +355,7 @@ public class EditorLogic
 		
 		project.newProject();
 		project.save(xstream);
+		project.setListener(projectCallback);
 		
 		renderer.setComponentList(project.getActiveSequence().getComponentList());
 	}
@@ -350,6 +365,10 @@ public class EditorLogic
 		int n = JOptionPane.showConfirmDialog(window, "Project or sequence has been modified. Save changes?", "Save", JOptionPane.YES_NO_OPTION);
 		
 		if(n == JOptionPane.CLOSED_OPTION || n == JOptionPane.NO_OPTION) return;
-		if(n == JOptionPane.YES_OPTION) project.save(xstream);
+		if(n == JOptionPane.YES_OPTION)
+		{
+			renderer.setDirty(false);
+			project.save(xstream);
+		}
 	}
 }

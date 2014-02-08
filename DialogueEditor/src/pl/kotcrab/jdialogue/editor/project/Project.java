@@ -48,6 +48,9 @@ public class Project
 	
 	private String activeSequenceName = null;
 	
+	@XStreamOmitField
+	private ProjectCallback listener;
+	
 	public Project(String projectName, String projectMainDir, boolean gzipProject, boolean gzipExport)
 	{
 		name = projectName;
@@ -57,6 +60,11 @@ public class Project
 		this.gzipExport = gzipExport;
 		
 		prepareProject();
+	}
+	
+	public void setListener(ProjectCallback listener)
+	{
+		this.listener = listener;
 	}
 	
 	private void prepareProject()
@@ -126,8 +134,25 @@ public class Project
 	public void newSequence(String name, boolean setAsActive)
 	{
 		sequences.add(new Sequence(mainDir + name + ".xml", name));
-		activeSequence = sequences.get(sequences.size() - 1);
-		activeSequenceName = activeSequence.getName();
+
+		if(setAsActive)
+		{
+			activeSequence = sequences.get(sequences.size() - 1);
+			activeSequenceName = activeSequence.getName();
+		}
+	}
+	
+	public void switchActiveSequence(String name)
+	{
+		for(Sequence seq : sequences)
+		{
+			if(seq.getName().equals(name))
+			{
+				activeSequence = seq;
+				activeSequenceName = seq.getName();
+				listener.sequenceChanged(activeSequence);
+			}
+		}
 	}
 	
 	public Sequence getActiveSequence()

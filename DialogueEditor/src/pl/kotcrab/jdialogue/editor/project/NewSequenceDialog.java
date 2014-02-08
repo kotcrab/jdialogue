@@ -26,9 +26,12 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
+import pl.kotcrab.jdialogue.editor.Editor;
 
 public class NewSequenceDialog extends JDialog
 {
@@ -43,7 +46,7 @@ public class NewSequenceDialog extends JDialog
 	public NewSequenceDialog(Window parrent, final Project project, boolean cancelable)
 	{
 		super(parrent, ModalityType.APPLICATION_MODAL);
-		//super(parrent, true);
+		// super(parrent, true);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		setTitle("New sequence");
 		setResizable(false);
@@ -62,6 +65,15 @@ public class NewSequenceDialog extends JDialog
 		{
 			public void actionPerformed(ActionEvent e)
 			{
+				for(Sequence seq : project.getSequences())
+				{
+					if(seq.getName().equals(textName.getText()))
+					{
+						JOptionPane.showMessageDialog(Editor.window, "Sequences with this name already exist, pick a diffrent name!", "Error", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+				}
+				
 				project.newSequence(textName.getText(), true);
 				dispose();
 			}

@@ -42,6 +42,10 @@ public class SequenceSelectionDialog extends JDialog
 	private static final long serialVersionUID = 1L;
 	private SequenceSelectionDialog instance;
 	private final JPanel contentPanel = new JPanel();
+	
+	private Project project;
+	
+	JList<Sequence> list;
 	/**
 	 * Create the dialog.
 	 */
@@ -49,6 +53,7 @@ public class SequenceSelectionDialog extends JDialog
 	{
 		super(parrent, true);
 		instance = this;
+		this.project = project;
 		setTitle("Sequences");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(parrent.getX() + (parrent.getWidth() / 2) - (450 / 2), parrent.getY() + (parrent.getHeight() / 2) - (300 / 2), 450, 300);
@@ -57,12 +62,10 @@ public class SequenceSelectionDialog extends JDialog
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BorderLayout(0, 0));
 		{
-			DefaultListModel<Sequence> listModel = new DefaultListModel<Sequence>();
-			ArrayList<Sequence> sequences = project.getSequences();
-			for(Sequence seq : sequences)
-				listModel.addElement(seq);
+			list = new JList<Sequence>();
 			
-			JList<Sequence> list = new JList<Sequence>(listModel);
+			refreshList();
+			
 			list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 			list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 			JScrollPane listScroller = new JScrollPane(list);
@@ -84,6 +87,7 @@ public class SequenceSelectionDialog extends JDialog
 					public void actionPerformed(ActionEvent e)
 					{
 						new NewSequenceDialog(instance, project, true);
+						refreshList();
 					}
 				});
 				buttonPane.add(btnCreateNew);
@@ -94,9 +98,19 @@ public class SequenceSelectionDialog extends JDialog
 				{
 					public void actionPerformed(ActionEvent e)
 					{
-						// TODO switch seq
+						setVisible(false);
+						project.switchActiveSequence(list.getSelectedValue().getName());
+						dispose();
 					}
 				});
+				{
+					JButton btnNewButton_1 = new JButton("Rename");
+					buttonPane.add(btnNewButton_1);
+				}
+				{
+					JButton btnNewButton = new JButton("Delete");
+					buttonPane.add(btnNewButton);
+				}
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
@@ -119,4 +133,13 @@ public class SequenceSelectionDialog extends JDialog
 		setVisible(true);
 	}
 	
+	private void refreshList()
+	{
+		DefaultListModel<Sequence> listModel = new DefaultListModel<Sequence>();
+		ArrayList<Sequence> sequences = project.getSequences();
+		for(Sequence seq : sequences)
+			listModel.addElement(seq);
+		
+		list.setModel(listModel);
+	}
 }
