@@ -26,6 +26,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -38,7 +39,7 @@ public class IOUtils
 		Object result = null;
 		try
 		{
-			BufferedReader reader = new BufferedReader(new FileReader(file));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
 			result = xstream.fromXML(reader);
 			reader.close();
 		}
@@ -57,7 +58,7 @@ public class IOUtils
 		try
 		{
 			GZIPInputStream zIn = new GZIPInputStream(new FileInputStream(file));
-			BufferedReader reader = new BufferedReader(new InputStreamReader(zIn));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(zIn, "UTF-8"));
 			result = xstream.fromXML(reader);
 			reader.close();
 			zIn.close();
