@@ -79,7 +79,7 @@ public class ChoicesEditDialog extends JDialog
 			contentPanel.add(scrollPane);
 		}
 		{
-			JLabel lblSeq1 = new JLabel("Choices:");
+			JLabel lblSeq1 = new JLabel("Choices                                                             (make sure to hit Enter after editing field)");
 			contentPanel.add(lblSeq1, BorderLayout.NORTH);
 		}
 		{
