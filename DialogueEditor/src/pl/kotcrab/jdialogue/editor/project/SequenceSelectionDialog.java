@@ -29,6 +29,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
@@ -49,7 +50,7 @@ public class SequenceSelectionDialog extends JDialog
 	/**
 	 * Create the dialog.
 	 */
-	public SequenceSelectionDialog(Editor parrent, final Project project)
+	public SequenceSelectionDialog(final Editor parrent, final Project project)
 	{
 		super(parrent, true);
 		instance = this;
@@ -98,6 +99,12 @@ public class SequenceSelectionDialog extends JDialog
 				{
 					public void actionPerformed(ActionEvent e)
 					{
+						if(list.getSelectedValue() == null)
+						{
+							JOptionPane.showMessageDialog(parrent, "Please select sequence", "Error", JOptionPane.ERROR_MESSAGE);
+							return;
+						}
+						
 						setVisible(false);
 						project.switchActiveSequence(list.getSelectedValue().getName());
 						dispose();

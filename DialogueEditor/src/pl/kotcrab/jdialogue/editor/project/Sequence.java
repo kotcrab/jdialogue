@@ -31,6 +31,7 @@ import pl.kotcrab.jdialogue.editor.components.types.EndComponent;
 import pl.kotcrab.jdialogue.editor.components.types.StartComponent;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 public class Sequence
 {
@@ -39,11 +40,17 @@ public class Sequence
 	
 	private ArrayList<DComponent> componentList = new ArrayList<DComponent>();
 	
+	@XStreamOmitField
+	private boolean loaded = false;
+	
+	private boolean saved = false;
+	
 	public Sequence(String path, String name)
 	{
 		file = new File(path);
 		this.name = name;
 		componentList.add(new StartComponent(200, 200));
+		loaded = true;
 	}
 	
 	public Sequence(File file)
@@ -55,24 +62,29 @@ public class Sequence
 	@SuppressWarnings("unchecked")
 	public void load(XStream xstream, boolean gzip)
 	{
-		if(gzip)
-			componentList = (ArrayList<DComponent>) IOUtils.loadGzip(xstream, file);
-		else
-			componentList = (ArrayList<DComponent>) IOUtils.loadNormal(xstream, file);
+		if(loaded == false)
+		{
+			loaded = true;
+			
+			if(gzip)
+				componentList = (ArrayList<DComponent>) IOUtils.loadGzip(xstream, file);
+			else
+				componentList = (ArrayList<DComponent>) IOUtils.loadNormal(xstream, file);
+		}
 	}
 	
 	public void save(XStream xstream, boolean gzip)
 	{
+		saved = true;
 		if(gzip)
 			IOUtils.saveGzip(xstream, file, componentList);
 		else
 			IOUtils.saveNormal(xstream, file, componentList);
 	}
 	
-	public void export(XStream xstream, boolean gzipExport, String exportPath) //TODO organize components list by id
+	public void export(XStream xstream, boolean gzipExport, String exportPath) // TODO organize components list by id
 	{
 		DComponentConverter.exportMode = true;
-		
 		
 		if(checkForEnd() == false)
 		{
@@ -96,7 +108,7 @@ public class Sequence
 		DComponentConverter.exportMode = false;
 		
 		JOptionPane.showMessageDialog(Editor.window, "Finished exporting", "Export", JOptionPane.INFORMATION_MESSAGE);
-
+		
 	}
 	
 	private void optimizeIDs()
@@ -108,7 +120,7 @@ public class Sequence
 			id++;
 		}
 	}
-
+	
 	private boolean checkForEnd()
 	{
 		for(DComponent comp : componentList)
@@ -151,6 +163,21 @@ public class Sequence
 	public String toString()
 	{
 		return name;
+	}
+	
+	public boolean isSaved()
+	{
+		return saved;
+	}
+	
+	public void setSaved(boolean saved)
+	{
+		this.saved = saved;
+	}
+	
+	public boolean isLoaded()
+	{
+		return loaded;
 	}
 	
 }

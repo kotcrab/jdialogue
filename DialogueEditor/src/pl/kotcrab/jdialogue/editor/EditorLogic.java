@@ -74,7 +74,7 @@ public class EditorLogic
 	
 	public ProjectCallback projectCallback;
 	
-	public EditorLogic(Editor window)
+	public EditorLogic(final Editor window)
 	{
 		this.window = window;
 		
@@ -155,6 +155,8 @@ public class EditorLogic
 			@Override
 			public void sequenceChanged(Sequence newSequence)
 			{
+				project.loadActiveSequence(xstream);
+				window.setTitle("Dialogue Editor - " + newSequence.getName());
 				renderer.setComponentList(newSequence.getComponentList());
 			}
 		};
@@ -338,6 +340,7 @@ public class EditorLogic
 			this.project = project;
 			project.loadProject(projectConfigFile, xstream);
 			renderer.setComponentList(project.getActiveSequence().getComponentList());
+			window.setTitle("Dialogue Editor - " + project.getActiveSequence().getName());
 		}
 		else
 		{

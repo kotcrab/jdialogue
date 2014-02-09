@@ -134,7 +134,7 @@ public class Project
 	public void newSequence(String name, boolean setAsActive)
 	{
 		sequences.add(new Sequence(mainDir + name + ".xml", name));
-
+		
 		if(setAsActive)
 		{
 			activeSequence = sequences.get(sequences.size() - 1);
@@ -150,9 +150,17 @@ public class Project
 			{
 				activeSequence = seq;
 				activeSequenceName = seq.getName();
-				listener.sequenceChanged(activeSequence);
+				listener.sequenceChanged(activeSequence); // sequence.load is NOT called before and MUST be called inside thic function
 			}
 		}
+	}
+	
+	public void loadActiveSequence(XStream xstream)
+	{
+		if(activeSequence.isSaved() == false && activeSequence.isLoaded() == true)
+			activeSequence.save(xstream, gzipProject);
+		
+		activeSequence.load(xstream, gzipProject);
 	}
 	
 	public Sequence getActiveSequence()
