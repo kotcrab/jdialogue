@@ -2,16 +2,21 @@ package pl.kotcrab.jdialogue.parser;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 
+import com.badlogic.gdx.math.MathUtils;
+
 import pl.kotcrab.jdialogue.loader.Loader;
 
 public class JDOMDialogueParser extends DialogueParser
 {
+	private Random random = new Random();
+	
 	private List<Element> elementList;
 	private int target;
 	private Element currentElement;
@@ -34,7 +39,6 @@ public class JDOMDialogueParser extends DialogueParser
 		}
 		catch (JDOMException | IOException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -52,10 +56,10 @@ public class JDOMDialogueParser extends DialogueParser
 		currentElement = elementList.get(target);
 		
 		if(currentElement.getName().equals("dText")) return ComponentType.TEXT;
-		
 		if(currentElement.getName().equals("dEnd")) return ComponentType.END;
-		
 		if(currentElement.getName().equals("dChoice")) return ComponentType.CHOICE;
+		if(currentElement.getName().equals("dRandom")) return ComponentType.RANDOM;
+		if(currentElement.getName().equals("dRelay")) return ComponentType.RELAY;
 		
 		return null;
 	}
@@ -109,6 +113,13 @@ public class JDOMDialogueParser extends DialogueParser
 	{
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	@Override
+	public void processRandom()
+	{
+		List<Element> randomList = currentElement.getChildren();
+		target = Integer.parseInt(randomList.get(1 + random.nextInt(randomList.size() - 1)).getText());
 	}
 	
 }

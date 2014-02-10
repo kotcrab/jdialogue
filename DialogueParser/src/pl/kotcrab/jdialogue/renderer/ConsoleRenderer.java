@@ -67,6 +67,13 @@ public class ConsoleRenderer implements DialogueRenderer
 				parser.nextComponent(chosen);
 				println("====================");
 			}
+			
+			if(nextType == ComponentType.RANDOM)
+				parser.processRandom();
+			
+			if(nextType == ComponentType.RELAY)
+				parser.nextComponent();
+			
 		} while (nextType != ComponentType.END);
 		
 		scanner.close();

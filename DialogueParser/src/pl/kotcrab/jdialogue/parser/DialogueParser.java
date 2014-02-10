@@ -43,6 +43,9 @@ public abstract class DialogueParser
 	//==============================FOR CHOICE COMPONENT ONLY==================================
 	public abstract String[] getChoiceData();
 	
+	//==============================FOR RANDOM COMPONENT ONLY==================================
+	public abstract void processRandom();
+	
 	public abstract String getNextCharacterData();
 	public abstract String getNextData();
 }

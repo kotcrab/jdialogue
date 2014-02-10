@@ -11,6 +11,7 @@ public class ConsoleRendererTest
 {
 	public static void main(String[] args)
 	{
+		//ConsoleRenderer renderer = new ConsoleRenderer(new JDOMDialogueParser(new JavaLoader(new File("assets/randomRelay.xml")), DialogueParser.INFINITY));
 		ConsoleRenderer renderer = new ConsoleRenderer(new JDOMDialogueParser(new JavaLoader(new File("assets/choicesTestAdv.xml")), DialogueParser.INFINITY));
 		renderer.render();
 	}

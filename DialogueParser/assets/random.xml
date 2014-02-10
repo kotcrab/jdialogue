@@ -1,0 +1,33 @@
+<list>
+  <dStart>
+    <id>0</id>
+    <target0>1</target0>
+  </dStart>
+  <dRandom>
+    <id>1</id>
+    <target0>2</target0>
+    <target1>3</target1>
+    <target2>5</target2>
+  </dRandom>
+  <dText>
+    <id>2</id>
+    <target0>4</target0>
+    <text>Wylosowano 1</text>
+    <character>TODO</character>
+  </dText>
+  <dText>
+    <id>3</id>
+    <target0>4</target0>
+    <text>Wylosowano 2</text>
+    <character>TODO</character>
+  </dText>
+  <dEnd>
+    <id>4</id>
+  </dEnd>
+  <dText>
+    <id>5</id>
+    <target0>4</target0>
+    <text>Wylosowano 3</text>
+    <character>TODO</character>
+  </dText>
+</list>
