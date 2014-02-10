@@ -48,7 +48,7 @@ public class CharacterCreationDialog extends JDialog
 	{
 		super(parrent, ModalityType.APPLICATION_MODAL);
 		// super(parrent, true);
-		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		
 		if(newMode)
 			setTitle("Character settings");
@@ -123,6 +123,13 @@ public class CharacterCreationDialog extends JDialog
 		
 		textName.getDocument().addDocumentListener(changeListener);
 		textTextureName.getDocument().addDocumentListener(changeListener);
+
+		if(newMode == false)
+		{
+			textName.setText(character.getName());
+			textTextureName.setText(character.getTextureName());
+			checkConditions();
+		}
 		
 		setVisible(true);
 	}
