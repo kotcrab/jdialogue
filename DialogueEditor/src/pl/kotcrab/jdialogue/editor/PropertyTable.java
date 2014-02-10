@@ -18,6 +18,10 @@
 
 package pl.kotcrab.jdialogue.editor;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.Date;
 
 import javax.swing.DefaultCellEditor;
@@ -50,8 +54,21 @@ public class PropertyTable extends JTable
 		super(dm);
 		leftRenderer.setHorizontalAlignment(JLabel.LEFT);
 		
-		JTextField textField = new JTextField();
+		final JTextField textField = new JTextField();
 		textField.setName("Table.editor");
+		textField.addFocusListener(new FocusListener()
+		{
+			@Override
+			public void focusLost(FocusEvent e)
+			{
+			}
+			
+			@Override
+			public void focusGained(FocusEvent e)
+			{
+				textField.selectAll();
+			}
+		});
 		
 		textEditor = new DefaultCellEditor(textField);
 	}
@@ -74,7 +91,7 @@ public class PropertyTable extends JTable
 			return textEditor;
 		}
 		
-		if(value instanceof ChoiceComponentChoices) //TODO za kazdym razem nowy czy stary moze byc?
+		if(value instanceof ChoiceComponentChoices) // TODO za kazdym razem nowy czy stary moze byc?
 		{
 			return new ChoiceComponentChoicesEditor();
 		}

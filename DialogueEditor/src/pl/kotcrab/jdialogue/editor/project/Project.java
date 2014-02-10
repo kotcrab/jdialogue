@@ -42,7 +42,7 @@ public class Project
 	private boolean gzipProject;
 	private boolean gzipExport;
 	
-	@XStreamOmitField
+	
 	private File configFile;
 	
 	@XStreamOmitField
@@ -51,6 +51,9 @@ public class Project
 	private Sequence activeSequence = null;
 	
 	private String activeSequenceName = null;
+	
+	
+	private ArrayList<Character> characters = new ArrayList<Character>(); 
 	
 	@XStreamOmitField
 	private ProjectCallback listener;
@@ -64,11 +67,8 @@ public class Project
 		this.gzipExport = gzipExport;
 		
 		prepareProject();
-	}
-	
-	public void setListener(ProjectCallback listener)
-	{
-		this.listener = listener;
+		
+		characters.add(new Character("None (default character)", "none"));
 	}
 	
 	private void prepareProject()
@@ -84,10 +84,6 @@ public class Project
 	public void setCustomOut(String projectOut)
 	{
 		this.customOut = projectOut;
-	}
-	
-	public void newProject()
-	{
 	}
 	
 	public void loadProject(File projectConfigFile, XStream xstream)
@@ -166,14 +162,14 @@ public class Project
 		activeSequence.load(xstream, gzipProject);
 	}
 	
-	public Sequence getActiveSequence()
+	public void newCharacter(String name, String textureName)
 	{
-		return activeSequence;
+		characters.add(new Character(name, textureName));
 	}
 	
-	public ArrayList<Sequence> getSequences()
+	public boolean deleteCharaacter(Character character)
 	{
-		return sequences;
+		return characters.remove(character);
 	}
 	
 	public void exportProject(XStream xstream) // TODO export all sequencees and project file
@@ -205,4 +201,25 @@ public class Project
 		
 		DComponentConverter.exportMode = false;
 	}
+
+	public Sequence getActiveSequence()
+	{
+		return activeSequence;
+	}
+	
+	public ArrayList<Sequence> getSequences()
+	{
+		return sequences;
+	}
+	
+	public ArrayList<Character> getCharacters()
+	{
+		return characters;
+	}
+	
+	public void setListener(ProjectCallback listener)
+	{
+		this.listener = listener;
+	}
+	
 }

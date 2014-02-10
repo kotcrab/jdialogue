@@ -67,7 +67,7 @@ public class ConnectionRenderer
 			else
 				startY = y2;
 			
-			if(cameraRect.overlaps(new Rectangle(startX, startY, Math.abs(x2 - x1), Math.abs(y2 - y1))) == false) return rendered;
+			if(cameraRect.overlaps(new Rectangle(startX, startY, Math.abs(x2 - x1), Math.abs(y2 - y1))) == false) continue;
 			
 			float d = 0;
 			

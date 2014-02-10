@@ -42,6 +42,7 @@ public class ChoicesEditDialog extends JDialog
 	
 	private JTable table;
 	private int tableLength;
+	
 	/**
 	 * Create the dialog.
 	 * 
@@ -72,6 +73,7 @@ public class ChoicesEditDialog extends JDialog
 			String[] columnName = { "Values" };
 			
 			table = new JTable(tableModelData, columnName);
+			table.setRowHeight(20);
 			
 			JScrollPane scrollPane = new JScrollPane(table);
 			table.setFillsViewportHeight(true);

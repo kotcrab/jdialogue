@@ -37,42 +37,39 @@ import javax.swing.border.EmptyBorder;
 
 import pl.kotcrab.jdialogue.editor.Editor;
 
-public class SequenceSelectionDialog extends JDialog
+public class CharactersConfigDialog extends JDialog
 {
 	
 	private static final long serialVersionUID = 1L;
-	private SequenceSelectionDialog instance;
+	private CharactersConfigDialog instance;
 	private final JPanel contentPanel = new JPanel();
-	
+	private JList<String> list;
 	private Project project;
-	
-	JList<Sequence> list;
 	
 	/**
 	 * Create the dialog.
 	 */
-	public SequenceSelectionDialog(final Editor parrent, final Project project)
+	public CharactersConfigDialog(final Editor parrent, final Project project)
 	{
 		super(parrent, true);
 		instance = this;
 		this.project = project;
-		setTitle("Sequences");
+		setTitle("Characters");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(parrent.getX() + (parrent.getWidth() / 2) - (450 / 2), parrent.getY() + (parrent.getHeight() / 2) - (300 / 2), 450, 300);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BorderLayout(0, 0));
-		list = new JList<Sequence>();
-		
-		refreshList();
-		
+		list = new JList<String>();
 		list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		list.setLayoutOrientation(JList.VERTICAL);
 		JScrollPane listScroller = new JScrollPane(list);
 		
+		updateList();
+		
 		contentPanel.add(listScroller);
-		JLabel lblSeq1 = new JLabel("Switch sequnce:");
+		JLabel lblSeq1 = new JLabel("Characters:");
 		contentPanel.add(lblSeq1, BorderLayout.NORTH);
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -82,35 +79,40 @@ public class SequenceSelectionDialog extends JDialog
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				new NewSequenceDialog(instance, project, true);
-				refreshList();
+				new CharacterCreationDialog(parrent, project, null, true);
+				updateList();
 			}
 		});
 		buttonPane.add(btnCreateNew);
-		JButton okButton = new JButton("OK");
+		JButton okButton = new JButton("Edit");
 		okButton.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				if(list.getSelectedValue() == null)
+				if(isSelectionValid())
 				{
-					JOptionPane.showMessageDialog(parrent, "Please select sequence", "Error", JOptionPane.ERROR_MESSAGE);
-					return;
+					// TODO edit char
 				}
-				
-				setVisible(false);
-				project.switchActiveSequence(list.getSelectedValue().getName());
-				dispose();
 			}
 		});
-		JButton btnNewButton_1 = new JButton("Rename");
-		buttonPane.add(btnNewButton_1);
-		JButton btnNewButton = new JButton("Delete");
-		buttonPane.add(btnNewButton);
+		
+		JButton btnDelete = new JButton("Delete");
+		btnDelete.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				if(isSelectionValid())
+				{
+					new CharacterDeleteDialog(parrent, project, getCharacterByName(list.getSelectedValue()));
+					updateList();
+				}
+			}
+		});
+		buttonPane.add(btnDelete);
 		okButton.setActionCommand("OK");
 		buttonPane.add(okButton);
 		getRootPane().setDefaultButton(okButton);
-		JButton cancelButton = new JButton("Cancel");
+		JButton cancelButton = new JButton("Close");
 		cancelButton.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -125,13 +127,40 @@ public class SequenceSelectionDialog extends JDialog
 		setVisible(true);
 	}
 	
-	private void refreshList()
+	private void updateList()
 	{
-		DefaultListModel<Sequence> listModel = new DefaultListModel<Sequence>();
-		ArrayList<Sequence> sequences = project.getSequences();
-		for(Sequence seq : sequences)
-			listModel.addElement(seq);
+		DefaultListModel<String> listModel = new DefaultListModel<String>();
+		ArrayList<Character> characters = project.getCharacters();
+		for(Character character : characters)
+			listModel.addElement(character.getName());
 		
 		list.setModel(listModel);
+	}
+	
+	private Character getCharacterByName(String name)
+	{
+		ArrayList<Character> charList = project.getCharacters();
+		
+		for(Character ch : charList)
+			if(ch.getName().equals(name)) return ch;
+		
+		return null;
+	}
+	
+	private boolean isSelectionValid()
+	{
+		if(list.getSelectedValue() == null)
+		{
+			JOptionPane.showMessageDialog(instance, "Please select character", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		if(list.getSelectedIndex() == 0)
+		{
+			JOptionPane.showMessageDialog(instance, "This character cannot be edited.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		return true;
 	}
 }

@@ -26,7 +26,8 @@ import pl.kotcrab.jdialogue.editor.components.types.RelayComponent;
 import pl.kotcrab.jdialogue.editor.components.types.StartComponent;
 import pl.kotcrab.jdialogue.editor.components.types.TextComponent;
 import pl.kotcrab.jdialogue.editor.gui.AddComponentMenuItem;
-import pl.kotcrab.jdialogue.editor.project.CharacterConfigDialog;
+import pl.kotcrab.jdialogue.editor.project.Character;
+import pl.kotcrab.jdialogue.editor.project.CharactersConfigDialog;
 import pl.kotcrab.jdialogue.editor.project.NewProjectDialog;
 import pl.kotcrab.jdialogue.editor.project.NewSequenceDialog;
 import pl.kotcrab.jdialogue.editor.project.Project;
@@ -80,8 +81,8 @@ public class EditorLogic
 		
 		xstream = new XStream();
 		xstream.autodetectAnnotations(true);
-		xstream.alias("connector", Connector.class);
 		
+		xstream.alias("connector", Connector.class);
 		xstream.alias("dText", TextComponent.class);
 		xstream.alias("dChoice", ChoiceComponent.class);
 		xstream.alias("dStart", StartComponent.class);
@@ -90,6 +91,7 @@ public class EditorLogic
 		xstream.alias("dCallback", CallbackComponent.class);
 		xstream.alias("dRandom", RandomComponent.class);
 		xstream.alias("project", Project.class);
+		xstream.alias("character", Character.class);
 		
 		xstream.registerConverter(new DComponentConverter());
 		
@@ -142,7 +144,7 @@ public class EditorLogic
 					public void run()
 					{
 						if(project != null)
-							new CharacterConfigDialog(Editor.window, project);
+							new CharactersConfigDialog(Editor.window, project);
 						else
 							JOptionPane.showMessageDialog(Editor.window, "Create or load project to edit characters", "Error", JOptionPane.ERROR_MESSAGE);
 					}
@@ -356,7 +358,6 @@ public class EditorLogic
 		
 		new NewSequenceDialog(Editor.window, project, false);
 		
-		project.newProject();
 		project.save(xstream);
 		project.setListener(projectCallback);
 		

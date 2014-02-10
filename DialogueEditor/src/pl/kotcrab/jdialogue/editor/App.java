@@ -23,6 +23,8 @@ import java.util.Arrays;
 
 import com.badlogic.gdx.Preferences;
 
+
+//TODO wersja przy jakiej utworzono projekt i sprawdzanie tego przy uruchomieniu
 public class App
 {
 	public static final String prefsLastOpenedFolder = "lastOpenedFolder";

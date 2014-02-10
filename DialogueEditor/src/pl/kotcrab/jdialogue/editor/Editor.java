@@ -21,6 +21,9 @@ package pl.kotcrab.jdialogue.editor;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.io.File;
@@ -88,29 +91,56 @@ public class Editor extends JFrame
 		contentPane.add(rendererSplitPane, BorderLayout.CENTER);
 		
 		JSplitPane propertiesSplitPane = new JSplitPane();
-		propertiesSplitPane.setResizeWeight(0.7);
+		propertiesSplitPane.setResizeWeight(1);
 		
 		JPanel propertyPanel = new JPanel();
 		propertyPanel.setLayout(new BorderLayout());
 		
 		table = new PropertyTable(new DefaultTableModel());
+		table.setRowHeight(20);
 		logic.table = table;
 		
 		propertyPanel.add(table.getTableHeader(), BorderLayout.PAGE_START);
 		propertyPanel.add(table, BorderLayout.CENTER);
 		
 		JPanel buttonsPanel = new JPanel();
-		
-		JButton btnSequences = new JButton("Sequences");
+		GridBagLayout gbl_buttonsPanel = new GridBagLayout();
+		gbl_buttonsPanel.columnWidths = new int[]{85, 0};
+		gbl_buttonsPanel.rowHeights = new int[]{0, 23, 0, 0};
+		gbl_buttonsPanel.columnWeights = new double[]{0.0, Double.MIN_VALUE};
+		gbl_buttonsPanel.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+		buttonsPanel.setLayout(gbl_buttonsPanel);
 		JButton btnCharacters = new JButton("Characters");
-		
-		btnSequences.addActionListener(logic.sequencesBtnListner);
 		btnCharacters.addActionListener(logic.charactersBtnListner);
 		
-		buttonsPanel.add(btnCharacters);
-		buttonsPanel.add(btnSequences);
+		JButton btnSequences = new JButton("Sequences");
+		
+		btnSequences.addActionListener(logic.sequencesBtnListner);
+		GridBagConstraints gbc_btnSequences = new GridBagConstraints();
+		gbc_btnSequences.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnSequences.anchor = GridBagConstraints.NORTH;
+		gbc_btnSequences.insets = new Insets(0, 0, 5, 0);
+		gbc_btnSequences.gridx = 0;
+		gbc_btnSequences.gridy = 0;
+		buttonsPanel.add(btnSequences, gbc_btnSequences);
+		
+		GridBagConstraints gbc_btnCharacters = new GridBagConstraints();
+		gbc_btnCharacters.fill = GridBagConstraints.BOTH;
+		gbc_btnCharacters.insets = new Insets(0, 0, 5, 0);
+		gbc_btnCharacters.gridx = 0;
+		gbc_btnCharacters.gridy = 1;
+		buttonsPanel.add(btnCharacters, gbc_btnCharacters);
 		
 		propertiesSplitPane.setRightComponent(buttonsPanel);
+		
+		JButton btnCallbacks = new JButton("Callbacks");
+		GridBagConstraints gbc_btnCallbacks = new GridBagConstraints();
+		gbc_btnCallbacks.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnCallbacks.anchor = GridBagConstraints.NORTH;
+		gbc_btnCallbacks.gridx = 0;
+		gbc_btnCallbacks.gridy = 2;
+		gbc_btnCallbacks.weightx = 1;
+		buttonsPanel.add(btnCallbacks, gbc_btnCallbacks);
 		propertiesSplitPane.setLeftComponent(propertyPanel);
 		rendererSplitPane.setRightComponent(propertiesSplitPane);
 		rendererSplitPane.setLeftComponent(logic.canvas.getCanvas());
