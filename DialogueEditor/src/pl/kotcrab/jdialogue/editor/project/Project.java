@@ -21,7 +21,11 @@ package pl.kotcrab.jdialogue.editor.project;
 import java.io.File;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
+import pl.kotcrab.jdialogue.editor.Editor;
 import pl.kotcrab.jdialogue.editor.IOUtils;
+import pl.kotcrab.jdialogue.editor.components.DComponentConverter;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
@@ -157,8 +161,7 @@ public class Project
 	
 	public void loadActiveSequence(XStream xstream)
 	{
-		if(activeSequence.isSaved() == false && activeSequence.isLoaded() == true)
-			activeSequence.save(xstream, gzipProject);
+		if(activeSequence.isSaved() == false && activeSequence.isLoaded() == true) activeSequence.save(xstream, gzipProject);
 		
 		activeSequence.load(xstream, gzipProject);
 	}
@@ -175,11 +178,31 @@ public class Project
 	
 	public void exportProject(XStream xstream) // TODO export all sequencees and project file
 	{
+		DComponentConverter.exportMode = true;
+		
 		if(customOut != null && customOut.equals("")) customOut = null;
 		
-		if(customOut != null)
-			activeSequence.export(xstream, gzipExport, customOut);
+		int failedToExport = 0;
+		
+		for(Sequence seq : sequences)
+		{
+			if(customOut != null)
+			{
+				if(seq.export(xstream, gzipExport, customOut) == false)
+					failedToExport++;
+			}
+			else
+			{
+				if(seq.export(xstream, gzipExport, mainDir + "out" + File.separator) == false)
+					failedToExport++;
+			}
+		}
+		
+		if(failedToExport > 0)
+			JOptionPane.showMessageDialog(Editor.window, "Finished exporting with errors. Sequences not exported: " + failedToExport, "Export", JOptionPane.WARNING_MESSAGE);
 		else
-			activeSequence.export(xstream, gzipExport, mainDir + "out" + File.separator);
+			JOptionPane.showMessageDialog(Editor.window, "Finished exporting", "Export", JOptionPane.INFORMATION_MESSAGE);
+		
+		DComponentConverter.exportMode = false;
 	}
 }

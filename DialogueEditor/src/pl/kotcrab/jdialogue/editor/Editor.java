@@ -134,7 +134,7 @@ public class Editor extends JFrame
 		btnLoad.addActionListener(logic.toolbarLoadListener);
 		btnUndo.addActionListener(logic.toolbarUndoListener);
 		btnRedo.addActionListener(logic.toolbarRedoListener);
-		btnRun.addActionListener(null); //TODO setup listeners
+		btnRun.addActionListener(null); //TODO setup listener
 		
 		toolBar.add(btnSave);
 		toolBar.add(btnLoad);

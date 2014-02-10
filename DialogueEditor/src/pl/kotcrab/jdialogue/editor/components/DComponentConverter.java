@@ -86,6 +86,7 @@ public class DComponentConverter implements Converter
 					if(data[i][0].equals("Info")) continue;
 					if(data[i][0].equals("Choices text")) continue;
 					if(data[i][0].equals("Outputs")) continue;
+					if(data[i][0].equals("Inputs")) continue;
 					
 					writer.startNode(data[i][0].toString().toLowerCase());
 					writer.setValue(data[i][1].toString());

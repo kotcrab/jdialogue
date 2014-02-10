@@ -103,6 +103,8 @@ public class ConnectionRenderer
 			
 			float y2 = target.getY() + 6;
 			
+			shapeRenderer.setColor(Color.BLACK);
+			
 			shapeRenderer.triangle(target.getX() - 8, target.getY(), target.getX() - 8, target.getY() + 12, target.getX() + 3, y2); // ending triangle
 		}
 	}

@@ -40,9 +40,7 @@ public class Sequence
 	
 	private ArrayList<DComponent> componentList = new ArrayList<DComponent>();
 	
-	@XStreamOmitField
 	private boolean loaded = false;
-	
 	private boolean saved = false;
 	
 	public Sequence(String path, String name)
@@ -82,20 +80,19 @@ public class Sequence
 			IOUtils.saveNormal(xstream, file, componentList);
 	}
 	
-	public void export(XStream xstream, boolean gzipExport, String exportPath) // TODO organize components list by id
+	public boolean export(XStream xstream, boolean gzipExport, String exportPath) // TODO organize components list by id
 	{
-		DComponentConverter.exportMode = true;
 		
 		if(checkForEnd() == false)
 		{
-			JOptionPane.showMessageDialog(Editor.window, "Could not find 'End' component, please fix errors before exporting", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
+			JOptionPane.showMessageDialog(Editor.window, "Could not find 'End' component, please fix errors before exporting. Skipping sequence: " + name, "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
 		}
 		
 		if(checkConnectors() == false)
 		{
-			JOptionPane.showMessageDialog(Editor.window, "Some components are not connected, please fix errors before exporting", "Error", JOptionPane.ERROR_MESSAGE);
-			return;
+			JOptionPane.showMessageDialog(Editor.window, "Some components are not connected, please fix errors before exporting. Skipping sequence: " + name, "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
 		}
 		
 		optimizeIDs();
@@ -105,10 +102,7 @@ public class Sequence
 		else
 			IOUtils.saveNormal(xstream, new File(exportPath + name + ".xml"), componentList);
 		
-		DComponentConverter.exportMode = false;
-		
-		JOptionPane.showMessageDialog(Editor.window, "Finished exporting", "Export", JOptionPane.INFORMATION_MESSAGE);
-		
+		return true;
 	}
 	
 	private void optimizeIDs()
