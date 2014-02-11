@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package pl.kotcrab.jdialogue.editor.project;
+package pl.kotcrab.jdialogue.editor.gui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -36,43 +36,42 @@ import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 
 import pl.kotcrab.jdialogue.editor.Editor;
+import pl.kotcrab.jdialogue.editor.project.Callback;
+import pl.kotcrab.jdialogue.editor.project.Project;
 
-public class SequenceSelectionDialog extends JDialog
+public class CallbacksConfigDialog extends JDialog
 {
 	
 	private static final long serialVersionUID = 1L;
-	private SequenceSelectionDialog instance;
+	private CallbacksConfigDialog instance;
 	private final JPanel contentPanel = new JPanel();
-	
+	private JList<String> list;
 	private Project project;
-	
-	JList<Sequence> list;
 	
 	/**
 	 * Create the dialog.
 	 */
-	public SequenceSelectionDialog(final Editor parrent, final Project project)
+	public CallbacksConfigDialog(final Editor parrent, final Project project)
 	{
 		super(parrent, true);
 		instance = this;
 		this.project = project;
-		setTitle("Sequences");
+		setTitle("Callbacks");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(parrent.getX() + (parrent.getWidth() / 2) - (450 / 2), parrent.getY() + (parrent.getHeight() / 2) - (300 / 2), 450, 300);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BorderLayout(0, 0));
-		list = new JList<Sequence>();
-		
-		refreshList();
-		
+		list = new JList<String>();
 		list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		list.setLayoutOrientation(JList.VERTICAL);
 		JScrollPane listScroller = new JScrollPane(list);
 		
+		updateList();
+		
 		contentPanel.add(listScroller);
-		JLabel lblSeq1 = new JLabel("Switch sequnce:");
+		JLabel lblSeq1 = new JLabel("Callbacks:");
 		contentPanel.add(lblSeq1, BorderLayout.NORTH);
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -82,35 +81,42 @@ public class SequenceSelectionDialog extends JDialog
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				new NewSequenceDialog(instance, project, true);
-				refreshList();
+				new CallbackCreationDialog(parrent, project, null, true);
+				updateList();
 			}
 		});
 		buttonPane.add(btnCreateNew);
-		JButton okButton = new JButton("OK");
+		JButton okButton = new JButton("Edit");
 		okButton.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				if(list.getSelectedValue() == null)
+				if(isSelectionValid())
 				{
-					JOptionPane.showMessageDialog(parrent, "Please select sequence", "Error", JOptionPane.ERROR_MESSAGE);
-					return;
+				new CallbackCreationDialog(parrent, project, getCallbackByName(list.getSelectedValue()), false);
+					updateList();
 				}
-				
-				setVisible(false);
-				project.switchActiveSequence(list.getSelectedValue().getName());
-				dispose();
+			}
+
+		});
+		
+		JButton btnDelete = new JButton("Delete");
+		btnDelete.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				if(isSelectionValid())
+				{
+					// new CharacterDeleteDialog(parrent, project, getCharacterByName(list.getSelectedValue()));
+					updateList();
+				}
 			}
 		});
-		JButton btnNewButton_1 = new JButton("Rename");
-		buttonPane.add(btnNewButton_1);
-		JButton btnNewButton = new JButton("Delete");
-		buttonPane.add(btnNewButton);
+		buttonPane.add(btnDelete);
 		okButton.setActionCommand("OK");
 		buttonPane.add(okButton);
 		getRootPane().setDefaultButton(okButton);
-		JButton cancelButton = new JButton("Cancel");
+		JButton cancelButton = new JButton("Close");
 		cancelButton.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
@@ -125,13 +131,34 @@ public class SequenceSelectionDialog extends JDialog
 		setVisible(true);
 	}
 	
-	private void refreshList()
+	private void updateList()
 	{
-		DefaultListModel<Sequence> listModel = new DefaultListModel<Sequence>();
-		ArrayList<Sequence> sequences = project.getSequences();
-		for(Sequence seq : sequences)
-			listModel.addElement(seq);
+		DefaultListModel<String> listModel = new DefaultListModel<String>();
+		ArrayList<Callback> callbacks = project.getCallbacks();
+		for(Callback cb : callbacks)
+			listModel.addElement(cb.getName());
 		
 		list.setModel(listModel);
+	}
+	
+	private boolean isSelectionValid()
+	{
+		if(list.getSelectedValue() == null)
+		{
+			JOptionPane.showMessageDialog(instance, "Please select callback.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		return true;
+	}
+	
+	private Callback getCallbackByName(String name)
+	{
+		ArrayList<Callback> cbList = project.getCallbacks();
+		
+		for(Callback cb : cbList)
+			if(cb.getName().equals(name)) return cb;
+		
+		return null;
 	}
 }

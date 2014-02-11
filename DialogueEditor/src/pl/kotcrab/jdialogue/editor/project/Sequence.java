@@ -20,18 +20,17 @@ package pl.kotcrab.jdialogue.editor.project;
 
 import java.io.File;
 import java.util.ArrayList;
+
 import javax.swing.JOptionPane;
 
 import pl.kotcrab.jdialogue.editor.Editor;
 import pl.kotcrab.jdialogue.editor.IOUtils;
 import pl.kotcrab.jdialogue.editor.components.Connector;
 import pl.kotcrab.jdialogue.editor.components.DComponent;
-import pl.kotcrab.jdialogue.editor.components.DComponentConverter;
 import pl.kotcrab.jdialogue.editor.components.types.EndComponent;
 import pl.kotcrab.jdialogue.editor.components.types.StartComponent;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 public class Sequence
 {

@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package pl.kotcrab.jdialogue.editor.project;
+package pl.kotcrab.jdialogue.editor.gui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -36,6 +36,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 
 import pl.kotcrab.jdialogue.editor.Editor;
+import pl.kotcrab.jdialogue.editor.project.Character;
+import pl.kotcrab.jdialogue.editor.project.Project;
 
 public class CharactersConfigDialog extends JDialog
 {
@@ -152,13 +154,13 @@ public class CharactersConfigDialog extends JDialog
 	{
 		if(list.getSelectedValue() == null)
 		{
-			JOptionPane.showMessageDialog(instance, "Please select character", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(instance, "Please select character.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		
 		if(list.getSelectedIndex() == 0)
 		{
-			JOptionPane.showMessageDialog(instance, "This character cannot be edited.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(instance, "This character cannot be edited or deleted.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		

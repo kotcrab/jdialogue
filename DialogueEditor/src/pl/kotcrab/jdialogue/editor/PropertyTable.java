@@ -98,7 +98,6 @@ public class PropertyTable extends JTable
 		if(getValueAt(row, 0).equals("Character") && column == 1)
 		{
 			characterCombobox.updateUI(); //make sure that combobox upadted itself (without this list will be blank if character list changed)
-			//characterCombobox.revalidate();
 			return new DefaultCellEditor(characterCombobox);
 		}
 		

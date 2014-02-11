@@ -76,6 +76,8 @@ public class ComponentTableModel extends AbstractTableModel
 	@Override
 	public boolean isCellEditable(int row, int col)
 	{
+		if(getValueAt(row, 0).equals("Info")) return false;
+		
 		if(col == 1)
 			return true;
 		else

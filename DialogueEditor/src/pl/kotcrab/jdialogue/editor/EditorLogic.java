@@ -26,15 +26,16 @@ import pl.kotcrab.jdialogue.editor.components.types.RelayComponent;
 import pl.kotcrab.jdialogue.editor.components.types.StartComponent;
 import pl.kotcrab.jdialogue.editor.components.types.TextComponent;
 import pl.kotcrab.jdialogue.editor.gui.AddComponentMenuItem;
+import pl.kotcrab.jdialogue.editor.gui.CallbacksConfigDialog;
+import pl.kotcrab.jdialogue.editor.gui.CharactersConfigDialog;
+import pl.kotcrab.jdialogue.editor.gui.NewProjectDialog;
+import pl.kotcrab.jdialogue.editor.gui.NewSequenceDialog;
+import pl.kotcrab.jdialogue.editor.gui.SequenceSelectionDialog;
 import pl.kotcrab.jdialogue.editor.project.Character;
-import pl.kotcrab.jdialogue.editor.project.CharactersConfigDialog;
-import pl.kotcrab.jdialogue.editor.project.NewProjectDialog;
-import pl.kotcrab.jdialogue.editor.project.NewSequenceDialog;
 import pl.kotcrab.jdialogue.editor.project.Project;
 import pl.kotcrab.jdialogue.editor.project.ProjectCallback;
 import pl.kotcrab.jdialogue.editor.project.ProjectExport;
 import pl.kotcrab.jdialogue.editor.project.Sequence;
-import pl.kotcrab.jdialogue.editor.project.SequenceSelectionDialog;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglCanvas;
 import com.thoughtworks.xstream.XStream;
@@ -60,6 +61,7 @@ public class EditorLogic
 	
 	public ActionListener sequencesBtnListner;
 	public ActionListener charactersBtnListner;
+	public ActionListener callbacksBtnListner;
 	
 	public ActionListener menubarResetCameraListener;
 	public ActionListener menubarRenderCurvesListener;
@@ -92,7 +94,7 @@ public class EditorLogic
 		xstream.alias("dCallback", CallbackComponent.class);
 		xstream.alias("dRandom", RandomComponent.class);
 		xstream.alias("project", Project.class);
-		xstream.alias("project", ProjectExport.class);
+		xstream.alias("projectExport", ProjectExport.class);
 		xstream.alias("character", Character.class);
 		
 		xstream.registerConverter(new DComponentConverter());
@@ -147,6 +149,26 @@ public class EditorLogic
 					{
 						if(project != null)
 							new CharactersConfigDialog(Editor.window, project);
+						else
+							JOptionPane.showMessageDialog(Editor.window, "Create or load project to edit characters", "Error", JOptionPane.ERROR_MESSAGE);
+					}
+				});
+			}
+		};
+		
+		callbacksBtnListner = new ActionListener()
+		{
+			
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				EventQueue.invokeLater(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						if(project != null)
+							new CallbacksConfigDialog(Editor.window, project);
 						else
 							JOptionPane.showMessageDialog(Editor.window, "Create or load project to edit characters", "Error", JOptionPane.ERROR_MESSAGE);
 					}

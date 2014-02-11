@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package pl.kotcrab.jdialogue.editor.project;
+package pl.kotcrab.jdialogue.editor.gui;
 
 import java.awt.Color;
 import java.awt.Window;
@@ -32,6 +32,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import pl.kotcrab.jdialogue.editor.Editor;
+import pl.kotcrab.jdialogue.editor.project.Project;
+import pl.kotcrab.jdialogue.editor.project.Sequence;
 
 public class NewSequenceDialog extends JDialog
 {

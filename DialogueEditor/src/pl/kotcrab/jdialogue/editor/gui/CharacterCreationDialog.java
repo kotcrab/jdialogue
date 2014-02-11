@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package pl.kotcrab.jdialogue.editor.project;
+package pl.kotcrab.jdialogue.editor.gui;
 
 import java.awt.Color;
 import java.awt.Window;
@@ -26,12 +26,12 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import pl.kotcrab.jdialogue.editor.Editor;
+import pl.kotcrab.jdialogue.editor.project.Character;
+import pl.kotcrab.jdialogue.editor.project.Project;
 
 public class CharacterCreationDialog extends JDialog
 {

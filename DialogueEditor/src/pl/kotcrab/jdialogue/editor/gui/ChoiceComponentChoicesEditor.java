@@ -19,9 +19,11 @@
 package pl.kotcrab.jdialogue.editor.gui;
 
 import java.awt.Component;
+
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+
 import pl.kotcrab.jdialogue.editor.components.ChoiceComponentChoices;
 
 public class ChoiceComponentChoicesEditor extends DefaultCellEditor

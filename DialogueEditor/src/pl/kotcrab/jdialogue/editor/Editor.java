@@ -58,7 +58,7 @@ public class Editor extends JFrame
 	
 	private JSplitPane rendererSplitPane;
 	private PropertyTable table;
-
+	
 	/**
 	 * Create the frame.
 	 */
@@ -105,10 +105,10 @@ public class Editor extends JFrame
 		
 		JPanel buttonsPanel = new JPanel();
 		GridBagLayout gbl_buttonsPanel = new GridBagLayout();
-		gbl_buttonsPanel.columnWidths = new int[]{85, 0};
-		gbl_buttonsPanel.rowHeights = new int[]{0, 23, 0, 0};
-		gbl_buttonsPanel.columnWeights = new double[]{0.0, Double.MIN_VALUE};
-		gbl_buttonsPanel.rowWeights = new double[]{0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_buttonsPanel.columnWidths = new int[] { 85, 0 };
+		gbl_buttonsPanel.rowHeights = new int[] { 0, 23, 0, 0 };
+		gbl_buttonsPanel.columnWeights = new double[] { 0.0, Double.MIN_VALUE };
+		gbl_buttonsPanel.rowWeights = new double[] { 0.0, 0.0, 0.0, Double.MIN_VALUE };
 		buttonsPanel.setLayout(gbl_buttonsPanel);
 		JButton btnCharacters = new JButton("Characters");
 		btnCharacters.addActionListener(logic.charactersBtnListner);
@@ -134,6 +134,7 @@ public class Editor extends JFrame
 		propertiesSplitPane.setRightComponent(buttonsPanel);
 		
 		JButton btnCallbacks = new JButton("Callbacks");
+		btnCallbacks.addActionListener(logic.callbacksBtnListner);
 		GridBagConstraints gbc_btnCallbacks = new GridBagConstraints();
 		gbc_btnCallbacks.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnCallbacks.anchor = GridBagConstraints.NORTH;
@@ -144,7 +145,7 @@ public class Editor extends JFrame
 		propertiesSplitPane.setLeftComponent(propertyPanel);
 		rendererSplitPane.setRightComponent(propertiesSplitPane);
 		rendererSplitPane.setLeftComponent(logic.canvas.getCanvas());
-
+		
 	}
 	
 	private void createToolbar()
@@ -164,7 +165,7 @@ public class Editor extends JFrame
 		btnLoad.addActionListener(logic.toolbarLoadListener);
 		btnUndo.addActionListener(logic.toolbarUndoListener);
 		btnRedo.addActionListener(logic.toolbarRedoListener);
-		btnRun.addActionListener(null); //TODO setup listener
+		btnRun.addActionListener(null); // TODO setup listener
 		
 		toolBar.add(btnSave);
 		toolBar.add(btnLoad);

@@ -375,9 +375,20 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 				{
 					if(selectedConnector.isInput() != connector.isInput()) // to prevent connecting 2 outputs or 2 inputs
 					{
-						// proper target found, adding
-						connector.addTarget(selectedConnector);
-						selectedConnector.addTarget(connector);
+						if(selectedConnector.isInput() && connector.getTarget() == null)
+						{
+							// proper target found, adding
+							connector.addTarget(selectedConnector);
+							selectedConnector.addTarget(connector);
+							return;
+						}
+						
+						if(selectedConnector.isInput() == false && selectedConnector.getTarget() == null)
+						{
+							connector.addTarget(selectedConnector);
+							selectedConnector.addTarget(connector);
+							return;
+						}
 					}
 				}
 				

@@ -54,6 +54,7 @@ public class Project
 	
 	
 	private ArrayList<Character> characters = new ArrayList<Character>(); 
+	private ArrayList<Callback> callbacks = new ArrayList<Callback>(); 
 	
 	@XStreamOmitField
 	private ProjectCallback listener;
@@ -180,11 +181,11 @@ public class Project
 		
 		if(customOut != null)
 		{
-			IOUtils.saveNormal(xstream, new File(customOut + "project.xml"), new ProjectExport(name, characters));
+			//IOUtils.saveNormal(xstream, new File(customOut + "project.xml"), new ProjectExport(name, characters));
 		}
 		else
 		{
-			IOUtils.saveNormal(xstream, new File(mainDir + "out" + File.separator + "project.xml"), new ProjectExport(name, characters));
+		//	IOUtils.saveNormal(xstream, new File(mainDir + "out" + File.separator + "project.xml"), new ProjectExport(name, characters));
 		}
 		
 		int failedToExport = 0;
@@ -226,6 +227,11 @@ public class Project
 		return characters;
 	}
 	
+	public ArrayList<Callback> getCallbacks()
+	{
+		return callbacks;
+	}
+
 	public void setListener(ProjectCallback listener)
 	{
 		this.listener = listener;
