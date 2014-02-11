@@ -44,7 +44,7 @@ public class CharacterCreationDialog extends JDialog
 	/**
 	 * Create the dialog.
 	 */
-	public CharacterCreationDialog(Window parrent, final Project project, Character character, final boolean newMode)
+	public CharacterCreationDialog(Window parrent, final Project project, final Character character, final boolean newMode)
 	{
 		super(parrent, ModalityType.APPLICATION_MODAL);
 		// super(parrent, true);
@@ -80,8 +80,8 @@ public class CharacterCreationDialog extends JDialog
 					project.newCharacter(textName.getText(), textTextureName.getText());
 				else
 				{
-					
-					//TODO edit char
+					character.setName(textName.getText());
+					character.setTextureName(textTextureName.getText());
 				}
 				
 				dispose();

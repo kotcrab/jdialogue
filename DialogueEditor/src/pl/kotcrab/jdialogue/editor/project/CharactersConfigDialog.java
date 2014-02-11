@@ -92,6 +92,7 @@ public class CharactersConfigDialog extends JDialog
 				if(isSelectionValid())
 				{
 					new CharacterCreationDialog(parrent, project, getCharacterByName(list.getSelectedValue()), false);
+					updateList();
 				}
 			}
 		});

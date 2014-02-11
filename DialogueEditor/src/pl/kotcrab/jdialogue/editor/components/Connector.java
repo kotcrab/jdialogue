@@ -87,7 +87,7 @@ public class Connector
 					Connector temp = targetConnectors[j];
 					targetConnectors[j].removeTarget(this); // detach
 					targetsToRemove.add(temp);
-					break;
+					continue;
 				}
 			}
 		}
@@ -118,14 +118,15 @@ public class Connector
 			
 			for(int j = 0; j < targetConnectors.length; j++) // searching for matching output connector
 			{
-				if(componentList.contains(targetConnectors[j].getParrentComponent())) return;
+				System.out.println(componentList.contains(targetConnectors[j].getParrentComponent()) + " " + componentList.contains(this.getParrentComponent()));
+				if(componentList.contains(targetConnectors[j].getParrentComponent()) && componentList.contains(this.getParrentComponent())) continue;
 				
 				if(targetConnectors[j] == target) // found
 				{
 					Connector temp = targetConnectors[j];
 					targetConnectors[j].removeTarget(this); // detach
 					targetsToRemove.add(temp);
-					break;
+					continue;
 				}
 			}
 		}

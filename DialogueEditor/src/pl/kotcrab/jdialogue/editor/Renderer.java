@@ -496,7 +496,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		
 		for(DComponent comp : compList)
 		{
-			comp.detachAllNotOnList(selectedComponentsList);
+			comp.detachAllNotOnList(compList);
 		}
 		
 		componentList.removeAll(compList);
