@@ -18,13 +18,12 @@
 
 package pl.kotcrab.jdialogue.editor;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.Date;
 
 import javax.swing.DefaultCellEditor;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -34,8 +33,11 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
 import pl.kotcrab.jdialogue.editor.components.ChoiceComponentChoices;
+import pl.kotcrab.jdialogue.editor.gui.CharactersJComboBoxModel;
 import pl.kotcrab.jdialogue.editor.gui.ChoiceComponentChoicesEditor;
 import pl.kotcrab.jdialogue.editor.gui.LeftNumberEditor;
+import pl.kotcrab.jdialogue.editor.project.Character;
+import pl.kotcrab.jdialogue.editor.project.Project;
 
 /**
  * Table with custom renderer
@@ -46,8 +48,10 @@ public class PropertyTable extends JTable
 {
 	private static final long serialVersionUID = 1L;
 	
-	DefaultTableCellRenderer leftRenderer = new DefaultTableCellRenderer();
-	DefaultCellEditor textEditor;
+	private DefaultTableCellRenderer leftRenderer = new DefaultTableCellRenderer();
+	private DefaultCellEditor textEditor;
+	private Project project;
+	private JComboBox<Character> characterCombobox;
 	
 	public PropertyTable(TableModel dm)
 	{
@@ -90,6 +94,13 @@ public class PropertyTable extends JTable
 		{
 			return textEditor;
 		}
+
+		if(getValueAt(row, 0).equals("Character") && column == 1)
+		{
+			characterCombobox.updateUI(); //make sure that combobox upadted itself (without this list will be blank if character list changed)
+			//characterCombobox.revalidate();
+			return new DefaultCellEditor(characterCombobox);
+		}
 		
 		if(value instanceof ChoiceComponentChoices) // TODO za kazdym razem nowy czy stary moze byc?
 		{
@@ -114,7 +125,7 @@ public class PropertyTable extends JTable
 			return getDefaultRenderer(Boolean.class);
 		}
 		
-		if(value instanceof Integer || value instanceof String || value instanceof ChoiceComponentChoices)
+		if(value instanceof Integer || value instanceof String || value instanceof ChoiceComponentChoices || value instanceof Character)
 		{
 			return leftRenderer;
 		}
@@ -122,5 +133,16 @@ public class PropertyTable extends JTable
 		// no special case
 		return super.getCellRenderer(row, column);
 	}
-	
+
+	public Project getProject()
+	{
+		return project;
+	}
+
+	public void setProject(Project project)
+	{
+		this.project = project;
+		characterCombobox = new JComboBox<>(new CharactersJComboBoxModel(project.getCharacters()));
+	}
+
 }

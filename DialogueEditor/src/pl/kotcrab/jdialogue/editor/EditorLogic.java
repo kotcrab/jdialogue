@@ -32,6 +32,7 @@ import pl.kotcrab.jdialogue.editor.project.NewProjectDialog;
 import pl.kotcrab.jdialogue.editor.project.NewSequenceDialog;
 import pl.kotcrab.jdialogue.editor.project.Project;
 import pl.kotcrab.jdialogue.editor.project.ProjectCallback;
+import pl.kotcrab.jdialogue.editor.project.ProjectExport;
 import pl.kotcrab.jdialogue.editor.project.Sequence;
 import pl.kotcrab.jdialogue.editor.project.SequenceSelectionDialog;
 
@@ -91,6 +92,7 @@ public class EditorLogic
 		xstream.alias("dCallback", CallbackComponent.class);
 		xstream.alias("dRandom", RandomComponent.class);
 		xstream.alias("project", Project.class);
+		xstream.alias("project", ProjectExport.class);
 		xstream.alias("character", Character.class);
 		
 		xstream.registerConverter(new DComponentConverter());
@@ -341,6 +343,8 @@ public class EditorLogic
 		{
 			this.project = project;
 			project.loadProject(projectConfigFile, xstream);
+			renderer.setProject(project);
+			table.setProject(project);
 			renderer.setComponentList(project.getActiveSequence().getComponentList());
 			window.setTitle("Dialogue Editor - " + project.getActiveSequence().getName());
 		}
@@ -355,6 +359,7 @@ public class EditorLogic
 	{
 		this.project = project;
 		renderer.setProject(project);
+		table.setProject(project);
 		
 		new NewSequenceDialog(Editor.window, project, false);
 		

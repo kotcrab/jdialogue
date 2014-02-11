@@ -20,6 +20,7 @@ package pl.kotcrab.jdialogue.editor.components.types;
 
 import pl.kotcrab.jdialogue.editor.components.ComponentTableModel;
 import pl.kotcrab.jdialogue.editor.components.DComponent;
+import pl.kotcrab.jdialogue.editor.project.Character;
 
 public class TextComponent extends DComponent
 {
@@ -27,11 +28,11 @@ public class TextComponent extends DComponent
 	{
 		super("Show Text", x, y, 1, 1);
 		tableModel = new ComponentTableModel(
-		//@formatter:off
+//@formatter:off
 		new Object[][]
 				{
 				    {"Text", "Set Text"},
-				    {"Character", "TODO"}
+				    {"Character", new Character("None (default character)", "none")}
 				}
 		//@formatter:on
 		);

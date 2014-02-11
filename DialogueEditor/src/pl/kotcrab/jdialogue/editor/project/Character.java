@@ -31,4 +31,10 @@ public class Character
 	{
 		this.textureName = textureName;
 	}
+	
+	@Override
+	public String toString()
+	{
+		return name;
+	}
 }

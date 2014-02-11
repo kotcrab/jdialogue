@@ -31,6 +31,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.Converter;
 
 public class IOUtils
 {

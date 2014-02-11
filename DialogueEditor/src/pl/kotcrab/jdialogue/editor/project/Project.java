@@ -178,6 +178,15 @@ public class Project
 		
 		if(customOut != null && customOut.equals("")) customOut = null;
 		
+		if(customOut != null)
+		{
+			IOUtils.saveNormal(xstream, new File(customOut + "project.xml"), new ProjectExport(name, characters));
+		}
+		else
+		{
+			IOUtils.saveNormal(xstream, new File(mainDir + "out" + File.separator + "project.xml"), new ProjectExport(name, characters));
+		}
+		
 		int failedToExport = 0;
 		
 		for(Sequence seq : sequences)
