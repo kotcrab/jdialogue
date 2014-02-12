@@ -79,6 +79,14 @@ public class Sequence
 			IOUtils.saveNormal(xstream, file, componentList);
 	}
 	
+	public void rename(XStream xstream, boolean gzip, String name)
+	{
+		file.delete();
+		this.name = name;
+		file = new File(file.getParentFile().getPath() + name + ".xml");
+		save(xstream, gzip);
+	}
+	
 	public boolean export(XStream xstream, boolean gzipExport, String exportPath) // TODO organize components list by id
 	{
 		
@@ -172,5 +180,4 @@ public class Sequence
 	{
 		return loaded;
 	}
-	
 }

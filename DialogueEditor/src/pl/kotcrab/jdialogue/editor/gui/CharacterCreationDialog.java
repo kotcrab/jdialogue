@@ -51,9 +51,9 @@ public class CharacterCreationDialog extends JDialog
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		
 		if(newMode)
-			setTitle("Character settings");
-		else
 			setTitle("New character");
+		else
+			setTitle("Character settings");
 		
 		setResizable(false);
 		setBounds(parrent.getX() + (parrent.getWidth() / 2) - (436 / 2), parrent.getY() + (parrent.getHeight() / 2) - (109 / 2), 436, 144);

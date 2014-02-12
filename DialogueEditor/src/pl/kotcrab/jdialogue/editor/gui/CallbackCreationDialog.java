@@ -50,9 +50,9 @@ public class CallbackCreationDialog extends JDialog
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		
 		if(newMode)
-			setTitle("Callback settings");
-		else
 			setTitle("New callback");
+		else
+			setTitle("Callback settings");
 		
 		setResizable(false);
 		setBounds(parrent.getX() + (parrent.getWidth() / 2) - (436 / 2), parrent.getY() + (parrent.getHeight() / 2) - (101 / 2), 436, 101);

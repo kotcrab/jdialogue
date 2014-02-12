@@ -30,7 +30,7 @@ import pl.kotcrab.jdialogue.editor.gui.CallbacksConfigDialog;
 import pl.kotcrab.jdialogue.editor.gui.CharactersConfigDialog;
 import pl.kotcrab.jdialogue.editor.gui.NewProjectDialog;
 import pl.kotcrab.jdialogue.editor.gui.NewSequenceDialog;
-import pl.kotcrab.jdialogue.editor.gui.SequenceSelectionDialog;
+import pl.kotcrab.jdialogue.editor.gui.SequenceConfigDialog;
 import pl.kotcrab.jdialogue.editor.project.Character;
 import pl.kotcrab.jdialogue.editor.project.Project;
 import pl.kotcrab.jdialogue.editor.project.ProjectCallback;
@@ -128,7 +128,7 @@ public class EditorLogic
 					public void run()
 					{
 						if(project != null)
-							new SequenceSelectionDialog(Editor.window, project);
+							new SequenceConfigDialog(Editor.window, project);
 						else
 							JOptionPane.showMessageDialog(Editor.window, "Create or load project to edit sequences", "Error", JOptionPane.ERROR_MESSAGE);
 					}

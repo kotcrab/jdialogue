@@ -70,6 +70,7 @@ public class Project
 		prepareProject();
 		
 		characters.add(new Character("None (default character)", "none"));
+		callbacks.add(new Callback("Default callback"));
 	}
 	
 	private void prepareProject()
@@ -168,9 +169,14 @@ public class Project
 		characters.add(new Character(name, textureName));
 	}
 	
-	public boolean deleteCharaacter(Character character)
+	public boolean deleteCharacter(Character character)
 	{
 		return characters.remove(character);
+	}
+	
+	public boolean deleteCallback(Callback callback)
+	{
+		return callbacks.remove(callback);
 	}
 	
 	public void exportProject(XStream xstream) // TODO export all sequencees and project file
@@ -236,5 +242,7 @@ public class Project
 	{
 		this.listener = listener;
 	}
+
+
 	
 }

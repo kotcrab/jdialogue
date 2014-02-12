@@ -20,6 +20,7 @@ package pl.kotcrab.jdialogue.editor.components.types;
 
 import pl.kotcrab.jdialogue.editor.components.ComponentTableModel;
 import pl.kotcrab.jdialogue.editor.components.DComponent;
+import pl.kotcrab.jdialogue.editor.project.Callback;
 
 public class CallbackComponent extends DComponent
 {
@@ -30,7 +31,7 @@ public class CallbackComponent extends DComponent
 			//@formatter:off
 			new Object[][]
 				{
-				    {"Callback Text", "Set Text"},
+				    {"Callback", new Callback("Default callback")},
 				}
 			//@formatter:on
 			);

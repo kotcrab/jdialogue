@@ -86,7 +86,7 @@ public class Editor extends JFrame
 		
 		rendererSplitPane = new JSplitPane();
 		rendererSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-		rendererSplitPane.setResizeWeight(0.8);
+		rendererSplitPane.setResizeWeight(1);
 		rendererSplitPane.setContinuousLayout(true);
 		contentPane.add(rendererSplitPane, BorderLayout.CENTER);
 		

@@ -93,11 +93,11 @@ public class CallbacksConfigDialog extends JDialog
 			{
 				if(isSelectionValid())
 				{
-				new CallbackCreationDialog(parrent, project, getCallbackByName(list.getSelectedValue()), false);
+					new CallbackCreationDialog(parrent, project, getCallbackByName(list.getSelectedValue()), false);
 					updateList();
 				}
 			}
-
+			
 		});
 		
 		JButton btnDelete = new JButton("Delete");
@@ -107,7 +107,7 @@ public class CallbacksConfigDialog extends JDialog
 			{
 				if(isSelectionValid())
 				{
-					// new CharacterDeleteDialog(parrent, project, getCharacterByName(list.getSelectedValue()));
+					new CallbackDeleteDialog(parrent, project, getCallbackByName(list.getSelectedValue()));
 					updateList();
 				}
 			}
@@ -146,6 +146,12 @@ public class CallbacksConfigDialog extends JDialog
 		if(list.getSelectedValue() == null)
 		{
 			JOptionPane.showMessageDialog(instance, "Please select callback.", "Error", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+		
+		if(list.getSelectedIndex() == 0)
+		{
+			JOptionPane.showMessageDialog(instance, "This callback cannot be edited or deleted.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		

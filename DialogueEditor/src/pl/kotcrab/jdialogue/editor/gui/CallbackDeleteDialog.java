@@ -12,10 +12,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import pl.kotcrab.jdialogue.editor.project.Character;
+import pl.kotcrab.jdialogue.editor.project.Callback;
 import pl.kotcrab.jdialogue.editor.project.Project;
 
-public class CharacterDeleteDialog extends JDialog
+public class CallbackDeleteDialog extends JDialog
 {
 	
 	private static final long serialVersionUID = 1L;
@@ -25,18 +25,19 @@ public class CharacterDeleteDialog extends JDialog
 	/**
 	 * Create the dialog.
 	 */
-	public CharacterDeleteDialog(Window parrent, final Project project, final Character character)
+	public CallbackDeleteDialog(Window parrent, final Project project, final Callback character)
 	{
 		super(parrent, ModalityType.APPLICATION_MODAL);
 		
-		setTitle("Character delete - " + character.getName());
+		setTitle("Callback delete - " + character.getName());
 		setBounds(parrent.getX() + (parrent.getWidth() / 2) - (450 / 2), parrent.getY() + (parrent.getHeight() / 2) - (191 / 2), 450, 191);
 
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(new BorderLayout(0, 0));
-		JLabel lblLabel = new JLabel("<html>Are you sure you want to delete this character? <br> <br>WARNING: All components using this character won't be updated! Their configuration will be invalid and may cause problems during runtime. <br><br>It's recommended to not delete character</html>");
+		JLabel lblLabel = new JLabel("<html>Are you sure you want to delete this callback? <br> <br>WARNING: All components using this callback won't be updated! " +
+				"Their configuration will be invalid and may cause problems during runtime. <br><br>It's recommended to not delete this callback</html>");
 		contentPanel.add(lblLabel);
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -46,7 +47,7 @@ public class CharacterDeleteDialog extends JDialog
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				project.deleteCharacter(character);
+				project.deleteCallback(character);
 				dispose();
 			}
 		});

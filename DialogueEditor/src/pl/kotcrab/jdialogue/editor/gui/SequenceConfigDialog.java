@@ -39,11 +39,11 @@ import pl.kotcrab.jdialogue.editor.Editor;
 import pl.kotcrab.jdialogue.editor.project.Project;
 import pl.kotcrab.jdialogue.editor.project.Sequence;
 
-public class SequenceSelectionDialog extends JDialog
+public class SequenceConfigDialog extends JDialog
 {
 	
 	private static final long serialVersionUID = 1L;
-	private SequenceSelectionDialog instance;
+	private SequenceConfigDialog instance;
 	private final JPanel contentPanel = new JPanel();
 	
 	private Project project;
@@ -53,7 +53,7 @@ public class SequenceSelectionDialog extends JDialog
 	/**
 	 * Create the dialog.
 	 */
-	public SequenceSelectionDialog(final Editor parrent, final Project project)
+	public SequenceConfigDialog(final Editor parrent, final Project project)
 	{
 		super(parrent, true);
 		instance = this;
@@ -89,8 +89,8 @@ public class SequenceSelectionDialog extends JDialog
 			}
 		});
 		buttonPane.add(btnCreateNew);
-		JButton okButton = new JButton("OK");
-		okButton.addActionListener(new ActionListener()
+		JButton btnOk = new JButton("OK");
+		btnOk.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
@@ -105,23 +105,30 @@ public class SequenceSelectionDialog extends JDialog
 				dispose();
 			}
 		});
-		JButton btnNewButton_1 = new JButton("Rename");
-		buttonPane.add(btnNewButton_1);
-		JButton btnNewButton = new JButton("Delete");
-		buttonPane.add(btnNewButton);
-		okButton.setActionCommand("OK");
-		buttonPane.add(okButton);
-		getRootPane().setDefaultButton(okButton);
-		JButton cancelButton = new JButton("Cancel");
-		cancelButton.addActionListener(new ActionListener()
+		JButton btnRename = new JButton("Rename");
+		btnRename.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				//new Seq
+			}
+		});
+		buttonPane.add(btnRename);
+		JButton btnDelete = new JButton("Delete");
+		buttonPane.add(btnDelete);
+		btnOk.setActionCommand("OK");
+		buttonPane.add(btnOk);
+		getRootPane().setDefaultButton(btnOk);
+		JButton btnCancel = new JButton("Cancel");
+		btnCancel.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e)
 			{
 				dispose();
 			}
 		});
-		cancelButton.setActionCommand("Cancel");
-		buttonPane.add(cancelButton);
+		btnCancel.setActionCommand("Cancel");
+		buttonPane.add(btnCancel);
 		
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setVisible(true);
