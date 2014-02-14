@@ -18,5 +18,5 @@ package pl.kotcrab.jdialogue.parser;
 
 public enum ComponentType
 {
-	TEXT, CHOICE, RANDOM, CALLBACK, END, RELAY
+	TEXT, CHOICE, RANDOM, CALLBACK, CBCHECK, END, RELAY
 }
