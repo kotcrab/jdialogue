@@ -26,6 +26,7 @@ import pl.kotcrab.jdialogue.editor.components.ConnectionRenderer;
 import pl.kotcrab.jdialogue.editor.components.Connector;
 import pl.kotcrab.jdialogue.editor.components.DComponent;
 import pl.kotcrab.jdialogue.editor.components.DComponentType;
+import pl.kotcrab.jdialogue.editor.components.types.CallbackCheckComponent;
 import pl.kotcrab.jdialogue.editor.components.types.CallbackComponent;
 import pl.kotcrab.jdialogue.editor.components.types.ChoiceComponent;
 import pl.kotcrab.jdialogue.editor.components.types.EndComponent;
@@ -335,6 +336,9 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 				break;
 			case CALLBACK:
 				componentList.add(new CallbackComponent(Touch.getX(), Touch.getY()));
+				break;
+			case CBCHECK:
+				componentList.add(new CallbackCheckComponent(Touch.getX(), Touch.getY()));
 				break;
 			case END:
 				componentList.add(new EndComponent(Touch.getX(), Touch.getY()));

@@ -20,5 +20,5 @@ package pl.kotcrab.jdialogue.editor.components;
 
 public enum DComponentType
 {
-	TEXT, CHOICE, RANDOM, CALLBACK, END, RELAY
+	TEXT, CHOICE, RANDOM, CALLBACK, CBCHECK, END, RELAY
 }

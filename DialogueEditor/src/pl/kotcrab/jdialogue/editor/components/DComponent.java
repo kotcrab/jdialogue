@@ -26,6 +26,7 @@ import pl.kotcrab.jdialogue.editor.KotcrabText;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 
 public abstract class DComponent
@@ -34,8 +35,7 @@ public abstract class DComponent
 	private KotcrabText title;
 	
 	/**
-	 * Id of this component, 0 for start, other in order 1,2,3,4...
-	 * Set only when exporting, after exporting it's may be incorrect
+	 * Id of this component, 0 for start, other in order 1,2,3,4... Set only when exporting, after exporting it's may be incorrect
 	 */
 	private int id;
 	
@@ -46,6 +46,9 @@ public abstract class DComponent
 	
 	private Connector[] inputs;
 	private Connector[] outputs;
+	
+	private KotcrabText[] inputsLabels;
+	private KotcrabText[] outputsLabels;
 	
 	protected ComponentTableModel tableModel;
 	
@@ -74,6 +77,11 @@ public abstract class DComponent
 		
 		distributeConnections();
 		calcTextPos();
+		
+		inputsLabels = provideInputLabels();
+		outputsLabels = provideOutputsLabels();
+		
+		distrbuteLabels();
 	}
 	
 	/**
@@ -120,6 +128,13 @@ public abstract class DComponent
 	public void render(SpriteBatch batch)
 	{
 		title.draw(batch);
+		
+		for(int i = 0; i < inputsLabels.length; i++)
+			if(inputsLabels[i] != null) inputsLabels[i].draw(batch);
+		
+		for(int i = 0; i < outputsLabels.length; i++)
+			if(outputsLabels[i] != null) outputsLabels[i].draw(batch);
+		
 	}
 	
 	public void renderShapes(ShapeRenderer shapeRenderer)
@@ -246,6 +261,7 @@ public abstract class DComponent
 		
 		calcTextPos();
 		distributeConnections();
+		distrbuteLabels();
 		
 	}
 	
@@ -286,6 +302,27 @@ public abstract class DComponent
 		this.title.setPosition(x + this.title.getPosition().x, ry + height - 30);
 	}
 	
+	private void distrbuteLabels()
+	{
+		for(int i = 0; i < inputsLabels.length; i++)
+		{
+			if(inputsLabels[i] != null)
+			{
+				inputsLabels[i].setPosition(inputs[i].getX() + 16, inputs[i].getY() - 14);
+				inputsLabels[i].setScale(0.5f);
+			}
+		}
+		
+		for(int i = 0; i < outputsLabels.length; i++)
+		{
+			if(outputsLabels[i] != null)
+			{
+				outputsLabels[i].setPosition(outputs[i].getX() - outputsLabels[i].getTextBounds().width / 2 - 6, outputs[i].getY() - 14);
+				outputsLabels[i].setScale(0.5f);
+			}
+		}
+	}
+	
 	public void setX(int x)
 	{
 		this.x = x;
@@ -299,7 +336,17 @@ public abstract class DComponent
 		calcTextPos();
 		distributeConnections();
 		boundingRectangle.set(x, ry, width, height);
-		
+		distrbuteLabels();
+	}
+	
+	public KotcrabText[] provideInputLabels()
+	{
+		return new KotcrabText[0];
+	}
+	
+	public KotcrabText[] provideOutputsLabels()
+	{
+		return new KotcrabText[0];
 	}
 	
 	public int getX()

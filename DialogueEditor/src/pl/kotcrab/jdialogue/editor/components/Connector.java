@@ -118,7 +118,6 @@ public class Connector
 			
 			for(int j = 0; j < targetConnectors.length; j++) // searching for matching output connector
 			{
-				System.out.println(componentList.contains(targetConnectors[j].getParrentComponent()) + " " + componentList.contains(this.getParrentComponent()));
 				if(componentList.contains(targetConnectors[j].getParrentComponent()) && componentList.contains(this.getParrentComponent())) continue;
 				
 				if(targetConnectors[j] == target) // found

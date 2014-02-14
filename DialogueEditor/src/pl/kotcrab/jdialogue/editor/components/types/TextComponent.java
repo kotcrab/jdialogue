@@ -18,6 +18,8 @@
 
 package pl.kotcrab.jdialogue.editor.components.types;
 
+import pl.kotcrab.jdialogue.editor.Assets;
+import pl.kotcrab.jdialogue.editor.KotcrabText;
 import pl.kotcrab.jdialogue.editor.components.ComponentTableModel;
 import pl.kotcrab.jdialogue.editor.components.DComponent;
 import pl.kotcrab.jdialogue.editor.project.Character;
@@ -28,7 +30,7 @@ public class TextComponent extends DComponent
 	{
 		super("Show Text", x, y, 1, 1);
 		tableModel = new ComponentTableModel(
-//@formatter:off
+		//@formatter:off
 		new Object[][]
 				{
 				    {"Text", "Set Text"},
@@ -38,4 +40,13 @@ public class TextComponent extends DComponent
 		);
 	}
 	
+	public KotcrabText[] provideInputLabels()
+	{
+		return new KotcrabText[]{new KotcrabText(Assets.consolasFont, "In", false, 0, 0)};
+	}
+	
+	public KotcrabText[] provideOutputsLabels()
+	{
+		return new KotcrabText[]{new KotcrabText(Assets.consolasFont, "Out", false, 0, 0)};
+	}
 }

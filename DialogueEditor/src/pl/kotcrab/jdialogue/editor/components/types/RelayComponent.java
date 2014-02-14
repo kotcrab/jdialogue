@@ -21,6 +21,8 @@ package pl.kotcrab.jdialogue.editor.components.types;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
+import pl.kotcrab.jdialogue.editor.Assets;
+import pl.kotcrab.jdialogue.editor.KotcrabText;
 import pl.kotcrab.jdialogue.editor.components.ComponentTableModel;
 import pl.kotcrab.jdialogue.editor.components.DComponent;
 
@@ -53,5 +55,15 @@ public class RelayComponent extends DComponent
 				resize((int) tableModel.getValueAt(0, 1), getOutputs().length);
 			}
 		});
+	}
+	
+	public KotcrabText[] provideInputLabels()
+	{
+		return new KotcrabText[]{new KotcrabText(Assets.consolasFont, "In(s)", false, 0, 0)};
+	}
+	
+	public KotcrabText[] provideOutputsLabels()
+	{
+		return new KotcrabText[]{new KotcrabText(Assets.consolasFont, "Out", false, 0, 0)};
 	}
 }

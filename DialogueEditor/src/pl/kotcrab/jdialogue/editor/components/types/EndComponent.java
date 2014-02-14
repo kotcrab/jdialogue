@@ -17,6 +17,8 @@
  ******************************************************************************/
 package pl.kotcrab.jdialogue.editor.components.types;
 
+import pl.kotcrab.jdialogue.editor.Assets;
+import pl.kotcrab.jdialogue.editor.KotcrabText;
 import pl.kotcrab.jdialogue.editor.components.ComponentTableModel;
 import pl.kotcrab.jdialogue.editor.components.DComponent;
 
@@ -26,5 +28,10 @@ public class EndComponent extends DComponent
 	{
 		super("End", x, y, 1, 0);
 		tableModel = new ComponentTableModel(null);
+	}
+	
+	public KotcrabText[] provideInputLabels()
+	{
+		return new KotcrabText[]{new KotcrabText(Assets.consolasFont, "In", false, 0, 0)};
 	}
 }

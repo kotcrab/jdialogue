@@ -24,11 +24,11 @@ import pl.kotcrab.jdialogue.editor.components.ComponentTableModel;
 import pl.kotcrab.jdialogue.editor.components.DComponent;
 import pl.kotcrab.jdialogue.editor.project.Callback;
 
-public class CallbackComponent extends DComponent
+public class CallbackCheckComponent extends DComponent
 {
-	public CallbackComponent(int x, int y)
+	public CallbackCheckComponent(int x, int y)
 	{
-		super("Callback", x, y, 1, 1);
+		super("Cb. Check", x, y, 1, 2);
 		tableModel = new ComponentTableModel(
 			//@formatter:off
 			new Object[][]
@@ -46,6 +46,7 @@ public class CallbackComponent extends DComponent
 	
 	public KotcrabText[] provideOutputsLabels()
 	{
-		return new KotcrabText[]{new KotcrabText(Assets.consolasFont, "Out", false, 0, 0)};
+		return new KotcrabText[]{new KotcrabText(Assets.consolasFont, "True", false, 0, 0),
+								 new KotcrabText(Assets.consolasFont, "False", false, 0, 0)};
 	}
 }

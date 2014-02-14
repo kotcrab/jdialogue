@@ -228,6 +228,7 @@ public class Editor extends JFrame
 		MenuItem mAddChoice = new AddComponentMenuItem("Add 'Choice'", DComponentType.CHOICE);
 		MenuItem mAddRandom = new AddComponentMenuItem("Add 'Random'", DComponentType.RANDOM);
 		MenuItem mAddCallback = new AddComponentMenuItem("Add 'Callback'", DComponentType.CALLBACK);
+		MenuItem mAddCallbackCheck = new AddComponentMenuItem("Add 'Callback Check'", DComponentType.CBCHECK);
 		MenuItem mAddRelay = new AddComponentMenuItem("Add 'Relay'", DComponentType.RELAY);
 		MenuItem mAddEnd = new AddComponentMenuItem("Add 'End'", DComponentType.END);
 		
@@ -235,6 +236,7 @@ public class Editor extends JFrame
 		mAddChoice.addActionListener(logic.popupMenuListener);
 		mAddRandom.addActionListener(logic.popupMenuListener);
 		mAddCallback.addActionListener(logic.popupMenuListener);
+		mAddCallbackCheck.addActionListener(logic.popupMenuListener);
 		mAddRelay.addActionListener(logic.popupMenuListener);
 		mAddEnd.addActionListener(logic.popupMenuListener);
 		
@@ -242,6 +244,7 @@ public class Editor extends JFrame
 		popupMenu.add(mAddChoice);
 		popupMenu.add(mAddRandom);
 		popupMenu.add(mAddCallback);
+		popupMenu.add(mAddCallbackCheck);
 		popupMenu.add(mAddRelay);
 		popupMenu.add(mAddEnd);
 		

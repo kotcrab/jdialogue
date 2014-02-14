@@ -21,6 +21,8 @@ package pl.kotcrab.jdialogue.editor.components.types;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
+import pl.kotcrab.jdialogue.editor.Assets;
+import pl.kotcrab.jdialogue.editor.KotcrabText;
 import pl.kotcrab.jdialogue.editor.components.ComponentTableModel;
 import pl.kotcrab.jdialogue.editor.components.DComponent;
 
@@ -53,5 +55,15 @@ public class RandomComponent extends DComponent
 			}
 		});
 		
+	}
+	
+	public KotcrabText[] provideInputLabels()
+	{
+		return new KotcrabText[]{new KotcrabText(Assets.consolasFont, "In", false, 0, 0)};
+	}
+	
+	public KotcrabText[] provideOutputsLabels()
+	{
+		return new KotcrabText[]{new KotcrabText(Assets.consolasFont, "Out(s)", false, 0, 0)};
 	}
 }
