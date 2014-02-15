@@ -23,7 +23,7 @@ import java.util.Collections;
 
 public class IDManager
 {
-	private ArrayList<Integer> freeIDs = new ArrayList<>(100);
+	private ArrayList<Integer> freeIDs = new ArrayList<>(30);
 		
 	private int IDCounter = 0;
 	
@@ -34,7 +34,7 @@ public class IDManager
 	
 	private void genertesIDs()
 	{
-		int targetIDCounter = IDCounter + 100;
+		int targetIDCounter = IDCounter + 30;
 		for(; IDCounter < targetIDCounter; IDCounter++)
 		{
 			freeIDs.add(IDCounter);

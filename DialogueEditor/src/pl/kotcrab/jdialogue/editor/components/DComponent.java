@@ -26,12 +26,11 @@ import pl.kotcrab.jdialogue.editor.KotcrabText;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 public abstract class DComponent
 {
-	
 	private KotcrabText title;
 	
 	/**

@@ -30,7 +30,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import pl.kotcrab.jdialogue.editor.project.Character;
+import pl.kotcrab.jdialogue.editor.project.DCharacter;
 import pl.kotcrab.jdialogue.editor.project.Project;
 
 public class CharacterCreationDialog extends JDialog
@@ -44,7 +44,7 @@ public class CharacterCreationDialog extends JDialog
 	/**
 	 * Create the dialog.
 	 */
-	public CharacterCreationDialog(Window parrent, final Project project, final Character character, final boolean newMode)
+	public CharacterCreationDialog(Window parrent, final Project project, final DCharacter character, final boolean newMode)
 	{
 		super(parrent, ModalityType.APPLICATION_MODAL);
 		// super(parrent, true);

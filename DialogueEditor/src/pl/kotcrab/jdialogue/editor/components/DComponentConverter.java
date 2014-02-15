@@ -19,6 +19,7 @@
 package pl.kotcrab.jdialogue.editor.components;
 
 import pl.kotcrab.jdialogue.editor.EditorException;
+import pl.kotcrab.jdialogue.editor.components.types.CallbackCheckComponent;
 import pl.kotcrab.jdialogue.editor.components.types.CallbackComponent;
 import pl.kotcrab.jdialogue.editor.components.types.ChoiceComponent;
 import pl.kotcrab.jdialogue.editor.components.types.EndComponent;
@@ -26,6 +27,7 @@ import pl.kotcrab.jdialogue.editor.components.types.RandomComponent;
 import pl.kotcrab.jdialogue.editor.components.types.RelayComponent;
 import pl.kotcrab.jdialogue.editor.components.types.StartComponent;
 import pl.kotcrab.jdialogue.editor.components.types.TextComponent;
+import pl.kotcrab.jdialogue.editor.project.DCharacter;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -48,6 +50,7 @@ public class DComponentConverter implements Converter
 		|| type.equals(StartComponent.class)
 		|| type.equals(EndComponent.class)
 		|| type.equals(CallbackComponent.class)
+		|| type.equals(CallbackCheckComponent.class)
 		|| type.equals(RandomComponent.class)
 		)
 		//@formatter:on
@@ -88,8 +91,18 @@ public class DComponentConverter implements Converter
 					if(data[i][0].equals("Outputs")) continue;
 					if(data[i][0].equals("Inputs")) continue;
 					
-					writer.startNode(data[i][0].toString().toLowerCase());
-					writer.setValue(data[i][1].toString());
+					String nodeName = data[i][0].toString().toLowerCase();
+					
+					writer.startNode(nodeName);
+					
+					if(nodeName.equals("character"))
+					{
+						DCharacter charater = (DCharacter) data[i][1];
+						writer.setValue(String.valueOf(charater.getId()));
+					}
+					else
+						writer.setValue(data[i][1].toString());
+					
 					writer.endNode();
 				}
 			}
@@ -116,6 +129,8 @@ public class DComponentConverter implements Converter
 				writer.addAttribute("type", "end");
 			else if(comp.getClass().equals(CallbackComponent.class))
 				writer.addAttribute("type", "callback");
+			else if(comp.getClass().equals(CallbackCheckComponent.class))
+				writer.addAttribute("type", "callbackCheck");
 			else if(comp.getClass().equals(RandomComponent.class))
 				writer.addAttribute("type", "random");
 			else
@@ -169,6 +184,8 @@ public class DComponentConverter implements Converter
 			comp = new EndComponent(0, 0);
 		else if(type.equals("callback"))
 			comp = new CallbackComponent(0, 0);
+		else if(type.equals("callbackCheck"))
+			comp = new CallbackCheckComponent(0, 0);
 		else if(type.equals("random"))
 			comp = new RandomComponent(0, 0);
 		else

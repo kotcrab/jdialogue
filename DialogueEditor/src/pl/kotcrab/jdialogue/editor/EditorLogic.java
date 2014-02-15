@@ -18,6 +18,7 @@ import javax.swing.table.DefaultTableModel;
 import pl.kotcrab.jdialogue.editor.components.ComponentTableModel;
 import pl.kotcrab.jdialogue.editor.components.Connector;
 import pl.kotcrab.jdialogue.editor.components.DComponentConverter;
+import pl.kotcrab.jdialogue.editor.components.types.CallbackCheckComponent;
 import pl.kotcrab.jdialogue.editor.components.types.CallbackComponent;
 import pl.kotcrab.jdialogue.editor.components.types.ChoiceComponent;
 import pl.kotcrab.jdialogue.editor.components.types.EndComponent;
@@ -31,7 +32,8 @@ import pl.kotcrab.jdialogue.editor.gui.CharactersConfigDialog;
 import pl.kotcrab.jdialogue.editor.gui.NewProjectDialog;
 import pl.kotcrab.jdialogue.editor.gui.NewSequenceDialog;
 import pl.kotcrab.jdialogue.editor.gui.SequenceConfigDialog;
-import pl.kotcrab.jdialogue.editor.project.Character;
+import pl.kotcrab.jdialogue.editor.project.Callback;
+import pl.kotcrab.jdialogue.editor.project.DCharacter;
 import pl.kotcrab.jdialogue.editor.project.Project;
 import pl.kotcrab.jdialogue.editor.project.ProjectCallback;
 import pl.kotcrab.jdialogue.editor.project.ProjectExport;
@@ -85,17 +87,21 @@ public class EditorLogic
 		xstream = new XStream();
 		xstream.autodetectAnnotations(true);
 		
-		xstream.alias("connector", Connector.class);
 		xstream.alias("dText", TextComponent.class);
 		xstream.alias("dChoice", ChoiceComponent.class);
 		xstream.alias("dStart", StartComponent.class);
 		xstream.alias("dEnd", EndComponent.class);
 		xstream.alias("dRelay", RelayComponent.class);
 		xstream.alias("dCallback", CallbackComponent.class);
+		xstream.alias("dCallbackCheck", CallbackCheckComponent.class);
 		xstream.alias("dRandom", RandomComponent.class);
+		
+		xstream.alias("connector", Connector.class);
 		xstream.alias("project", Project.class);
 		xstream.alias("projectExport", ProjectExport.class);
-		xstream.alias("character", Character.class);
+		
+		xstream.alias("character", DCharacter.class);
+		xstream.alias("callback", Callback.class);
 		
 		xstream.registerConverter(new DComponentConverter());
 		
@@ -184,6 +190,7 @@ public class EditorLogic
 				project.loadActiveSequence(xstream);
 				window.setTitle("Dialogue Editor - " + newSequence.getName());
 				renderer.setComponentList(newSequence.getComponentList());
+				table.setModel(new DefaultTableModel());
 			}
 		};
 		

@@ -19,6 +19,7 @@
 package pl.kotcrab.jdialogue.editor;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.swing.JOptionPane;
 
@@ -499,20 +500,24 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	public void removeComponentList(ArrayList<DComponent> compList)
 	{
 		dirty = true;
-		for(DComponent comp : compList)
+		
+		Iterator<DComponent> it = compList.iterator();
+		
+		while (it.hasNext())
 		{
+			DComponent comp = it.next();
 			if(comp instanceof StartComponent)
 			{
-				listener.showMsg("Selection containts components that cannot be deleted!", "Error", JOptionPane.ERROR_MESSAGE);
-				compList.clear();
-				return;
+				it.remove();
+				// listener.showMsg("Selection containts components that cannot be deleted!", "Error", JOptionPane.ERROR_MESSAGE);
+				// compList.clear();
+				// return;
 			}
 		}
 		
+		
 		for(DComponent comp : compList)
-		{
 			comp.detachAllNotOnList(compList);
-		}
 		
 		componentList.removeAll(compList);
 		

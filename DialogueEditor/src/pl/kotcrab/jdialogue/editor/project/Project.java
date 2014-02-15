@@ -20,12 +20,14 @@ package pl.kotcrab.jdialogue.editor.project;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.JOptionPane;
 
 import pl.kotcrab.jdialogue.editor.Editor;
 import pl.kotcrab.jdialogue.editor.IOUtils;
 import pl.kotcrab.jdialogue.editor.components.DComponentConverter;
+import pl.kotcrab.jdialogue.editor.components.IDManager;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
@@ -42,7 +44,6 @@ public class Project
 	private boolean gzipProject;
 	private boolean gzipExport;
 	
-	
 	private File configFile;
 	
 	@XStreamOmitField
@@ -52,12 +53,13 @@ public class Project
 	
 	private String activeSequenceName = null;
 	
-	
-	private ArrayList<Character> characters = new ArrayList<Character>(); 
-	private ArrayList<Callback> callbacks = new ArrayList<Callback>(); 
+	private ArrayList<DCharacter> characters = new ArrayList<DCharacter>();
+	private ArrayList<Callback> callbacks = new ArrayList<Callback>();
 	
 	@XStreamOmitField
 	private ProjectCallback listener;
+	
+	private IDManager characterIDManager;
 	
 	public Project(String projectName, String projectMainDir, boolean gzipProject, boolean gzipExport)
 	{
@@ -67,13 +69,15 @@ public class Project
 		this.gzipProject = gzipProject;
 		this.gzipExport = gzipExport;
 		
-		prepareProject();
+		prepareProjectPaths();
 		
-		characters.add(new Character("None (default character)", "none"));
+		characterIDManager = new IDManager();
+		
+		characters.add(new DCharacter(0, "None (default character)", "none"));
 		callbacks.add(new Callback("Default callback"));
 	}
 	
-	private void prepareProject()
+	private void prepareProjectPaths()
 	{
 		if(mainDir.endsWith(File.separator) == false) mainDir += File.separator;
 		if(customOut != null && customOut.endsWith(File.separator) == false) customOut += File.separator;
@@ -166,11 +170,12 @@ public class Project
 	
 	public void newCharacter(String name, String textureName)
 	{
-		characters.add(new Character(name, textureName));
+		characters.add(new DCharacter(characterIDManager.getFreeId(), name, textureName));
 	}
 	
-	public boolean deleteCharacter(Character character)
+	public boolean deleteCharacter(DCharacter character)
 	{
+		characterIDManager.freeID(character.getId());
 		return characters.remove(character);
 	}
 	
@@ -186,27 +191,25 @@ public class Project
 		if(customOut != null && customOut.equals("")) customOut = null;
 		
 		if(customOut != null)
-		{
-			//IOUtils.saveNormal(xstream, new File(customOut + "project.xml"), new ProjectExport(name, characters));
-		}
+			IOUtils.saveNormal(xstream, new File(customOut + "project.xml"), new ProjectExport(name, characters, buildCharacterMap()));
 		else
-		{
-		//	IOUtils.saveNormal(xstream, new File(mainDir + "out" + File.separator + "project.xml"), new ProjectExport(name, characters));
-		}
+			IOUtils.saveNormal(xstream, new File(mainDir + "out" + File.separator + "project.xml"), new ProjectExport(name, characters, buildCharacterMap()));
+
 		
 		int failedToExport = 0;
 		
 		for(Sequence seq : sequences)
 		{
+			if(seq.isLoaded() == false)
+				seq.load(xstream, gzipProject);
+			
 			if(customOut != null)
 			{
-				if(seq.export(xstream, gzipExport, customOut) == false)
-					failedToExport++;
+				if(seq.export(xstream, gzipExport, customOut) == false) failedToExport++;
 			}
 			else
 			{
-				if(seq.export(xstream, gzipExport, mainDir + "out" + File.separator) == false)
-					failedToExport++;
+				if(seq.export(xstream, gzipExport, mainDir + "out" + File.separator) == false) failedToExport++;
 			}
 		}
 		
@@ -217,7 +220,17 @@ public class Project
 		
 		DComponentConverter.exportMode = false;
 	}
-
+	
+	private HashMap<Integer, Integer> buildCharacterMap()
+	{
+		HashMap<Integer, Integer> characterMap = new HashMap<>();
+		
+		for(int i = 0; i < characters.size(); i++)
+			characterMap.put(characters.get(i).getId(), i);
+		
+		return characterMap;
+	}
+	
 	public Sequence getActiveSequence()
 	{
 		return activeSequence;
@@ -228,7 +241,7 @@ public class Project
 		return sequences;
 	}
 	
-	public ArrayList<Character> getCharacters()
+	public ArrayList<DCharacter> getCharacters()
 	{
 		return characters;
 	}
@@ -237,12 +250,10 @@ public class Project
 	{
 		return callbacks;
 	}
-
+	
 	public void setListener(ProjectCallback listener)
 	{
 		this.listener = listener;
 	}
-
-
 	
 }

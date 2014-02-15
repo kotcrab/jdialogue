@@ -12,7 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import pl.kotcrab.jdialogue.editor.project.Character;
+import pl.kotcrab.jdialogue.editor.project.DCharacter;
 import pl.kotcrab.jdialogue.editor.project.Project;
 
 public class CharacterDeleteDialog extends JDialog
@@ -25,7 +25,7 @@ public class CharacterDeleteDialog extends JDialog
 	/**
 	 * Create the dialog.
 	 */
-	public CharacterDeleteDialog(Window parrent, final Project project, final Character character)
+	public CharacterDeleteDialog(Window parrent, final Project project, final DCharacter character)
 	{
 		super(parrent, ModalityType.APPLICATION_MODAL);
 		

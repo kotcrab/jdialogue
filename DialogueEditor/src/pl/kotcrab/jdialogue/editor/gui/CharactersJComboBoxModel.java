@@ -5,22 +5,22 @@ import java.util.ArrayList;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
 
-import pl.kotcrab.jdialogue.editor.project.Character;
+import pl.kotcrab.jdialogue.editor.project.DCharacter;
 
-public class CharactersJComboBoxModel extends AbstractListModel<Character> implements ComboBoxModel<Character>
+public class CharactersJComboBoxModel extends AbstractListModel<DCharacter> implements ComboBoxModel<DCharacter>
 {
 	private static final long serialVersionUID = 1L;
 
-	ArrayList<Character> characterList;
+	ArrayList<DCharacter> characterList;
 	
 	Object selection = null;
 	
-	public CharactersJComboBoxModel(ArrayList<Character> characterList)
+	public CharactersJComboBoxModel(ArrayList<DCharacter> characterList)
 	{
 		this.characterList = characterList;
 	}
 	
-	public Character getElementAt(int index)
+	public DCharacter getElementAt(int index)
 	{
 		return characterList.get(index);
 	}
