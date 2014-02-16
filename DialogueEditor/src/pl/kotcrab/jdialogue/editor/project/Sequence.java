@@ -83,7 +83,7 @@ public class Sequence
 	{
 		file.delete();
 		this.name = name;
-		file = new File(file.getParentFile().getPath() + name + ".xml");
+		file = new File(file.getParentFile().getPath() + File.separator+ name + ".xml");
 		save(xstream, gzip);
 	}
 	

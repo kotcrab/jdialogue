@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package pl.kotcrab.jdialogue.editor.gui;
+package pl.kotcrab.jdialogue.editor.gui.dialog;
 
 import java.awt.Color;
 import java.awt.Window;
@@ -31,11 +31,13 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import com.thoughtworks.xstream.XStream;
+
 import pl.kotcrab.jdialogue.editor.Editor;
 import pl.kotcrab.jdialogue.editor.project.Project;
 import pl.kotcrab.jdialogue.editor.project.Sequence;
 
-public class NewSequenceDialog extends JDialog
+public class SequenceCreationDialog extends JDialog
 {
 	private static final long serialVersionUID = 1L;
 	private JTextField textName;
@@ -44,13 +46,21 @@ public class NewSequenceDialog extends JDialog
 	
 	/**
 	 * Create the dialog.
+	 * 
+	 * @param sequence
+	 *            Sequence to edit/rename, maybe null for new sequecen mode
+	 * @param xstream
+	 *            Only if sequence != null
 	 */
-	public NewSequenceDialog(Window parrent, final Project project, boolean cancelable)
+	public SequenceCreationDialog(Window parrent, final Project project, boolean cancelable, final Sequence sequence, final XStream xstream)
 	{
 		super(parrent, ModalityType.APPLICATION_MODAL);
 		// super(parrent, true);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		setTitle("New sequence");
+		if(sequence == null)
+			setTitle("New sequence");
+		else
+			setTitle("Rename sequence");
 		setResizable(false);
 		setBounds(parrent.getX() + (parrent.getWidth() / 2) - (436 / 2), parrent.getY() + (parrent.getHeight() / 2) - (109 / 2), 436, 109);
 		
@@ -61,7 +71,14 @@ public class NewSequenceDialog extends JDialog
 		getContentPane().add(textName);
 		textName.setColumns(10);
 		
-		btnCreate = new JButton("Create");
+		if(sequence != null)
+			textName.setText(sequence.getName());
+		
+		if(sequence == null)
+			btnCreate = new JButton("Create");
+		else
+			btnCreate = new JButton("Rename");
+		
 		btnCreate.setEnabled(false);
 		btnCreate.addActionListener(new ActionListener()
 		{
@@ -76,7 +93,11 @@ public class NewSequenceDialog extends JDialog
 					}
 				}
 				
-				project.newSequence(textName.getText(), true);
+				if(sequence == null)
+					project.newSequence(textName.getText(), true);
+				else
+					project.renameSequence(xstream, sequence, textName.getText());
+				
 				dispose();
 			}
 		});

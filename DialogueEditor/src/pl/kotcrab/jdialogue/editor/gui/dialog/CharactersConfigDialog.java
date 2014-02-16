@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package pl.kotcrab.jdialogue.editor.gui;
+package pl.kotcrab.jdialogue.editor.gui.dialog;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -36,14 +36,14 @@ import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 
 import pl.kotcrab.jdialogue.editor.Editor;
-import pl.kotcrab.jdialogue.editor.project.Callback;
+import pl.kotcrab.jdialogue.editor.project.DCharacter;
 import pl.kotcrab.jdialogue.editor.project.Project;
 
-public class CallbacksConfigDialog extends JDialog
+public class CharactersConfigDialog extends JDialog
 {
 	
 	private static final long serialVersionUID = 1L;
-	private CallbacksConfigDialog instance;
+	private CharactersConfigDialog instance;
 	private final JPanel contentPanel = new JPanel();
 	private JList<String> list;
 	private Project project;
@@ -51,12 +51,12 @@ public class CallbacksConfigDialog extends JDialog
 	/**
 	 * Create the dialog.
 	 */
-	public CallbacksConfigDialog(final Editor parrent, final Project project)
+	public CharactersConfigDialog(final Editor parrent, final Project project)
 	{
 		super(parrent, true);
 		instance = this;
 		this.project = project;
-		setTitle("Callbacks");
+		setTitle("Characters");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(parrent.getX() + (parrent.getWidth() / 2) - (450 / 2), parrent.getY() + (parrent.getHeight() / 2) - (300 / 2), 450, 300);
 		getContentPane().setLayout(new BorderLayout());
@@ -71,7 +71,7 @@ public class CallbacksConfigDialog extends JDialog
 		updateList();
 		
 		contentPanel.add(listScroller);
-		JLabel lblSeq1 = new JLabel("Callbacks:");
+		JLabel lblSeq1 = new JLabel("Characters:");
 		contentPanel.add(lblSeq1, BorderLayout.NORTH);
 		JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -81,7 +81,7 @@ public class CallbacksConfigDialog extends JDialog
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				new CallbackCreationDialog(parrent, project, null, true);
+				new CharacterCreationDialog(parrent, project, null, true);
 				updateList();
 			}
 		});
@@ -93,11 +93,10 @@ public class CallbacksConfigDialog extends JDialog
 			{
 				if(isSelectionValid())
 				{
-					new CallbackCreationDialog(parrent, project, getCallbackByName(list.getSelectedValue()), false);
+					new CharacterCreationDialog(parrent, project, getCharacterByName(list.getSelectedValue()), false);
 					updateList();
 				}
 			}
-			
 		});
 		
 		JButton btnDelete = new JButton("Delete");
@@ -107,7 +106,7 @@ public class CallbacksConfigDialog extends JDialog
 			{
 				if(isSelectionValid())
 				{
-					new CallbackDeleteDialog(parrent, project, getCallbackByName(list.getSelectedValue()));
+					new CharacterDeleteDialog(parrent, project, getCharacterByName(list.getSelectedValue()));
 					updateList();
 				}
 			}
@@ -134,37 +133,37 @@ public class CallbacksConfigDialog extends JDialog
 	private void updateList()
 	{
 		DefaultListModel<String> listModel = new DefaultListModel<String>();
-		ArrayList<Callback> callbacks = project.getCallbacks();
-		for(Callback cb : callbacks)
-			listModel.addElement(cb.getName());
+		ArrayList<DCharacter> characters = project.getCharacters();
+		for(DCharacter character : characters)
+			listModel.addElement(character.getName());
 		
 		list.setModel(listModel);
+	}
+	
+	private DCharacter getCharacterByName(String name)
+	{
+		ArrayList<DCharacter> charList = project.getCharacters();
+		
+		for(DCharacter ch : charList)
+			if(ch.getName().equals(name)) return ch;
+		
+		return null;
 	}
 	
 	private boolean isSelectionValid()
 	{
 		if(list.getSelectedValue() == null)
 		{
-			JOptionPane.showMessageDialog(instance, "Please select callback.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(instance, "Please select character.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		
 		if(list.getSelectedIndex() == 0)
 		{
-			JOptionPane.showMessageDialog(instance, "This callback cannot be edited or deleted.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(instance, "This character cannot be edited or deleted.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		
 		return true;
-	}
-	
-	private Callback getCallbackByName(String name)
-	{
-		ArrayList<Callback> cbList = project.getCallbacks();
-		
-		for(Callback cb : cbList)
-			if(cb.getName().equals(name)) return cb;
-		
-		return null;
 	}
 }

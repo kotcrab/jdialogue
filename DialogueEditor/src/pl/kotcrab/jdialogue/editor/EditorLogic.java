@@ -12,6 +12,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -27,11 +28,12 @@ import pl.kotcrab.jdialogue.editor.components.types.RelayComponent;
 import pl.kotcrab.jdialogue.editor.components.types.StartComponent;
 import pl.kotcrab.jdialogue.editor.components.types.TextComponent;
 import pl.kotcrab.jdialogue.editor.gui.AddComponentMenuItem;
-import pl.kotcrab.jdialogue.editor.gui.CallbacksConfigDialog;
-import pl.kotcrab.jdialogue.editor.gui.CharactersConfigDialog;
-import pl.kotcrab.jdialogue.editor.gui.NewProjectDialog;
-import pl.kotcrab.jdialogue.editor.gui.NewSequenceDialog;
-import pl.kotcrab.jdialogue.editor.gui.SequenceConfigDialog;
+import pl.kotcrab.jdialogue.editor.gui.StatusBar;
+import pl.kotcrab.jdialogue.editor.gui.dialog.CallbacksConfigDialog;
+import pl.kotcrab.jdialogue.editor.gui.dialog.CharactersConfigDialog;
+import pl.kotcrab.jdialogue.editor.gui.dialog.NewProjectDialog;
+import pl.kotcrab.jdialogue.editor.gui.dialog.SequenceConfigDialog;
+import pl.kotcrab.jdialogue.editor.gui.dialog.SequenceCreationDialog;
 import pl.kotcrab.jdialogue.editor.project.Callback;
 import pl.kotcrab.jdialogue.editor.project.DCharacter;
 import pl.kotcrab.jdialogue.editor.project.Project;
@@ -48,6 +50,7 @@ public class EditorLogic
 	public Editor window;
 	public PopupMenu popupMenu;
 	public PropertyTable table;
+	public StatusBar statusLabel;
 	
 	// ==============================================SPECYFIC TO EDITOR LOGIC====================================
 	public WindowAdapter winAdapater;
@@ -134,7 +137,7 @@ public class EditorLogic
 					public void run()
 					{
 						if(project != null)
-							new SequenceConfigDialog(Editor.window, project);
+							new SequenceConfigDialog(Editor.window, project, xstream);
 						else
 							JOptionPane.showMessageDialog(Editor.window, "Create or load project to edit sequences", "Error", JOptionPane.ERROR_MESSAGE);
 					}
@@ -176,7 +179,7 @@ public class EditorLogic
 						if(project != null)
 							new CallbacksConfigDialog(Editor.window, project);
 						else
-							JOptionPane.showMessageDialog(Editor.window, "Create or load project to edit characters", "Error", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(Editor.window, "Create or load project to edit callbacks", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				});
 			}
@@ -296,7 +299,7 @@ public class EditorLogic
 			{
 				if(project != null)
 				{
-					project.exportProject(xstream);
+					project.exportProject(xstream, statusLabel);
 				}
 				else
 					JOptionPane.showMessageDialog(Editor.window, "Create or load project before exporting", "Error", JOptionPane.ERROR_MESSAGE);
@@ -390,7 +393,7 @@ public class EditorLogic
 		renderer.setProject(project);
 		table.setProject(project);
 		
-		new NewSequenceDialog(Editor.window, project, false);
+		new SequenceCreationDialog(Editor.window, project, false, null, null);
 		
 		project.save(xstream);
 		project.setListener(projectCallback);

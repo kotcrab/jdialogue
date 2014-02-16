@@ -48,7 +48,12 @@ import javax.swing.table.DefaultTableModel;
 
 import pl.kotcrab.jdialogue.editor.components.DComponentType;
 import pl.kotcrab.jdialogue.editor.gui.AddComponentMenuItem;
+import pl.kotcrab.jdialogue.editor.gui.StatusBar;
 import pl.kotcrab.jdialogue.editor.project.Project;
+import javax.swing.border.TitledBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.SoftBevelBorder;
+import javax.swing.UIManager;
 
 public class Editor extends JFrame
 {
@@ -152,14 +157,16 @@ public class Editor extends JFrame
 		
 		// create the status bar panel and shove it down the bottom of the frame
 		JPanel statusPanel = new JPanel();
-		statusPanel.setBorder(new BevelBorder(BevelBorder.LOWERED));
-		add(statusPanel, BorderLayout.SOUTH);
+		statusPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
+		//statusPanel.setBorder();
+		getContentPane().add(statusPanel, BorderLayout.SOUTH);
 		statusPanel.setPreferredSize(new Dimension(getWidth(), 19));
 		statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.X_AXIS));
-		JLabel statusLabel = new JLabel("Ready");
+		StatusBar statusLabel = new StatusBar("Ready");
 		statusLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		statusPanel.add(statusLabel);
 		
+		logic.statusLabel = statusLabel;
 	}
 	
 	private void createToolbar()

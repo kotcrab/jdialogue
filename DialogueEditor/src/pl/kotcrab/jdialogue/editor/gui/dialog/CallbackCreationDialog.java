@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package pl.kotcrab.jdialogue.editor.gui;
+package pl.kotcrab.jdialogue.editor.gui.dialog;
 
 import java.awt.Color;
 import java.awt.Window;
@@ -30,33 +30,32 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import pl.kotcrab.jdialogue.editor.project.DCharacter;
+import pl.kotcrab.jdialogue.editor.project.Callback;
 import pl.kotcrab.jdialogue.editor.project.Project;
 
-public class CharacterCreationDialog extends JDialog
+public class CallbackCreationDialog extends JDialog
 {
 	private static final long serialVersionUID = 1L;
 	private JTextField textName;
 	private JButton btnCreate;
 	private JLabel lblErrorLabel;
-	private JTextField textTextureName;
 	
 	/**
 	 * Create the dialog.
 	 */
-	public CharacterCreationDialog(Window parrent, final Project project, final DCharacter character, final boolean newMode)
+	public CallbackCreationDialog(Window parrent, final Project project, final Callback callback, final boolean newMode)
 	{
 		super(parrent, ModalityType.APPLICATION_MODAL);
 		// super(parrent, true);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		
 		if(newMode)
-			setTitle("New character");
+			setTitle("New callback");
 		else
-			setTitle("Character settings");
+			setTitle("Callback settings");
 		
 		setResizable(false);
-		setBounds(parrent.getX() + (parrent.getWidth() / 2) - (436 / 2), parrent.getY() + (parrent.getHeight() / 2) - (109 / 2), 436, 144);
+		setBounds(parrent.getX() + (parrent.getWidth() / 2) - (436 / 2), parrent.getY() + (parrent.getHeight() / 2) - (101 / 2), 436, 101);
 		
 		getContentPane().setLayout(null);
 		
@@ -77,20 +76,17 @@ public class CharacterCreationDialog extends JDialog
 			{
 				
 				if(newMode)
-					project.newCharacter(textName.getText(), textTextureName.getText());
+					project.getCallbacks().add(new Callback(textName.getText()));
 				else
-				{
-					character.setName(textName.getText());
-					character.setTextureName(textTextureName.getText());
-				}
+					callback.setName(textName.getText());
 				
 				dispose();
 			}
 		});
-		btnCreate.setBounds(335, 87, 89, 23);
+		btnCreate.setBounds(335, 48, 89, 23);
 		getContentPane().add(btnCreate);
 		
-		JLabel lblEnterSequenceName = new JLabel("Character name:");
+		JLabel lblEnterSequenceName = new JLabel("Callback name:");
 		lblEnterSequenceName.setBounds(10, 6, 414, 14);
 		getContentPane().add(lblEnterSequenceName);
 		
@@ -102,32 +98,21 @@ public class CharacterCreationDialog extends JDialog
 				dispose();
 			}
 		});
-		btnCancel.setBounds(236, 87, 89, 23);
+		btnCancel.setBounds(236, 48, 89, 23);
 		getContentPane().add(btnCancel);
 		
-		lblErrorLabel = new JLabel("Enter character name.");
+		lblErrorLabel = new JLabel("Enter callback name.");
 		lblErrorLabel.setForeground(Color.RED);
-		lblErrorLabel.setBounds(10, 91, 216, 14);
+		lblErrorLabel.setBounds(10, 52, 216, 14);
 		getContentPane().add(lblErrorLabel);
-		
-		textTextureName = new JTextField();
-		textTextureName.setColumns(10);
-		textTextureName.setBounds(10, 60, 414, 24);
-		getContentPane().add(textTextureName);
-		
-		JLabel lblCharacterTextureName = new JLabel("Character texture name:");
-		lblCharacterTextureName.setBounds(10, 45, 414, 14);
-		getContentPane().add(lblCharacterTextureName);
 		
 		ChangeListener changeListener = new ChangeListener();
 		
 		textName.getDocument().addDocumentListener(changeListener);
-		textTextureName.getDocument().addDocumentListener(changeListener);
-
+		
 		if(newMode == false)
 		{
-			textName.setText(character.getName());
-			textTextureName.setText(character.getTextureName());
+			textName.setText(callback.getName());
 			checkConditions();
 		}
 		
@@ -141,13 +126,7 @@ public class CharacterCreationDialog extends JDialog
 		
 		if(textName.getText().equals(""))
 		{
-			lblErrorLabel.setText("Enter character name.");
-			return;
-		}
-		
-		if(textTextureName.getText().equals(""))
-		{
-			lblErrorLabel.setText("Enter texture name or type none.");
+			lblErrorLabel.setText("Enter callback name.");
 			return;
 		}
 		

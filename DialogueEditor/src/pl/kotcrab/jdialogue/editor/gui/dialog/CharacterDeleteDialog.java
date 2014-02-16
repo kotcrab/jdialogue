@@ -1,4 +1,4 @@
-package pl.kotcrab.jdialogue.editor.gui;
+package pl.kotcrab.jdialogue.editor.gui.dialog;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;

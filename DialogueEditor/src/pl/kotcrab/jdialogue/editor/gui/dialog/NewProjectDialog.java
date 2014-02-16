@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
-package pl.kotcrab.jdialogue.editor.gui;
+package pl.kotcrab.jdialogue.editor.gui.dialog;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;

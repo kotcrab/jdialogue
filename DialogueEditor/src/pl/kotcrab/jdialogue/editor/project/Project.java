@@ -28,6 +28,7 @@ import pl.kotcrab.jdialogue.editor.Editor;
 import pl.kotcrab.jdialogue.editor.IOUtils;
 import pl.kotcrab.jdialogue.editor.components.DComponentConverter;
 import pl.kotcrab.jdialogue.editor.components.IDManager;
+import pl.kotcrab.jdialogue.editor.gui.StatusBar;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
@@ -111,8 +112,8 @@ public class Project
 			}
 		}
 		
-		System.out.println("error");
-		// TODO throw exception, active seq not found, project is broken etc.
+		activeSequence = sequences.get(0);
+		activeSequence.load(xstream, gzipProject);
 	}
 	
 	public void refreshSequences()
@@ -135,6 +136,19 @@ public class Project
 	public void saveActiveSeqeunce(XStream xstream)
 	{
 		activeSequence.save(xstream, gzipProject);
+	}
+	
+	public void renameSequence(XStream xstream, Sequence seq, String newName)
+	{
+		boolean activeSequenceNameNeedUpdate = false;
+		
+		if(seq.getName().equals(activeSequenceName))
+			activeSequenceNameNeedUpdate = true;
+		
+		seq.rename(xstream, gzipExport, newName);
+		
+		if(activeSequenceNameNeedUpdate)
+			activeSequenceName = seq.getName();
 	}
 	
 	public void newSequence(String name, boolean setAsActive)
@@ -184,7 +198,7 @@ public class Project
 		return callbacks.remove(callback);
 	}
 	
-	public void exportProject(XStream xstream) // TODO export all sequencees and project file
+	public void exportProject(XStream xstream, StatusBar statusLabel) // TODO export all sequencees and project file
 	{
 		DComponentConverter.exportMode = true;
 		
@@ -194,14 +208,12 @@ public class Project
 			IOUtils.saveNormal(xstream, new File(customOut + "project.xml"), new ProjectExport(name, characters, buildCharacterMap()));
 		else
 			IOUtils.saveNormal(xstream, new File(mainDir + "out" + File.separator + "project.xml"), new ProjectExport(name, characters, buildCharacterMap()));
-
 		
 		int failedToExport = 0;
 		
 		for(Sequence seq : sequences)
 		{
-			if(seq.isLoaded() == false)
-				seq.load(xstream, gzipProject);
+			if(seq.isLoaded() == false) seq.load(xstream, gzipProject);
 			
 			if(customOut != null)
 			{
@@ -214,9 +226,13 @@ public class Project
 		}
 		
 		if(failedToExport > 0)
+		{
 			JOptionPane.showMessageDialog(Editor.window, "Finished exporting with errors. Sequences not exported: " + failedToExport, "Export", JOptionPane.WARNING_MESSAGE);
+			statusLabel.setStatusText("Finished exporting with errors. Sequences not exported: " + failedToExport);
+			
+		}
 		else
-			JOptionPane.showMessageDialog(Editor.window, "Finished exporting", "Export", JOptionPane.INFORMATION_MESSAGE);
+			statusLabel.setStatusText("Finished exporting");
 		
 		DComponentConverter.exportMode = false;
 	}

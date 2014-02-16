@@ -25,6 +25,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import pl.kotcrab.jdialogue.editor.components.ChoiceComponentChoices;
+import pl.kotcrab.jdialogue.editor.gui.dialog.ChoicesEditDialog;
 
 public class ChoiceComponentChoicesEditor extends DefaultCellEditor
 {
