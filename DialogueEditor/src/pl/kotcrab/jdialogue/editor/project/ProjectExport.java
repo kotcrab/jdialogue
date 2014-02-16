@@ -14,10 +14,10 @@ import java.util.HashMap;
 public class ProjectExport
 {
 	private String name;
-	private ArrayList<DCharacter> characterList;
+	private ArrayList<PCharacter> characterList;
 	private HashMap<Integer, Integer> characterMap;
 	
-	public ProjectExport(String name, ArrayList<DCharacter> characterList, HashMap<Integer, Integer> characterMap)
+	public ProjectExport(String name, ArrayList<PCharacter> characterList, HashMap<Integer, Integer> characterMap)
 	{
 		this.name = name;
 		this.characterList = characterList;

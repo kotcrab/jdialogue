@@ -22,7 +22,7 @@ import pl.kotcrab.jdialogue.editor.Assets;
 import pl.kotcrab.jdialogue.editor.KotcrabText;
 import pl.kotcrab.jdialogue.editor.components.ComponentTableModel;
 import pl.kotcrab.jdialogue.editor.components.DComponent;
-import pl.kotcrab.jdialogue.editor.project.DCharacter;
+import pl.kotcrab.jdialogue.editor.project.PCharacter;
 
 public class TextComponent extends DComponent
 {
@@ -34,7 +34,7 @@ public class TextComponent extends DComponent
 		new Object[][]
 				{
 				    {"Text", "Set Text"},
-				    {"Character", new DCharacter(0, "None (default character)", "none")}
+				    {"Character", new PCharacter(0, "None (default character)", "none")}
 				}
 		//@formatter:on
 		);

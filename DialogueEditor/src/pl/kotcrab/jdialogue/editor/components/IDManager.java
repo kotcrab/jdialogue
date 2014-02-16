@@ -25,7 +25,7 @@ public class IDManager
 {
 	private ArrayList<Integer> freeIDs = new ArrayList<>(30);
 		
-	private int IDCounter = 0;
+	private int IDCounter = 1;
 	
 	public IDManager()
 	{

@@ -27,7 +27,7 @@ import pl.kotcrab.jdialogue.editor.components.types.RandomComponent;
 import pl.kotcrab.jdialogue.editor.components.types.RelayComponent;
 import pl.kotcrab.jdialogue.editor.components.types.StartComponent;
 import pl.kotcrab.jdialogue.editor.components.types.TextComponent;
-import pl.kotcrab.jdialogue.editor.project.DCharacter;
+import pl.kotcrab.jdialogue.editor.project.PCharacter;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -97,7 +97,7 @@ public class DComponentConverter implements Converter
 					
 					if(nodeName.equals("character"))
 					{
-						DCharacter charater = (DCharacter) data[i][1];
+						PCharacter charater = (PCharacter) data[i][1];
 						writer.setValue(String.valueOf(charater.getId()));
 					}
 					else

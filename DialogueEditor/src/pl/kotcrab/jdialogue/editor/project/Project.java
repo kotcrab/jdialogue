@@ -54,13 +54,13 @@ public class Project
 	
 	private String activeSequenceName = null;
 	
-	private ArrayList<DCharacter> characters = new ArrayList<DCharacter>();
+	private ArrayList<PCharacter> characters = new ArrayList<PCharacter>();
 	private ArrayList<Callback> callbacks = new ArrayList<Callback>();
 	
 	@XStreamOmitField
 	private ProjectCallback listener;
 	
-	private IDManager characterIDManager;
+	private IDManager projectIDManager;
 	
 	public Project(String projectName, String projectMainDir, boolean gzipProject, boolean gzipExport)
 	{
@@ -72,10 +72,10 @@ public class Project
 		
 		prepareProjectPaths();
 		
-		characterIDManager = new IDManager();
+		projectIDManager = new IDManager();
 		
-		characters.add(new DCharacter(0, "None (default character)", "none"));
-		callbacks.add(new Callback("Default callback"));
+		characters.add(new PCharacter(0, "None (default character)", "none"));
+		callbacks.add(new Callback(0, "Default callback"));
 	}
 	
 	private void prepareProjectPaths()
@@ -184,17 +184,23 @@ public class Project
 	
 	public void newCharacter(String name, String textureName)
 	{
-		characters.add(new DCharacter(characterIDManager.getFreeId(), name, textureName));
+		characters.add(new PCharacter(projectIDManager.getFreeId(), name, textureName));
 	}
 	
-	public boolean deleteCharacter(DCharacter character)
+	public boolean deleteCharacter(PCharacter character)
 	{
-		characterIDManager.freeID(character.getId());
+		projectIDManager.freeID(character.getId());
 		return characters.remove(character);
+	}
+	
+	public void newCallback(String name)
+	{
+		callbacks.add(new Callback(projectIDManager.getFreeId(), name));
 	}
 	
 	public boolean deleteCallback(Callback callback)
 	{
+		projectIDManager.freeID(callback.getId());
 		return callbacks.remove(callback);
 	}
 	
@@ -257,7 +263,7 @@ public class Project
 		return sequences;
 	}
 	
-	public ArrayList<DCharacter> getCharacters()
+	public ArrayList<PCharacter> getCharacters()
 	{
 		return characters;
 	}

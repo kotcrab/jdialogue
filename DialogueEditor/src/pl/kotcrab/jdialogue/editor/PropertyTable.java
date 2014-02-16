@@ -38,7 +38,7 @@ import pl.kotcrab.jdialogue.editor.gui.CharactersJComboBoxModel;
 import pl.kotcrab.jdialogue.editor.gui.ChoiceComponentChoicesEditor;
 import pl.kotcrab.jdialogue.editor.gui.LeftNumberEditor;
 import pl.kotcrab.jdialogue.editor.project.Callback;
-import pl.kotcrab.jdialogue.editor.project.DCharacter;
+import pl.kotcrab.jdialogue.editor.project.PCharacter;
 import pl.kotcrab.jdialogue.editor.project.Project;
 
 /**
@@ -53,7 +53,7 @@ public class PropertyTable extends JTable
 	private DefaultTableCellRenderer leftRenderer = new DefaultTableCellRenderer();
 	private DefaultCellEditor textEditor;
 	private Project project;
-	private JComboBox<DCharacter> characterCombobox;
+	private JComboBox<PCharacter> characterCombobox;
 	private JComboBox<Callback> callbackCombobox;
 	
 	public PropertyTable(TableModel dm)
@@ -98,7 +98,7 @@ public class PropertyTable extends JTable
 			return textEditor;
 		}
 
-		if(value instanceof DCharacter)
+		if(value instanceof PCharacter)
 		{
 			characterCombobox.updateUI(); //make sure that combobox upadted itself (without this list will be blank if character list changed)
 			return new DefaultCellEditor(characterCombobox);
@@ -133,7 +133,7 @@ public class PropertyTable extends JTable
 			return getDefaultRenderer(Boolean.class);
 		}
 		
-		if(value instanceof Integer || value instanceof String || value instanceof ChoiceComponentChoices || value instanceof DCharacter)
+		if(value instanceof Integer || value instanceof String || value instanceof ChoiceComponentChoices || value instanceof PCharacter)
 		{
 			return leftRenderer;
 		}
@@ -152,6 +152,8 @@ public class PropertyTable extends JTable
 		this.project = project;
 		characterCombobox = new JComboBox<>(new CharactersJComboBoxModel(project.getCharacters()));
 		callbackCombobox = new JComboBox<>(new CallbackJComboBoxModel(project.getCallbacks()));
+		characterCombobox.setLightWeightPopupEnabled(false);
+		callbackCombobox.setLightWeightPopupEnabled(false);
 	}
 
 }

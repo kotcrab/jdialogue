@@ -35,7 +35,7 @@ import pl.kotcrab.jdialogue.editor.gui.dialog.NewProjectDialog;
 import pl.kotcrab.jdialogue.editor.gui.dialog.SequenceConfigDialog;
 import pl.kotcrab.jdialogue.editor.gui.dialog.SequenceCreationDialog;
 import pl.kotcrab.jdialogue.editor.project.Callback;
-import pl.kotcrab.jdialogue.editor.project.DCharacter;
+import pl.kotcrab.jdialogue.editor.project.PCharacter;
 import pl.kotcrab.jdialogue.editor.project.Project;
 import pl.kotcrab.jdialogue.editor.project.ProjectCallback;
 import pl.kotcrab.jdialogue.editor.project.ProjectExport;
@@ -103,7 +103,7 @@ public class EditorLogic
 		xstream.alias("project", Project.class);
 		xstream.alias("projectExport", ProjectExport.class);
 		
-		xstream.alias("character", DCharacter.class);
+		xstream.alias("character", PCharacter.class);
 		xstream.alias("callback", Callback.class);
 		
 		xstream.registerConverter(new DComponentConverter());

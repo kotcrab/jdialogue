@@ -33,7 +33,7 @@ public class CallbackComponent extends DComponent
 			//@formatter:off
 			new Object[][]
 				{
-				    {"Callback", new Callback("Default callback")},
+				    {"Callback", new Callback(0, "Default callback")},
 				}
 			//@formatter:on
 			);

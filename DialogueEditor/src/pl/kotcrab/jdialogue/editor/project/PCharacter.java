@@ -1,13 +1,13 @@
 package pl.kotcrab.jdialogue.editor.project;
 
-public class DCharacter
+public class PCharacter
 {
 	
 	private int id;
 	private String name;
 	private String textureName;
 	
-	public DCharacter(int id, String name, String textureName)
+	public PCharacter(int id, String name, String textureName)
 	{
 		this.name = name;
 		this.textureName = textureName;
@@ -42,6 +42,6 @@ public class DCharacter
 	@Override
 	public String toString()
 	{
-		return name;
+		return name + " (id: " + id + ")";
 	}
 }

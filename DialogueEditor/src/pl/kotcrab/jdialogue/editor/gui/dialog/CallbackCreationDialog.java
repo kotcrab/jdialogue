@@ -76,7 +76,7 @@ public class CallbackCreationDialog extends JDialog
 			{
 				
 				if(newMode)
-					project.getCallbacks().add(new Callback(textName.getText()));
+					project.newCallback(textName.getText());
 				else
 					callback.setName(textName.getText());
 				

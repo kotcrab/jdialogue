@@ -36,7 +36,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 
 import pl.kotcrab.jdialogue.editor.Editor;
-import pl.kotcrab.jdialogue.editor.project.DCharacter;
+import pl.kotcrab.jdialogue.editor.project.PCharacter;
 import pl.kotcrab.jdialogue.editor.project.Project;
 
 public class CharactersConfigDialog extends JDialog
@@ -133,18 +133,18 @@ public class CharactersConfigDialog extends JDialog
 	private void updateList()
 	{
 		DefaultListModel<String> listModel = new DefaultListModel<String>();
-		ArrayList<DCharacter> characters = project.getCharacters();
-		for(DCharacter character : characters)
+		ArrayList<PCharacter> characters = project.getCharacters();
+		for(PCharacter character : characters)
 			listModel.addElement(character.getName());
 		
 		list.setModel(listModel);
 	}
 	
-	private DCharacter getCharacterByName(String name)
+	private PCharacter getCharacterByName(String name)
 	{
-		ArrayList<DCharacter> charList = project.getCharacters();
+		ArrayList<PCharacter> charList = project.getCharacters();
 		
-		for(DCharacter ch : charList)
+		for(PCharacter ch : charList)
 			if(ch.getName().equals(name)) return ch;
 		
 		return null;
