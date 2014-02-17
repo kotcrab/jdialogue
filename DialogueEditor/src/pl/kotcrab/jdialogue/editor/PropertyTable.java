@@ -37,7 +37,7 @@ import pl.kotcrab.jdialogue.editor.gui.CallbackJComboBoxModel;
 import pl.kotcrab.jdialogue.editor.gui.CharactersJComboBoxModel;
 import pl.kotcrab.jdialogue.editor.gui.ChoiceComponentChoicesEditor;
 import pl.kotcrab.jdialogue.editor.gui.LeftNumberEditor;
-import pl.kotcrab.jdialogue.editor.project.Callback;
+import pl.kotcrab.jdialogue.editor.project.PCallback;
 import pl.kotcrab.jdialogue.editor.project.PCharacter;
 import pl.kotcrab.jdialogue.editor.project.Project;
 
@@ -54,7 +54,7 @@ public class PropertyTable extends JTable
 	private DefaultCellEditor textEditor;
 	private Project project;
 	private JComboBox<PCharacter> characterCombobox;
-	private JComboBox<Callback> callbackCombobox;
+	private JComboBox<PCallback> callbackCombobox;
 	
 	public PropertyTable(TableModel dm)
 	{
@@ -104,7 +104,7 @@ public class PropertyTable extends JTable
 			return new DefaultCellEditor(characterCombobox);
 		}
 		
-		if(value instanceof Callback)
+		if(value instanceof PCallback)
 		{
 			callbackCombobox.updateUI();
 			return new DefaultCellEditor(callbackCombobox);

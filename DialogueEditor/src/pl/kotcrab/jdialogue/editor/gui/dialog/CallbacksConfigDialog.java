@@ -36,7 +36,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 
 import pl.kotcrab.jdialogue.editor.Editor;
-import pl.kotcrab.jdialogue.editor.project.Callback;
+import pl.kotcrab.jdialogue.editor.project.PCallback;
 import pl.kotcrab.jdialogue.editor.project.Project;
 
 public class CallbacksConfigDialog extends JDialog
@@ -134,8 +134,8 @@ public class CallbacksConfigDialog extends JDialog
 	private void updateList()
 	{
 		DefaultListModel<String> listModel = new DefaultListModel<String>();
-		ArrayList<Callback> callbacks = project.getCallbacks();
-		for(Callback cb : callbacks)
+		ArrayList<PCallback> callbacks = project.getCallbacks();
+		for(PCallback cb : callbacks)
 			listModel.addElement(cb.getName());
 		
 		list.setModel(listModel);
@@ -158,11 +158,11 @@ public class CallbacksConfigDialog extends JDialog
 		return true;
 	}
 	
-	private Callback getCallbackByName(String name)
+	private PCallback getCallbackByName(String name)
 	{
-		ArrayList<Callback> cbList = project.getCallbacks();
+		ArrayList<PCallback> cbList = project.getCallbacks();
 		
-		for(Callback cb : cbList)
+		for(PCallback cb : cbList)
 			if(cb.getName().equals(name)) return cb;
 		
 		return null;

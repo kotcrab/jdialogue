@@ -30,7 +30,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import pl.kotcrab.jdialogue.editor.project.Callback;
+import pl.kotcrab.jdialogue.editor.project.PCallback;
 import pl.kotcrab.jdialogue.editor.project.Project;
 
 public class CallbackCreationDialog extends JDialog
@@ -43,7 +43,7 @@ public class CallbackCreationDialog extends JDialog
 	/**
 	 * Create the dialog.
 	 */
-	public CallbackCreationDialog(Window parrent, final Project project, final Callback callback, final boolean newMode)
+	public CallbackCreationDialog(Window parrent, final Project project, final PCallback callback, final boolean newMode)
 	{
 		super(parrent, ModalityType.APPLICATION_MODAL);
 		// super(parrent, true);

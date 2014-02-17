@@ -1,12 +1,13 @@
 package pl.kotcrab.jdialogue.editor.project;
 
-public class Callback
+public class PCallback
 {
 	private int id;
 	private String name;
 	
-	public Callback(int id, String name)
+	public PCallback(int id, String name)
 	{
+		this.id = id;
 		this.name = name;
 	}
 	

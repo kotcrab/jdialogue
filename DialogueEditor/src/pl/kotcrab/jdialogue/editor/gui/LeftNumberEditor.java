@@ -2,6 +2,8 @@ package pl.kotcrab.jdialogue.editor.gui;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComponent;
@@ -21,7 +23,23 @@ public class LeftNumberEditor extends DefaultCellEditor // modifed copy of JTabl
 	{
 		super(new JTextField());
 		getComponent().setName("Table.editor");
-		((JTextField) getComponent()).setHorizontalAlignment(JTextField.LEFT); // changed aligment
+		
+		final JTextField textField = (JTextField) getComponent(); // changed aligment and added autoselect when edited
+		textField.setHorizontalAlignment(JTextField.LEFT); 
+		textField.addFocusListener(new FocusListener()
+		{
+			@Override
+			public void focusLost(FocusEvent e)
+			{
+			}
+			
+			@Override
+			public void focusGained(FocusEvent e)
+			{
+				textField.selectAll();
+			}
+		});
+		
 	}
 	
 	public boolean stopCellEditing()

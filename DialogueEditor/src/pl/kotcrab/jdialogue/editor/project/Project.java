@@ -55,7 +55,7 @@ public class Project
 	private String activeSequenceName = null;
 	
 	private ArrayList<PCharacter> characters = new ArrayList<PCharacter>();
-	private ArrayList<Callback> callbacks = new ArrayList<Callback>();
+	private ArrayList<PCallback> callbacks = new ArrayList<PCallback>();
 	
 	@XStreamOmitField
 	private ProjectCallback listener;
@@ -75,7 +75,7 @@ public class Project
 		projectIDManager = new IDManager();
 		
 		characters.add(new PCharacter(0, "None (default character)", "none"));
-		callbacks.add(new Callback(0, "Default callback"));
+		callbacks.add(new PCallback(0, "Default callback"));
 	}
 	
 	private void prepareProjectPaths()
@@ -142,13 +142,11 @@ public class Project
 	{
 		boolean activeSequenceNameNeedUpdate = false;
 		
-		if(seq.getName().equals(activeSequenceName))
-			activeSequenceNameNeedUpdate = true;
+		if(seq.getName().equals(activeSequenceName)) activeSequenceNameNeedUpdate = true;
 		
 		seq.rename(xstream, gzipExport, newName);
 		
-		if(activeSequenceNameNeedUpdate)
-			activeSequenceName = seq.getName();
+		if(activeSequenceNameNeedUpdate) activeSequenceName = seq.getName();
 	}
 	
 	public void newSequence(String name, boolean setAsActive)
@@ -195,10 +193,10 @@ public class Project
 	
 	public void newCallback(String name)
 	{
-		callbacks.add(new Callback(projectIDManager.getFreeId(), name));
+		callbacks.add(new PCallback(projectIDManager.getFreeId(), name));
 	}
 	
-	public boolean deleteCallback(Callback callback)
+	public boolean deleteCallback(PCallback callback)
 	{
 		projectIDManager.freeID(callback.getId());
 		return callbacks.remove(callback);
@@ -210,10 +208,12 @@ public class Project
 		
 		if(customOut != null && customOut.equals("")) customOut = null;
 		
+		ProjectExport projectToExport = new ProjectExport(name, gzipExport, characters, buildCharactersMap(), callbacks, buildCallbacksMap());
+		
 		if(customOut != null)
-			IOUtils.saveNormal(xstream, new File(customOut + "project.xml"), new ProjectExport(name, characters, buildCharacterMap()));
+			IOUtils.saveNormal(xstream, new File(customOut + "project.xml"), projectToExport);
 		else
-			IOUtils.saveNormal(xstream, new File(mainDir + "out" + File.separator + "project.xml"), new ProjectExport(name, characters, buildCharacterMap()));
+			IOUtils.saveNormal(xstream, new File(mainDir + "out" + File.separator + "project.xml"), projectToExport);
 		
 		int failedToExport = 0;
 		
@@ -243,14 +243,24 @@ public class Project
 		DComponentConverter.exportMode = false;
 	}
 	
-	private HashMap<Integer, Integer> buildCharacterMap()
+	private HashMap<Integer, Integer> buildCharactersMap()
 	{
-		HashMap<Integer, Integer> characterMap = new HashMap<>();
+		HashMap<Integer, Integer> charactersMap = new HashMap<>();
 		
 		for(int i = 0; i < characters.size(); i++)
-			characterMap.put(characters.get(i).getId(), i);
+			charactersMap.put(characters.get(i).getId(), i);
 		
-		return characterMap;
+		return charactersMap;
+	}
+	
+	private HashMap<Integer, Integer> buildCallbacksMap()
+	{
+		HashMap<Integer, Integer> callbacksMap = new HashMap<>();
+		
+		for(int i = 0; i < callbacks.size(); i++)
+			callbacksMap.put(callbacks.get(i).getId(), i);
+		
+		return callbacksMap;
 	}
 	
 	public Sequence getActiveSequence()
@@ -268,7 +278,7 @@ public class Project
 		return characters;
 	}
 	
-	public ArrayList<Callback> getCallbacks()
+	public ArrayList<PCallback> getCallbacks()
 	{
 		return callbacks;
 	}

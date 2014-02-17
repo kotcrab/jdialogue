@@ -22,7 +22,7 @@ import pl.kotcrab.jdialogue.editor.Assets;
 import pl.kotcrab.jdialogue.editor.KotcrabText;
 import pl.kotcrab.jdialogue.editor.components.ComponentTableModel;
 import pl.kotcrab.jdialogue.editor.components.DComponent;
-import pl.kotcrab.jdialogue.editor.project.Callback;
+import pl.kotcrab.jdialogue.editor.project.PCallback;
 
 public class CallbackCheckComponent extends DComponent
 {
@@ -33,7 +33,7 @@ public class CallbackCheckComponent extends DComponent
 			//@formatter:off
 			new Object[][]
 				{
-				    {"Callback", new Callback(0, "Default callback")},
+				    {"Callback", new PCallback(0, "Default callback")},
 				}
 			//@formatter:on
 			);

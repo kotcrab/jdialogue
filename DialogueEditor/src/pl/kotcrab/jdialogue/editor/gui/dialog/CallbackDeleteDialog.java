@@ -12,7 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import pl.kotcrab.jdialogue.editor.project.Callback;
+import pl.kotcrab.jdialogue.editor.project.PCallback;
 import pl.kotcrab.jdialogue.editor.project.Project;
 
 public class CallbackDeleteDialog extends JDialog
@@ -25,7 +25,7 @@ public class CallbackDeleteDialog extends JDialog
 	/**
 	 * Create the dialog.
 	 */
-	public CallbackDeleteDialog(Window parrent, final Project project, final Callback character)
+	public CallbackDeleteDialog(Window parrent, final Project project, final PCallback character)
 	{
 		super(parrent, ModalityType.APPLICATION_MODAL);
 		
