@@ -2,7 +2,6 @@ package pl.kotcrab.jdialogue.editor.project;
 
 public class PCharacter
 {
-	
 	private int id;
 	private String name;
 	private String textureName;
