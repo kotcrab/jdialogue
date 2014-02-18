@@ -88,4 +88,10 @@ public class ConsoleRenderer implements DialogueRenderer
 	{
 		System.out.print(text);
 	}
+
+	@Override
+	public void startSequence(String name)
+	{
+		parser.startSequence(name);
+	}
 }

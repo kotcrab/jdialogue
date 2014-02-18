@@ -1,0 +1,131 @@
+<list>
+  <dStart>
+    <id>0</id>
+    <target0>1</target0>
+  </dStart>
+  <dText>
+    <id>1</id>
+    <target0>2</target0>
+    <text>Hi, what do you want?</text>
+    <character>2</character>
+  </dText>
+  <dChoice>
+    <id>2</id>
+    <target0>3</target0>
+    <target1>6</target1>
+    <target2>14</target2>
+    <target3>5</target3>
+    <text>Select option:</text>
+    <choiceData>
+      <string>Trade (callback test)</string>
+      <string>Quest (callback check test)</string>
+      <string>Ask (text/choice/relay test)</string>
+      <string>End (end test)</string>
+    </choiceData>
+  </dChoice>
+  <dCallback>
+    <id>3</id>
+    <target0>2</target0>
+    <callback>trade (id: 3)</callback>
+  </dCallback>
+  <dEnd>
+    <id>4</id>
+  </dEnd>
+  <dText>
+    <id>5</id>
+    <target0>4</target0>
+    <text>Bye, then.</text>
+    <character>2</character>
+  </dText>
+  <dText>
+    <id>6</id>
+    <target0>7</target0>
+    <text>Have you done what I asked you to do?</text>
+    <character>2</character>
+  </dText>
+  <dChoice>
+    <id>7</id>
+    <target0>9</target0>
+    <target1>8</target1>
+    <text>Select option</text>
+    <choiceData>
+      <string>Yes</string>
+      <string>No</string>
+    </choiceData>
+  </dChoice>
+  <dText>
+    <id>8</id>
+    <target0>11</target0>
+    <text>So, come back when you done.</text>
+    <character>2</character>
+  </dText>
+  <dCallbackCheck>
+    <id>9</id>
+    <target0>12</target0>
+    <target1>10</target1>
+    <callback>quest_check (id: 5)</callback>
+  </dCallbackCheck>
+  <dText>
+    <id>10</id>
+    <target0>11</target0>
+    <text>You still didin&apos;t done what i asked you to do.</text>
+    <character>2</character>
+  </dText>
+  <dRelay>
+    <id>11</id>
+    <target0>2</target0>
+  </dRelay>
+  <dText>
+    <id>12</id>
+    <target0>13</target0>
+    <text>Thanks!</text>
+    <character>2</character>
+  </dText>
+  <dCallback>
+    <id>13</id>
+    <target0>11</target0>
+    <callback>quest_finished (id: 4)</callback>
+  </dCallback>
+  <dText>
+    <id>14</id>
+    <target0>15</target0>
+    <text>What do you want to know?</text>
+    <character>2</character>
+  </dText>
+  <dChoice>
+    <id>15</id>
+    <target0>16</target0>
+    <target1>17</target1>
+    <target2>18</target2>
+    <target3>2</target3>
+    <text>Select option:</text>
+    <choiceData>
+      <string>Have you got any job for me?</string>
+      <string>What do you do?</string>
+      <string>Where are you from?</string>
+      <string>Back</string>
+    </choiceData>
+  </dChoice>
+  <dText>
+    <id>16</id>
+    <target0>19</target0>
+    <text>No go ask someone else.</text>
+    <character>2</character>
+  </dText>
+  <dText>
+    <id>17</id>
+    <target0>19</target0>
+    <text>It&apos;s not your business.</text>
+    <character>2</character>
+  </dText>
+  <dText>
+    <id>18</id>
+    <target0>19</target0>
+    <text>I&apos;m from this city.</text>
+    <character>2</character>
+  </dText>
+  <dRelay>
+    <id>19</id>
+    <target0>15</target0>
+  </dRelay>
+</list>

@@ -16,7 +16,7 @@
 
 package pl.kotcrab.jdialogue.parser;
 
-import pl.kotcrab.jdialogue.loader.Loader;
+import pl.kotcrab.jdialogue.loader.DialogueLoader;
 
 public abstract class DialogueParser
 {
@@ -24,12 +24,12 @@ public abstract class DialogueParser
 	
 	int maxChars;
 	
-	public DialogueParser(Loader projectFile, int maxChars)
+	public DialogueParser(DialogueLoader projectFile, int maxChars)
 	{
 		this.maxChars = maxChars;
 	}
 	
-	public abstract void startSequence();
+	public abstract void startSequence(String name);
 	
 	public abstract ComponentType getNextType();
 	

@@ -18,7 +18,7 @@ package pl.kotcrab.jdialogue.loader;
 
 import java.io.File;
 
-public interface Loader
+public interface DialogueLoader
 {
 	public File getFile();
 }

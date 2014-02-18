@@ -20,7 +20,7 @@ import java.io.File;
 
 import com.badlogic.gdx.files.FileHandle;
 
-public class GdxLoader implements Loader
+public class GdxLoader implements DialogueLoader
 {
 	FileHandle file;
 	
