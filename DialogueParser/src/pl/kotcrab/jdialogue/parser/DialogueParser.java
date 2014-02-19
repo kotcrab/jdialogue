@@ -36,6 +36,10 @@ public abstract class DialogueParser
 	public abstract void nextComponent(int target);
 	public abstract void nextComponent();
 	
+	//===================================FOR TEXT COMPONENT====================================
+	public abstract String getNextCharacterData();
+	public abstract String getNextData();
+	
 	//==============================FOR TEXT/CHOICE COMPONENT==================================
 	public abstract String getNextMsg();
 	public abstract boolean isCurrentMsgFinished();
@@ -46,6 +50,12 @@ public abstract class DialogueParser
 	//==============================FOR RANDOM COMPONENT ONLY==================================
 	public abstract void processRandom();
 	
-	public abstract String getNextCharacterData();
-	public abstract String getNextData();
+	//===========================FOR CALLBACK CHECK COMPONENT ONLY=============================
+	public abstract void processCallbackCheck();
+	
+
+
+	//==============================FOR CALLBACK HADNLING======================================
+	public abstract void addCallbackListener(CallbackListener listener);
+	public abstract boolean removeCallbackListener(CallbackListener listener);
 }

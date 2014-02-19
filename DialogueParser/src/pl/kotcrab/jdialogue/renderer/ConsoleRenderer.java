@@ -3,6 +3,7 @@ package pl.kotcrab.jdialogue.renderer;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import pl.kotcrab.jdialogue.parser.CallbackListener;
 import pl.kotcrab.jdialogue.parser.ComponentType;
 import pl.kotcrab.jdialogue.parser.DialogueParser;
 
@@ -20,6 +21,24 @@ public class ConsoleRenderer implements DialogueRenderer
 	{
 		this.parser = parser;
 		scanner = new Scanner(System.in);
+		
+		parser.addCallbackListener(new CallbackListener()
+		{
+			
+			@Override
+			public boolean handleCallbackCheck(String callbackText)
+			{
+				System.out.print("***Callback Check*** " + callbackText + " DEBUG INPUT: true/false");
+				
+				return nextValidBoolean();
+			}
+			
+			@Override
+			public void handleCallback(String callbackText)
+			{
+				System.out.println("***Callback*** " + callbackText);
+			}
+		});
 	}
 	
 	@Override
@@ -68,11 +87,11 @@ public class ConsoleRenderer implements DialogueRenderer
 				println("====================");
 			}
 			
-			if(nextType == ComponentType.RANDOM)
-				parser.processRandom();
+			if(nextType == ComponentType.RANDOM) parser.processRandom();
 			
-			if(nextType == ComponentType.RELAY)
-				parser.nextComponent();
+			if(nextType == ComponentType.CBCHECK) parser.processCallbackCheck();
+			
+			if(nextType == ComponentType.RELAY || nextType == ComponentType.CALLBACK) parser.nextComponent();
 			
 		} while (nextType != ComponentType.END);
 		
@@ -88,10 +107,32 @@ public class ConsoleRenderer implements DialogueRenderer
 	{
 		System.out.print(text);
 	}
-
+	
 	@Override
 	public void startSequence(String name)
 	{
 		parser.startSequence(name);
+	}
+	
+	private boolean nextValidBoolean()
+	{
+		boolean valid = false;
+		boolean response = false;
+		do
+		{
+			try
+			{
+				response = scanner.nextBoolean();
+				valid = true;
+			}
+			catch (InputMismatchException e)
+			{
+				System.out.println("Input valid boolean!");
+				scanner.nextLine();
+				valid = false;
+			}
+		} while (valid == false);
+		
+		return response;
 	}
 }

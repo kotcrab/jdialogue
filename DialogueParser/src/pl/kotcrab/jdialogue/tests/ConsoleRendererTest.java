@@ -12,8 +12,8 @@ public class ConsoleRendererTest
 	public static void main(String[] args)
 	{
 		ConsoleRenderer renderer = new ConsoleRenderer(new JDOMDialogueParser(new JavaLoader(new File("assets/testProj/project.xml")), DialogueParser.INFINITY));
-		//renderer.startSequence("test");
-		//renderer.render();
+		renderer.startSequence("test");
+		renderer.render();
 	}
 	
 }

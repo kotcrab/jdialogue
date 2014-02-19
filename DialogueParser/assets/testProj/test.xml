@@ -26,7 +26,7 @@
   <dCallback>
     <id>3</id>
     <target0>2</target0>
-    <callback>trade (id: 3)</callback>
+    <callback>3</callback>
   </dCallback>
   <dEnd>
     <id>4</id>
@@ -63,7 +63,7 @@
     <id>9</id>
     <target0>12</target0>
     <target1>10</target1>
-    <callback>quest_check (id: 5)</callback>
+    <callback>5</callback>
   </dCallbackCheck>
   <dText>
     <id>10</id>
@@ -84,7 +84,7 @@
   <dCallback>
     <id>13</id>
     <target0>11</target0>
-    <callback>quest_finished (id: 4)</callback>
+    <callback>4</callback>
   </dCallback>
   <dText>
     <id>14</id>
