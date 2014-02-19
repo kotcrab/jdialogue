@@ -27,6 +27,7 @@ import pl.kotcrab.jdialogue.editor.components.types.RandomComponent;
 import pl.kotcrab.jdialogue.editor.components.types.RelayComponent;
 import pl.kotcrab.jdialogue.editor.components.types.StartComponent;
 import pl.kotcrab.jdialogue.editor.components.types.TextComponent;
+import pl.kotcrab.jdialogue.editor.project.PCallback;
 import pl.kotcrab.jdialogue.editor.project.PCharacter;
 
 import com.thoughtworks.xstream.converters.Converter;
@@ -99,6 +100,11 @@ public class DComponentConverter implements Converter
 					{
 						PCharacter charater = (PCharacter) data[i][1];
 						writer.setValue(String.valueOf(charater.getId()));
+					}
+					else if(nodeName.equals("callback"))
+					{
+						PCallback callback = (PCallback) data[i][1];
+						writer.setValue(String.valueOf(callback.getId()));
 					}
 					else
 						writer.setValue(data[i][1].toString());
