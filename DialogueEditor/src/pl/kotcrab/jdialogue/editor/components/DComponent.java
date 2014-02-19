@@ -91,6 +91,8 @@ public abstract class DComponent
 		calcSize(inputs.length, outputs.length);
 		distributeConnections();
 		calcTextPos();
+		
+		distrbuteLabels();
 	}
 	
 	private void distributeConnections()
