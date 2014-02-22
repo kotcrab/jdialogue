@@ -24,16 +24,19 @@ public class JDOMDialogueParser extends DialogueParser
 {
 	private Random random = new Random();
 	
+	private ArrayList<CallbackListener> listeners = new ArrayList<>();
+	
 	private Project project;
 	private String projectPath;
 	
 	private List<Element> elementList;
-	private int target;
 	private Element currentElement;
 	
-	private boolean lastCallbackCheckResult;
+	private ComponentType currentComponentType;
+	private int target;
 	
-	private ArrayList<CallbackListener> listeners = new ArrayList<>();
+	private PCharacter currentCharacterData;
+	private boolean lastCallbackCheckResult;
 	
 	public JDOMDialogueParser(DialogueLoader projectFile, int maxChars)
 	{
@@ -64,18 +67,25 @@ public class JDOMDialogueParser extends DialogueParser
 	}
 	
 	@Override
-	public ComponentType getNextType()
+	public ComponentType processNextComponent()
 	{
 		currentElement = elementList.get(target);
 		
 		String name = currentElement.getName();
 		
-		if(name.equals("dText")) return ComponentType.TEXT;
-		if(name.equals("dEnd")) return ComponentType.END;
-		if(name.equals("dChoice")) return ComponentType.CHOICE;
-		if(name.equals("dRandom")) return ComponentType.RANDOM;
-		if(name.equals("dRelay")) return ComponentType.RELAY;
+		if(name.equals("dEnd")) currentComponentType = ComponentType.END;
+		if(name.equals("dChoice")) currentComponentType = ComponentType.CHOICE;
+		if(name.equals("dRandom")) currentComponentType = ComponentType.RANDOM;
+		if(name.equals("dRelay")) currentComponentType = ComponentType.RELAY;
 		
+		if(name.equals("dText"))
+		{
+			int id = Integer.parseInt(currentElement.getChildText("character"));
+			currentCharacterData = project.getCharacterList().get(project.getCharacterMap().get(id));
+			
+			currentComponentType = ComponentType.TEXT;
+			
+		}
 		if(name.startsWith("dCallback"))
 		{
 			int id = Integer.parseInt(currentElement.getChildText("callback"));
@@ -86,7 +96,7 @@ public class JDOMDialogueParser extends DialogueParser
 				for(CallbackListener lis : listeners)
 					lis.handleCallback(callbackText);
 				
-				return ComponentType.CALLBACK;
+				currentComponentType = ComponentType.CALLBACK;
 			}
 			
 			if(name.equals("dCallbackCheck"))
@@ -94,33 +104,41 @@ public class JDOMDialogueParser extends DialogueParser
 				for(CallbackListener lis : listeners)
 					lastCallbackCheckResult = lis.handleCallbackCheck(callbackText);
 				
-				return ComponentType.CBCHECK;
+				currentComponentType = ComponentType.CBCHECK;
 			}
 		}
 		
-		return null;
+		return currentComponentType;
 	}
 	
 	@Override
-	public void nextComponent(int target)
+	public void moveToNextComponent(int target)
 	{
+		if(currentComponentType == ComponentType.RANDOM)
+		{
+			List<Element> randomList = currentElement.getChildren();
+			this.target = Integer.parseInt(randomList.get(1 + random.nextInt(randomList.size() - 1)).getText());
+			
+			return;
+		}
+		
 		this.target = Integer.valueOf(currentElement.getChildText("target" + target));
 	}
 	
 	@Override
-	public void nextComponent()
+	public void moveToNextComponent()
 	{
-		nextComponent(0);
-	}
-	
-	@Override
-	public void processCallbackCheck()
-	{
-		if(lastCallbackCheckResult == true)
-			nextComponent(0);
-		else
-			nextComponent(1);
+		if(currentComponentType == ComponentType.CBCHECK)
+		{
+			if(lastCallbackCheckResult == true)
+				moveToNextComponent(0);
+			else
+				moveToNextComponent(1);
+			
+			return;
+		}
 		
+		moveToNextComponent(0);
 	}
 	
 	@Override
@@ -142,17 +160,9 @@ public class JDOMDialogueParser extends DialogueParser
 	}
 	
 	@Override
-	public String getNextCharacterData()
+	public PCharacter getCharacterData()
 	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public String getNextData()
-	{
-		// TODO Auto-generated method stub
-		return null;
+		return currentCharacterData;
 	}
 	
 	@Override
@@ -160,13 +170,6 @@ public class JDOMDialogueParser extends DialogueParser
 	{
 		// TODO Auto-generated method stub
 		return false;
-	}
-	
-	@Override
-	public void processRandom()
-	{
-		List<Element> randomList = currentElement.getChildren();
-		target = Integer.parseInt(randomList.get(1 + random.nextInt(randomList.size() - 1)).getText());
 	}
 	
 	@Override

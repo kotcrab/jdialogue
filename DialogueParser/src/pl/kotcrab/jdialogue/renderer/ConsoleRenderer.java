@@ -47,12 +47,15 @@ public class ConsoleRenderer implements DialogueRenderer
 		ComponentType nextType;
 		do
 		{
-			nextType = parser.getNextType();
+			nextType = parser.processNextComponent();
 			
 			if(nextType == ComponentType.TEXT)
 			{
+				print(parser.getCharacterData().getName() + ": ");
 				println(parser.getNextMsg());
-				parser.nextComponent();
+				parser.moveToNextComponent();
+				
+				continue;
 			}
 			
 			if(nextType == ComponentType.CHOICE)
@@ -83,15 +86,13 @@ public class ConsoleRenderer implements DialogueRenderer
 					
 				} while (chosen >= choices.length || chosen < 0);
 				
-				parser.nextComponent(chosen);
+				parser.moveToNextComponent(chosen);
 				println("====================");
+				
+				continue;
 			}
 			
-			if(nextType == ComponentType.RANDOM) parser.processRandom();
-			
-			if(nextType == ComponentType.CBCHECK) parser.processCallbackCheck();
-			
-			if(nextType == ComponentType.RELAY || nextType == ComponentType.CALLBACK) parser.nextComponent();
+			parser.moveToNextComponent();
 			
 		} while (nextType != ComponentType.END);
 		

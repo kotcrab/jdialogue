@@ -31,14 +31,13 @@ public abstract class DialogueParser
 	
 	public abstract void startSequence(String name);
 	
-	public abstract ComponentType getNextType();
+	public abstract ComponentType processNextComponent();
 	
-	public abstract void nextComponent(int target);
-	public abstract void nextComponent();
+	public abstract void moveToNextComponent(int target);
+	public abstract void moveToNextComponent();
 	
 	//===================================FOR TEXT COMPONENT====================================
-	public abstract String getNextCharacterData();
-	public abstract String getNextData();
+	public abstract PCharacter getCharacterData();
 	
 	//==============================FOR TEXT/CHOICE COMPONENT==================================
 	public abstract String getNextMsg();
@@ -47,14 +46,6 @@ public abstract class DialogueParser
 	//==============================FOR CHOICE COMPONENT ONLY==================================
 	public abstract String[] getChoiceData();
 	
-	//==============================FOR RANDOM COMPONENT ONLY==================================
-	public abstract void processRandom();
-	
-	//===========================FOR CALLBACK CHECK COMPONENT ONLY=============================
-	public abstract void processCallbackCheck();
-	
-
-
 	//==============================FOR CALLBACK HADNLING======================================
 	public abstract void addCallbackListener(CallbackListener listener);
 	public abstract boolean removeCallbackListener(CallbackListener listener);
