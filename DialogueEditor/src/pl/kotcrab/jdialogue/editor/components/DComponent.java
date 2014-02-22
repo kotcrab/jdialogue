@@ -161,7 +161,7 @@ public abstract class DComponent
 	public void renderSelectionOutline(ShapeRenderer shapeRenderer, Color color)
 	{
 		shapeRenderer.setColor(color);
-		shapeRenderer.rect(x, y - height / 2, width, height);// outline
+		shapeRenderer.rect(x, ry, width, height); // outline
 		shapeRenderer.line(x, ry + height - 30, x + width, ry + height - 30); // line under text
 	}
 	
