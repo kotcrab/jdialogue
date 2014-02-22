@@ -13,11 +13,3 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ******************************************************************************/
-
-package pl.kotcrab.jdialogue.renderer;
-
-public interface DialogueRenderer
-{
-	public void render();
-	public void startSequence(String name);
-}
