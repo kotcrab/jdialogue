@@ -40,11 +40,13 @@ public class TextComponent extends DComponent
 		);
 	}
 	
+	@Override
 	public KotcrabText[] provideInputLabels()
 	{
 		return new KotcrabText[]{new KotcrabText(Assets.consolasFont, "In", false, 0, 0)};
 	}
 	
+	@Override
 	public KotcrabText[] provideOutputsLabels()
 	{
 		return new KotcrabText[]{new KotcrabText(Assets.consolasFont, "Out", false, 0, 0)};

@@ -77,12 +77,14 @@ public class ChoiceComponent extends DComponent
 	{
 		this.choices = choices;
 	}
-	
+
+	@Override
 	public KotcrabText[] provideInputLabels()
 	{
 		return new KotcrabText[]{new KotcrabText(Assets.consolasFont, "In", false, 0, 0)};
 	}
 	
+	@Override
 	public KotcrabText[] provideOutputsLabels()
 	{
 		return new KotcrabText[]{new KotcrabText(Assets.consolasFont, "Out(s)", false, 0, 0)};

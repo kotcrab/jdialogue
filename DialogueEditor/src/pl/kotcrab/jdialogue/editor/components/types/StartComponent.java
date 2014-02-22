@@ -31,6 +31,7 @@ public class StartComponent extends DComponent
 		tableModel = new ComponentTableModel(null);
 	}
 	
+	@Override
 	public KotcrabText[] provideOutputsLabels()
 	{
 		return new KotcrabText[]{new KotcrabText(Assets.consolasFont, "Out", false, 0, 0)};

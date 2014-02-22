@@ -30,6 +30,7 @@ public class EndComponent extends DComponent
 		tableModel = new ComponentTableModel(null);
 	}
 	
+	@Override
 	public KotcrabText[] provideInputLabels()
 	{
 		return new KotcrabText[]{new KotcrabText(Assets.consolasFont, "In", false, 0, 0)};
