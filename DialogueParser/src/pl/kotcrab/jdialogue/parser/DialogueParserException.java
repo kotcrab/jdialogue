@@ -14,10 +14,14 @@
  * limitations under the License.
  ******************************************************************************/
 
-package pl.kotcrab.jdialogue.renderer;
+package pl.kotcrab.jdialogue.parser;
 
-
-public interface DialogueRenderer
+public class DialogueParserException extends RuntimeException
 {
-	public void startSequence(String name);
+	private static final long serialVersionUID = 1L;
+	
+	public DialogueParserException(String message)
+	{
+		super(message);
+	}
 }

@@ -57,7 +57,6 @@ public class ConsoleRenderer implements DialogueRenderer
 		});
 	}
 	
-	@Override
 	public void render()
 	{
 		ComponentType nextType;
@@ -68,7 +67,7 @@ public class ConsoleRenderer implements DialogueRenderer
 			if(nextType == ComponentType.TEXT)
 			{
 				print(parser.getCharacterData().getName() + ": ");
-				println(parser.getNextMsg());
+				println(parser.getMsg());
 				parser.moveToNextComponent();
 				
 				continue;
@@ -76,7 +75,7 @@ public class ConsoleRenderer implements DialogueRenderer
 			
 			if(nextType == ComponentType.CHOICE)
 			{
-				println("===" + parser.getNextMsg() + "===");
+				println("===" + parser.getMsg() + "===");
 				
 				String[] choices = parser.getChoiceData();
 				
@@ -112,7 +111,6 @@ public class ConsoleRenderer implements DialogueRenderer
 			
 		} while (nextType != ComponentType.END);
 		
-		scanner.close();
 	}
 	
 	private void println(String line)
@@ -151,5 +149,10 @@ public class ConsoleRenderer implements DialogueRenderer
 		} while (valid == false);
 		
 		return response;
+	}
+	
+	public void dispose()
+	{
+		scanner.close();
 	}
 }

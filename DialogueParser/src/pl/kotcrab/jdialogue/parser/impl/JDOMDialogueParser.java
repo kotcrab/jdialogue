@@ -32,6 +32,7 @@ import pl.kotcrab.jdialogue.loader.DialogueLoader;
 import pl.kotcrab.jdialogue.parser.CallbackListener;
 import pl.kotcrab.jdialogue.parser.ComponentType;
 import pl.kotcrab.jdialogue.parser.DialogueParser;
+import pl.kotcrab.jdialogue.parser.DialogueParserException;
 import pl.kotcrab.jdialogue.parser.PCallback;
 import pl.kotcrab.jdialogue.parser.PCharacter;
 import pl.kotcrab.jdialogue.parser.Project;
@@ -49,7 +50,7 @@ public class JDOMDialogueParser extends DialogueParser
 	private Element currentElement;
 	
 	private ComponentType currentComponentType;
-	private int target;
+	private int target = -1;
 	
 	private PCharacter currentCharacterData;
 	private boolean lastCallbackCheckResult;
@@ -85,6 +86,8 @@ public class JDOMDialogueParser extends DialogueParser
 	@Override
 	public ComponentType processNextComponent()
 	{
+		if(target == -1) throw new DialogueParserException("target == -1. Did you call startSequence(String sequenceName) before calling processNextComponent()?");
+		
 		currentElement = elementList.get(target);
 		
 		String name = currentElement.getName();
@@ -158,9 +161,22 @@ public class JDOMDialogueParser extends DialogueParser
 	}
 	
 	@Override
-	public String getNextMsg() // TODO implement maxChars
+	public String getMsg() // TODO implement maxChars
 	{
 		return currentElement.getChildText("text");
+	}
+	
+	@Override
+	public boolean isCurrentMsgFinished()
+	{
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	@Override
+	public int getId()
+	{
+		return Integer.parseInt(currentElement.getChildText("id"));
 	}
 	
 	@Override
@@ -179,13 +195,6 @@ public class JDOMDialogueParser extends DialogueParser
 	public PCharacter getCharacterData()
 	{
 		return currentCharacterData;
-	}
-	
-	@Override
-	public boolean isCurrentMsgFinished()
-	{
-		// TODO Auto-generated method stub
-		return false;
 	}
 	
 	@Override
@@ -260,5 +269,4 @@ public class JDOMDialogueParser extends DialogueParser
 		
 		return new PCharacter(id, name, textureName);
 	}
-	
 }

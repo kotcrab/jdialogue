@@ -36,11 +36,13 @@ public abstract class DialogueParser
 	public abstract void moveToNextComponent(int target);
 	public abstract void moveToNextComponent();
 	
+	public abstract int getId();
+	
 	//===================================FOR TEXT COMPONENT====================================
 	public abstract PCharacter getCharacterData();
 	
 	//==============================FOR TEXT/CHOICE COMPONENT==================================
-	public abstract String getNextMsg();
+	public abstract String getMsg();
 	public abstract boolean isCurrentMsgFinished();
 	
 	//==============================FOR CHOICE COMPONENT ONLY==================================
