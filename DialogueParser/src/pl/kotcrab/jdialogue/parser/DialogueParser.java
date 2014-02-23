@@ -22,7 +22,7 @@ public abstract class DialogueParser
 {
 	public static final int INFINITY = -1;
 	
-	int maxChars;
+	protected int maxChars;
 	
 	public DialogueParser(DialogueLoader projectFile, int maxChars)
 	{

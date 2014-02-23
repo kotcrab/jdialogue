@@ -17,7 +17,6 @@
 package pl.kotcrab.jdialogue.tests;
 
 import pl.kotcrab.jdialogue.loader.GdxLoader;
-import pl.kotcrab.jdialogue.parser.DialogueParser;
 import pl.kotcrab.jdialogue.parser.impl.JDOMDialogueParser;
 import pl.kotcrab.jdialogue.renderer.SimplestLibgdxRenderer;
 import pl.kotcrab.libgdx.Assets;
@@ -46,7 +45,7 @@ public class SimplestLibgdxRendererTest implements ApplicationListener
 		
 		batch = new SpriteBatch();
 		
-		renderer = new SimplestLibgdxRenderer(new JDOMDialogueParser(new GdxLoader(Gdx.files.internal("assets/testProj/project.xml")), DialogueParser.INFINITY), Assets.consolasFont);
+		renderer = new SimplestLibgdxRenderer(new JDOMDialogueParser(new GdxLoader(Gdx.files.internal("assets/testProj/project.xml")), 30), Assets.consolasFont);
 		renderer.startSequence("test");
 		Gdx.input.setInputProcessor(renderer);
 	}
@@ -85,21 +84,18 @@ public class SimplestLibgdxRendererTest implements ApplicationListener
 	@Override
 	public void pause()
 	{
-		// TODO Auto-generated method stub
 		
 	}
 	
 	@Override
 	public void resume()
 	{
-		// TODO Auto-generated method stub
 		
 	}
 	
 	@Override
 	public void resize(int width, int height)
 	{
-		// TODO Auto-generated method stub
 		
 	}
 }

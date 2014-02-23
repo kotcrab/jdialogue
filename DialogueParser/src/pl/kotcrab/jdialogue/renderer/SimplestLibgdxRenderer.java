@@ -40,11 +40,12 @@ public class SimplestLibgdxRenderer implements DialogueRenderer, InputProcessor
 	// < selector { visible heigt
 	
 	private int selectorPointAt = 0;
-	private String selector = ">";
 	private int selectorVisiblePos = 0;
 	private int visibleHeight = 0;
 	private int visibleHeightPos = 0;
+	private String selector = ">";
 	private String[] choices = { "" };
+	
 	private int lastId = -1;
 	
 	private ComponentType currentComponentType;
@@ -91,6 +92,7 @@ public class SimplestLibgdxRenderer implements DialogueRenderer, InputProcessor
 		{
 			font.draw(batch, selector, 80, 160 - (selectorVisiblePos * 30));
 			font.draw(batch, lineTitle, 100, 200);
+			font.draw(batch, selectorPointAt + 1 + "/" + choices.length, 100, 40);
 		}
 		
 		batch.end();
@@ -105,6 +107,11 @@ public class SimplestLibgdxRenderer implements DialogueRenderer, InputProcessor
 		{
 			clear();
 			lines[0] = parser.getCharacterData().getName() + ": " + parser.getMsg();
+			
+			if(parser.isCurrentMsgFinished() == false) lines[1] = parser.getMsg();
+			
+			if(parser.isCurrentMsgFinished() == false) lines[2] = parser.getMsg();
+			
 			parser.moveToNextComponent();
 		}
 		
@@ -188,11 +195,6 @@ public class SimplestLibgdxRenderer implements DialogueRenderer, InputProcessor
 			selectorVisiblePos--;
 			selectorPointAt--;
 			
-			if(selectorVisiblePos == 0)
-			{
-				// listMoveUp();
-			}
-			
 			return true;
 		}
 		
@@ -212,8 +214,6 @@ public class SimplestLibgdxRenderer implements DialogueRenderer, InputProcessor
 			
 			selectorVisiblePos++;
 			selectorPointAt++;
-			
-			// listMoveDown();
 			
 			return true;
 		}
@@ -239,49 +239,42 @@ public class SimplestLibgdxRenderer implements DialogueRenderer, InputProcessor
 	@Override
 	public boolean keyUp(int keycode)
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 	
 	@Override
 	public boolean keyTyped(char character)
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 	
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button)
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 	
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button)
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 	
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer)
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 	
 	@Override
 	public boolean mouseMoved(int screenX, int screenY)
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 	
 	@Override
 	public boolean scrolled(int amount)
 	{
-		// TODO Auto-generated method stub
 		return false;
 	}
 	

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.StringTokenizer;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -54,6 +55,9 @@ public class JDOMDialogueParser extends DialogueParser
 	
 	private PCharacter currentCharacterData;
 	private boolean lastCallbackCheckResult;
+	
+	private String[] msgText;
+	private int currentMsg;
 	
 	public JDOMDialogueParser(DialogueLoader projectFile, int maxChars)
 	{
@@ -93,7 +97,13 @@ public class JDOMDialogueParser extends DialogueParser
 		String name = currentElement.getName();
 		
 		if(name.equals("dEnd")) currentComponentType = ComponentType.END;
-		if(name.equals("dChoice")) currentComponentType = ComponentType.CHOICE;
+		if(name.equals("dChoice"))
+		{
+			currentComponentType = ComponentType.CHOICE;
+			msgText = new String[1];
+			msgText[0] = currentElement.getChildText("text");
+			
+		}
 		if(name.equals("dRandom")) currentComponentType = ComponentType.RANDOM;
 		if(name.equals("dRelay")) currentComponentType = ComponentType.RELAY;
 		
@@ -101,6 +111,15 @@ public class JDOMDialogueParser extends DialogueParser
 		{
 			int id = Integer.parseInt(currentElement.getChildText("character"));
 			currentCharacterData = project.getCharacterList().get(project.getCharacterMap().get(id));
+			
+			if(maxChars > 0)
+				msgText = splitIntoLines(currentElement.getChildText("text"));
+			else
+			{
+				msgText = new String[1];
+				msgText[0] = currentElement.getChildText("text");
+			}
+			currentMsg = 0;
 			
 			currentComponentType = ComponentType.TEXT;
 			
@@ -161,16 +180,22 @@ public class JDOMDialogueParser extends DialogueParser
 	}
 	
 	@Override
-	public String getMsg() // TODO implement maxChars
+	public String getMsg()
 	{
-		return currentElement.getChildText("text");
+		if(maxChars > 0 && currentMsg < msgText.length)
+		{
+			String text = msgText[currentMsg];
+			currentMsg++;
+			return text;
+		}
+		else
+			return msgText[0];
 	}
 	
 	@Override
 	public boolean isCurrentMsgFinished()
 	{
-		// TODO Auto-generated method stub
-		return false;
+		return currentMsg == msgText.length;
 	}
 	
 	@Override
@@ -207,6 +232,35 @@ public class JDOMDialogueParser extends DialogueParser
 	public boolean removeCallbackListener(CallbackListener listener)
 	{
 		return listeners.remove(listener);
+	}
+	
+	private String[] splitIntoLines(String input)
+	{
+		StringTokenizer tok = new StringTokenizer(input, " ");
+		StringBuilder output = new StringBuilder(input.length());
+		int lineLen = 0;
+		while (tok.hasMoreTokens())
+		{
+			String word = tok.nextToken();
+			
+			while (word.length() > maxChars)
+			{
+				output.append(word.substring(0, maxChars - lineLen) + "\n");
+				word = word.substring(maxChars - lineLen);
+				lineLen = 0;
+			}
+			
+			if(lineLen + word.length() > maxChars)
+			{
+				output.append("\n");
+				lineLen = 0;
+			}
+			output.append(word + " ");
+			
+			lineLen += word.length() + 1;
+		}
+		
+		return output.toString().split("\n");
 	}
 	
 	// =====================================LOADING PROJECT========================================
@@ -248,6 +302,7 @@ public class JDOMDialogueParser extends DialogueParser
 		}
 		catch (JDOMException | IOException e)
 		{
+			throw new DialogueParserException("Chould not load project! Is your project.xml file correct?");
 		}
 		
 		return new Project(name, gzipExport, characterList, characterMap, callbackList, callbackMap);

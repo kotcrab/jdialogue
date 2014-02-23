@@ -22,7 +22,7 @@ import com.badlogic.gdx.files.FileHandle;
 
 public class GdxLoader implements DialogueLoader
 {
-	FileHandle file;
+	private FileHandle file;
 	
 	public GdxLoader(FileHandle file)
 	{

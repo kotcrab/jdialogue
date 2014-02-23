@@ -20,7 +20,7 @@ import java.io.File;
 
 public class JavaLoader implements DialogueLoader
 {
-	File file;
+	private File file;
 	
 	public JavaLoader(File file)
 	{
