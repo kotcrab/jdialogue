@@ -420,7 +420,7 @@ public abstract class DComponent
 		
 	}
 	
-	public void calcVisible(Rectangle cameraRect)
+	public void calcIfVisible(Rectangle cameraRect)
 	{
 		if(cameraRect.overlaps(boundingRectangle))
 			visible = true;

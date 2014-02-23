@@ -55,9 +55,9 @@ public class DComponentConverter implements Converter
 		|| type.equals(RandomComponent.class)
 		)
 		//@formatter:on
-			return true;
-		else
-			return false;
+		 return true;
+		 else
+		 return false;
 	}
 	
 	@Override

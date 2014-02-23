@@ -23,6 +23,7 @@ import java.awt.event.FocusListener;
 import java.util.Date;
 
 import javax.swing.DefaultCellEditor;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -86,21 +87,20 @@ public class PropertyTable extends JTable
 		Object value = super.getValueAt(row, column);
 		if(value instanceof Boolean)
 		{
-			return getDefaultEditor(Boolean.class);
-		}
-		if(value instanceof Date)
-		{
-			return getDefaultEditor(Date.class);
+			DefaultCellEditor editor = (DefaultCellEditor) getDefaultEditor(Boolean.class);
+			JCheckBox check = (JCheckBox) (editor.getComponent());
+			check.setHorizontalAlignment(JLabel.LEFT);
+			return editor;
 		}
 		
 		if(value instanceof String)
 		{
 			return textEditor;
 		}
-
+		
 		if(value instanceof PCharacter)
 		{
-			characterCombobox.updateUI(); //make sure that combobox upadted itself (without this list will be blank if character list changed)
+			characterCombobox.updateUI(); // make sure that combobox upadted itself (without this list will be blank if character list changed)
 			return new DefaultCellEditor(characterCombobox);
 		}
 		
@@ -130,7 +130,10 @@ public class PropertyTable extends JTable
 		
 		if(value instanceof Boolean)
 		{
-			return getDefaultRenderer(Boolean.class);
+			TableCellRenderer ren = getDefaultRenderer(Boolean.class);
+			JCheckBox check = (JCheckBox) ren;
+			check.setHorizontalAlignment(JLabel.LEFT);
+			return ren;
 		}
 		
 		if(value instanceof Integer || value instanceof String || value instanceof ChoiceComponentChoices || value instanceof PCharacter)
@@ -141,12 +144,12 @@ public class PropertyTable extends JTable
 		// no special case
 		return super.getCellRenderer(row, column);
 	}
-
+	
 	public Project getProject()
 	{
 		return project;
 	}
-
+	
 	public void setProject(Project project)
 	{
 		this.project = project;
@@ -155,5 +158,5 @@ public class PropertyTable extends JTable
 		characterCombobox.setLightWeightPopupEnabled(false);
 		callbackCombobox.setLightWeightPopupEnabled(false);
 	}
-
+	
 }

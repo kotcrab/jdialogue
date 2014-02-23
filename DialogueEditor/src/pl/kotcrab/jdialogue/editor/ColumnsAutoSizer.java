@@ -34,7 +34,7 @@ public class ColumnsAutoSizer
 {
 	public static void sizeColumnsToFit(JTable table)
 	{
-		sizeColumnsToFit(table, 50);
+		sizeColumnsToFit(table, 80);
 	}
 	
 	public static void sizeColumnsToFit(JTable table, int columnMargin)

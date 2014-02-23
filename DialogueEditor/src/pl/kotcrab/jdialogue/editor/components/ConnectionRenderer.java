@@ -18,6 +18,8 @@
 
 package pl.kotcrab.jdialogue.editor.components;
 
+import pl.kotcrab.jdialogue.editor.components.types.RelayComponent;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -31,9 +33,14 @@ public class ConnectionRenderer
 	
 	private int rendered;
 	
-	public int renderLines(ShapeRenderer shapeRenderer, DComponent comp)
+	public int renderLines(ShapeRenderer shapeRenderer, DComponent comp, boolean ignoreInvisible)
 	{
 		rendered = 0;
+		
+		if(ignoreInvisible == false && comp instanceof RelayComponent)
+		{
+			if((boolean) comp.getTableModel().data[0][1] == true) return rendered;
+		}
 		
 		Connector[] outputs = comp.getOutputs();
 		
@@ -88,8 +95,15 @@ public class ConnectionRenderer
 		return rendered;
 	}
 	
-	public void renderTraingles(ShapeRenderer shapeRenderer, DComponent comp)
+	public void renderTraingles(ShapeRenderer shapeRenderer, DComponent comp, boolean ignoreInvisible)
 	{
+		if(comp instanceof RelayComponent)
+		{
+			RelayComponent rcomp = (RelayComponent) comp;
+			if((boolean) rcomp.getTableModel().data[0][1] == true) shapeRenderer.setColor(Color.RED);
+			
+		}
+		
 		Connector[] inputs = comp.getOutputs();
 		
 		for(int i = 0; i < inputs.length; i++)
@@ -103,9 +117,17 @@ public class ConnectionRenderer
 			
 			float y2 = target.getY() + 6;
 			
-			shapeRenderer.setColor(Color.BLACK);
+			if(ignoreInvisible == false && comp instanceof RelayComponent && (boolean) comp.getTableModel().data[0][1] == true)
+			{
+				shapeRenderer.setColor(Color.RED);
+				shapeRenderer.triangle(target.getX() - 8, target.getY() + 20, target.getX() - 8, target.getY() + 32, target.getX() + 3, y2 + 20); // ending triangle
+			}
+			else
+			{
+				shapeRenderer.setColor(Color.BLACK);
+				shapeRenderer.triangle(target.getX() - 8, target.getY(), target.getX() - 8, target.getY() + 12, target.getX() + 3, y2); // ending triangle
+			}
 			
-			shapeRenderer.triangle(target.getX() - 8, target.getY(), target.getX() - 8, target.getY() + 12, target.getX() + 3, y2); // ending triangle
 		}
 	}
 	

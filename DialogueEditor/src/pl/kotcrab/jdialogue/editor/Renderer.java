@@ -58,7 +58,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.thoughtworks.xstream.XStream;
 
-//TODO rozmiar komponentów przy wczytytwaniu (to chyba nie problem, bo rozmair itak jest zapisywany w xml'u)
 //TODO przesuwanie kamery, gdy przy rysowaniu zblizymy kursor do krawêdzie ekranu, u¿yteczna funkcja
 public class Renderer implements ApplicationListener, InputProcessor, GestureListener
 {
@@ -100,6 +99,8 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	private XStream xstream;
 	
 	private boolean dirty;
+	
+	private int panCounter = 0;
 	
 	public Renderer(EditorListener listener, XStream xstream)
 	{
@@ -166,7 +167,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		
 		for(DComponent comp : componentList)
 		{
-			comp.calcVisible(cameraRect);
+			comp.calcIfVisible(cameraRect);
 		}
 		
 		// this is here for simplicity, because we are using a key and a mouse button
@@ -221,12 +222,12 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 			batch.setShader(null);
 			
 			shapeRenderer.begin(ShapeType.Line);
-			if(selectedComponent != null) selectedComponent.renderSelectionOutline(shapeRenderer, Color.ORANGE);
+			if(selectedComponent != null) selectedComponent.renderSelectionOutline(shapeRenderer, Color.ORANGE); // 1
 			shapeRenderer.end();
 			
-			// these if's are difrrent, easy to omit...
+			// these if's are difrrent, easy to omit... (1,2)
 			
-			if(selectedConnector != null)
+			if(selectedConnector != null) // 2
 			{
 				if(Gdx.input.isKeyPressed(Keys.CONTROL_LEFT))
 					selectedConnector.renderAsSelected(shapeRenderer, Color.RED);
@@ -254,14 +255,14 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 			shapeRenderer.begin(ShapeType.Line);
 			for(DComponent comp : componentList)
 			{
-				renderedConnections += connectionRenderer.renderLines(shapeRenderer, comp); // we are counitng how many connections we had drawn
+				renderedConnections += connectionRenderer.renderLines(shapeRenderer, comp,  Gdx.input.isKeyPressed(Keys.CONTROL_LEFT)); // we are counitng how many connections we had drawn
 			}
 			shapeRenderer.end();
 			
 			shapeRenderer.begin(ShapeType.Filled);
 			for(DComponent comp : componentList)
 			{
-				connectionRenderer.renderTraingles(shapeRenderer, comp);
+				connectionRenderer.renderTraingles(shapeRenderer, comp, Gdx.input.isKeyPressed(Keys.CONTROL_LEFT));
 			}
 			shapeRenderer.end();
 			
@@ -515,7 +516,6 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 			}
 		}
 		
-		
 		for(DComponent comp : compList)
 			comp.detachAllNotOnList(compList);
 		
@@ -600,12 +600,20 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 			return true;
 		}
 		
-		if(selectedComponent == null && selectedConnector == null && selectedComponentsList.size() == 0 && Gdx.input.isButtonPressed(Buttons.LEFT))
+		if(panCounter > 0) //this will igore moving camera when clicked somewhere with menu opened
 		{
-			camera.position.x = camera.position.x - deltaX * camera.zoom;
-			camera.position.y = camera.position.y + deltaY * camera.zoom;
-			return true;
+			if(selectedComponent == null && selectedConnector == null && selectedComponentsList.size() == 0)
+			{
+				if(Gdx.input.isButtonPressed(Buttons.LEFT) && Gdx.input.isKeyPressed(Keys.CONTROL_LEFT) == false)
+				{
+					camera.position.x = camera.position.x - deltaX * camera.zoom;
+					camera.position.y = camera.position.y + deltaY * camera.zoom;
+					return true;
+				}
+			}
 		}
+		else
+			panCounter++;
 		
 		return false;
 	}
@@ -637,6 +645,8 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	@Override
 	public boolean touchDown(float x, float y, int pointer, int button)
 	{
+		panCounter = 0;
+		
 		x = Touch.calcX(x);
 		y = Touch.calcY(y);
 		

@@ -18,49 +18,32 @@
 
 package pl.kotcrab.jdialogue.editor.components.types;
 
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-
 import pl.kotcrab.jdialogue.editor.Assets;
 import pl.kotcrab.jdialogue.editor.KotcrabText;
 import pl.kotcrab.jdialogue.editor.components.ComponentTableModel;
 import pl.kotcrab.jdialogue.editor.components.DComponent;
+import pl.kotcrab.jdialogue.editor.project.PCharacter;
 
 public class RelayComponent extends DComponent
 {
 	public RelayComponent(int x, int y)
 	{
-		super("Relay", x, y, 3, 1);
+		super("Relay", x, y, 1, 1);
 		
 		tableModel = new ComponentTableModel(
-			//@formatter:off
-			new Object[][]
+		//@formatter:off
+		new Object[][]
 				{
-				    {"Inputs", new Integer(3)},
+				    {"Invisible connection", new Boolean(false)},
 				}
-			//@formatter:on
-			);
-		
-		setListeners();
-	}
-	
-	@Override
-	protected void setListeners()
-	{
-		tableModel.addTableModelListener(new TableModelListener()
-		{
-			@Override
-			public void tableChanged(TableModelEvent e)
-			{
-				resize((int) tableModel.getValueAt(0, 1), getOutputs().length);
-			}
-		});
+		//@formatter:on
+		);
 	}
 	
 	@Override
 	public KotcrabText[] provideInputLabels()
 	{
-		return new KotcrabText[]{new KotcrabText(Assets.consolasFont, "In(s)", false, 0, 0)};
+		return new KotcrabText[]{new KotcrabText(Assets.consolasFont, "In", false, 0, 0)};
 	}
 	
 	@Override
