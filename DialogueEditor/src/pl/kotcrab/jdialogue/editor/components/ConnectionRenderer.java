@@ -121,6 +121,7 @@ public class ConnectionRenderer
 			{
 				shapeRenderer.setColor(Color.RED);
 				shapeRenderer.triangle(target.getX() - 8, target.getY() + 20, target.getX() - 8, target.getY() + 32, target.getX() + 3, y2 + 20); // ending triangle
+				shapeRenderer.triangle(con.getX() + 12, con.getY(), con.getX() + 12, con.getY() + 12, con.getX() + 22, con.getY() + 6); // ending triangle
 			}
 			else
 			{
