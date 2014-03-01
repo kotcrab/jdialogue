@@ -68,7 +68,7 @@
   <dText>
     <id>10</id>
     <target0>11</target0>
-    <text>You still didin&apos;t done what i asked you to do.</text>
+    <text>You still didin&apos;t done what I asked you to do.</text>
     <character>2</character>
   </dText>
   <dRelay>
@@ -100,7 +100,7 @@
     <target3>2</target3>
     <text>Select option:</text>
     <choiceData>
-      <string>Have you got any job for me?</string>
+      <string>Have you got any jobs for me?</string>
       <string>What do you do?</string>
       <string>Where are you from?</string>
       <string>Back</string>
@@ -121,7 +121,7 @@
   <dText>
     <id>18</id>
     <target0>19</target0>
-    <text>I&apos;m from this city.</text>
+    <text>I&apos;m from this village.</text>
     <character>2</character>
   </dText>
   <dRelay>

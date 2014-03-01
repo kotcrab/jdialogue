@@ -31,6 +31,7 @@ import java.io.File;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -53,6 +54,8 @@ import pl.kotcrab.jdialogue.editor.project.Project;
 import javax.swing.border.TitledBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.SoftBevelBorder;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.UIManager;
 
 public class Editor extends JFrame
@@ -67,6 +70,8 @@ public class Editor extends JFrame
 	
 	private JSplitPane rendererSplitPane;
 	private PropertyTable table;
+	
+	private JFileChooser loadProjectFileChooser;
 	
 	/**
 	 * Create the frame.
@@ -92,6 +97,33 @@ public class Editor extends JFrame
 		createPopupMenu();
 		
 		logic.createRenderer();
+		
+		loadProjectFileChooser = new JFileChooser(App.getLastOpenedFolderPath());
+		loadProjectFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		loadProjectFileChooser.setFileFilter(new FileFilter()
+		{
+			@Override
+			public String getDescription()
+			{
+				return "Dialogue Editor XML file";
+			}
+			
+			@Override
+			public boolean accept(File f)
+			{
+				if(f != null)
+				{
+					if(f.isDirectory())
+					{
+						return true;
+					}
+					
+					return f.getName().equals("project.xml");
+				}
+				
+				return false;
+			}
+		});
 		
 		rendererSplitPane = new JSplitPane();
 		rendererSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
@@ -158,7 +190,7 @@ public class Editor extends JFrame
 		// create the status bar panel and shove it down the bottom of the frame
 		JPanel statusPanel = new JPanel();
 		statusPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
-		//statusPanel.setBorder();
+		// statusPanel.setBorder();
 		getContentPane().add(statusPanel, BorderLayout.SOUTH);
 		statusPanel.setPreferredSize(new Dimension(getWidth(), 19));
 		statusPanel.setLayout(new BoxLayout(statusPanel, BoxLayout.X_AXIS));
@@ -280,6 +312,13 @@ public class Editor extends JFrame
 	public void newProject(Project project)
 	{
 		logic.newProject(project);
+	}
+	
+	public void showLoadProjectDialog()
+	{
+		loadProjectFileChooser.setCurrentDirectory(new File(App.getLastOpenedFolderPath()));
+		int returnVal = loadProjectFileChooser.showOpenDialog(this);
+		if(returnVal == JFileChooser.APPROVE_OPTION) loadProject(loadProjectFileChooser.getSelectedFile());
 	}
 	
 	@Override

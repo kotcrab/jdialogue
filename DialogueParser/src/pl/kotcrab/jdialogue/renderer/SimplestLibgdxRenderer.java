@@ -172,6 +172,7 @@ public class SimplestLibgdxRenderer implements DialogueRenderer, InputProcessor
 	{
 		if(keycode == Keys.ENTER)
 		{
+			System.out.println("Key: Enter");
 			if(currentComponentType == ComponentType.CHOICE) parser.moveToNextComponent(selectorPointAt);
 			
 			processComponent();
@@ -181,6 +182,7 @@ public class SimplestLibgdxRenderer implements DialogueRenderer, InputProcessor
 		
 		if(keycode == Keys.UP && currentComponentType == ComponentType.CHOICE)
 		{
+			System.out.println("Key: Up");
 			if(selectorVisiblePos - 1 < 0)
 			{
 				if(selectorPointAt > 0)
@@ -200,6 +202,8 @@ public class SimplestLibgdxRenderer implements DialogueRenderer, InputProcessor
 		
 		if(keycode == Keys.DOWN && currentComponentType == ComponentType.CHOICE)
 		{
+			System.out.println("Key: Down");
+			
 			if(selectorVisiblePos + 1 > visibleHeight - 1)
 			{
 				if(selectorPointAt < choices.length - 1)

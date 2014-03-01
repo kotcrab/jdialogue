@@ -64,7 +64,7 @@ public class Main
 				{
 					window.setLocation(gd[0].getDefaultConfiguration().getBounds().x, window.getY());
 				}
-				else //really sombady can launch this with no screen?
+				else //really somebody can launch this with no screen?
 				{
 					throw new RuntimeException("No Screens Found - Get a screen");
 				}

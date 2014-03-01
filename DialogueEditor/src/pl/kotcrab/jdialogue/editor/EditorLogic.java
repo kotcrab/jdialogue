@@ -241,8 +241,7 @@ public class EditorLogic
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				// TODO load
-				
+				window.showLoadProjectDialog();
 			}
 		};
 		
@@ -370,7 +369,6 @@ public class EditorLogic
 		
 		canvas = new LwjglCanvas(renderer, true);
 		canvas.getCanvas().add(popupMenu);
-		
 	}
 	
 	public void loadProject(File projectConfigFile)

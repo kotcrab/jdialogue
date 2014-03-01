@@ -47,7 +47,7 @@ public class NewProjectDialog extends JDialog
 	private JLabel lblErrorLabel;
 	private JCheckBox chckUseCustomLoc;
 	private JButton btnCreate;
-	final JFileChooser fc = new JFileChooser();
+	final JFileChooser fc;
 	
 	/**
 	 * Create the dialog.
@@ -65,9 +65,7 @@ public class NewProjectDialog extends JDialog
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		getContentPane().setLayout(null);
 		
-		String path = App.getLastOpenedFolderPath();
-		if(path != null) fc.setCurrentDirectory(new File(path));
-		
+		fc = new JFileChooser(App.getLastOpenedFolderPath());
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		
 		JLabel lblProjectName = new JLabel("Project name:");
@@ -205,6 +203,7 @@ public class NewProjectDialog extends JDialog
 	
 	public String openSelecFolderDialog()
 	{
+		fc.setCurrentDirectory(new File(App.getLastOpenedFolderPath()));
 		int returnVal = fc.showOpenDialog(this);
 		
 		if(returnVal == JFileChooser.APPROVE_OPTION)
