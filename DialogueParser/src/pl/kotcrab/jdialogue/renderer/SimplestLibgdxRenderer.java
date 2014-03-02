@@ -138,6 +138,8 @@ public class SimplestLibgdxRenderer implements DialogueRenderer, InputProcessor
 				
 				lines[i] = choices[i];
 			}
+			
+			listMove();
 		}
 		
 		if(currentComponentType == ComponentType.CALLBACK || currentComponentType == ComponentType.CBCHECK || currentComponentType == ComponentType.RANDOM || currentComponentType == ComponentType.RELAY)

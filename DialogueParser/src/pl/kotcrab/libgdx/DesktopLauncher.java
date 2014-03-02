@@ -1,5 +1,6 @@
 package pl.kotcrab.libgdx;
 
+import pl.kotcrab.jdialogue.tests.GzipSimplestLibgdxRendererTest;
 import pl.kotcrab.jdialogue.tests.SimplestLibgdxRendererTest;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
@@ -15,7 +16,7 @@ public class DesktopLauncher
 		cfg.width = 800;
 		cfg.height = 480;
 		
-		new LwjglApplication(new SimplestLibgdxRendererTest(), cfg);
+		new LwjglApplication(new GzipSimplestLibgdxRendererTest(), cfg);
 	}
 	
 }

@@ -17,12 +17,14 @@
 package pl.kotcrab.jdialogue.parser.impl;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.StringTokenizer;
+import java.util.zip.GZIPInputStream;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -73,7 +75,13 @@ public class JDOMDialogueParser extends DialogueParser
 		try
 		{
 			SAXBuilder builder = new SAXBuilder();
-			Document document = builder.build(new File(projectPath + name + ".xml"));
+			Document document;
+			
+			if(project.isGzipExport())
+				document = builder.build(new GZIPInputStream(new FileInputStream(new File(projectPath + name + ".xml"))));
+			else
+				document = builder.build(new File(projectPath + name + ".xml"));
+			
 			Element rootNode = document.getRootElement();
 			
 			elementList = rootNode.getChildren();
@@ -83,6 +91,9 @@ public class JDOMDialogueParser extends DialogueParser
 		}
 		catch (JDOMException | IOException e)
 		{
+			if(e.getMessage().contains("Invalid byte 1 of 1-byte UTF-8 sequence."))
+				throw new DialogueParserException("Error decoding file.");
+					
 			e.printStackTrace();
 		}
 	}
