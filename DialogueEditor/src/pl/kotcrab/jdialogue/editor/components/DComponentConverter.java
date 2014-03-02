@@ -91,6 +91,7 @@ public class DComponentConverter implements Converter
 					if(data[i][0].equals("Choices text")) continue;
 					if(data[i][0].equals("Outputs")) continue;
 					if(data[i][0].equals("Inputs")) continue;
+					if(data[i][0].equals("Invisible connection")) continue;
 					
 					String nodeName = data[i][0].toString().toLowerCase();
 					
