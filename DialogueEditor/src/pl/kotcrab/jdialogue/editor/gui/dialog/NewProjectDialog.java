@@ -86,7 +86,7 @@ public class NewProjectDialog extends JDialog {
 		JButton btnBrowse = new JButton("Browse...");
 		btnBrowse.addActionListener(new ActionListener() {
 			public void actionPerformed (ActionEvent e) {
-				textProjectLoc.setText(openSelecFolderDialog());
+				textProjectLoc.setText(openSelectFolderDialog());
 			}
 		});
 		btnBrowse.setBounds(345, 32, 89, 23);
@@ -121,7 +121,7 @@ public class NewProjectDialog extends JDialog {
 		final JButton btnCustomLocBrowse = new JButton("Browse...");
 		btnCustomLocBrowse.addActionListener(new ActionListener() {
 			public void actionPerformed (ActionEvent e) {
-				textCustomOutLoc.setText(openSelecFolderDialog());
+				textCustomOutLoc.setText(openSelectFolderDialog());
 			}
 		});
 		btnCustomLocBrowse.setEnabled(false);
@@ -185,8 +185,9 @@ public class NewProjectDialog extends JDialog {
 		setVisible(true);
 	}
 
-	public String openSelecFolderDialog () {
-		fc.setCurrentDirectory(new File(App.getLastOpenedFolderPath()));
+	public String openSelectFolderDialog () {
+		String lastPath = App.getLastOpenedFolderPath();
+		if (lastPath != null) fc.setCurrentDirectory(new File(lastPath));
 		int returnVal = fc.showOpenDialog(this);
 
 		if (returnVal == JFileChooser.APPROVE_OPTION) {

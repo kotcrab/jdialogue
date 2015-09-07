@@ -226,6 +226,7 @@ public class Editor extends JFrame {
 		JMenuItem menuExit = new JMenuItem("Exit");
 
 		menuNewProject.addActionListener(logic.menubarNewProjectListener);
+		menuLoadProject.addActionListener(logic.menubarLoadProjectListener);
 		menuSaveProject.addActionListener(logic.saveButtonListener);
 		menuExportProject.addActionListener(logic.menubarExportProjectListener);
 
@@ -295,7 +296,9 @@ public class Editor extends JFrame {
 	}
 
 	public void showLoadProjectDialog () {
-		loadProjectFileChooser.setCurrentDirectory(new File(App.getLastOpenedFolderPath()));
+		String lastPath = App.getLastOpenedFolderPath();
+		if (lastPath != null)
+			loadProjectFileChooser.setCurrentDirectory(new File(lastPath));
 		int returnVal = loadProjectFileChooser.showOpenDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) loadProject(loadProjectFileChooser.getSelectedFile());
 	}

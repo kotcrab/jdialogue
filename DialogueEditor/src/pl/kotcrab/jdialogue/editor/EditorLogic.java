@@ -87,6 +87,7 @@ public class EditorLogic {
 	public ActionListener menubarRenderDebugListener;
 
 	public ActionListener menubarNewProjectListener;
+	public ActionListener menubarLoadProjectListener;
 	public ActionListener menubarExportProjectListener;
 
 	public ActionListener saveButtonListener;
@@ -259,6 +260,12 @@ public class EditorLogic {
 						new NewProjectDialog(Editor.window);
 					}
 				});
+			}
+		};
+
+		menubarLoadProjectListener = new ActionListener() {
+			public void actionPerformed (ActionEvent e) {
+				window.showLoadProjectDialog();
 			}
 		};
 
