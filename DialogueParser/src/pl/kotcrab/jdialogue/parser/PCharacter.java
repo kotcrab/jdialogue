@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2014 Pawel Pastuszak
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,47 +16,39 @@
 
 package pl.kotcrab.jdialogue.parser;
 
-public class PCharacter
-{
+public class PCharacter {
 	private int id;
 	private String name;
 	private String textureName;
-	
-	public PCharacter(int id, String name, String textureName)
-	{
+
+	public PCharacter (int id, String name, String textureName) {
 		this.name = name;
 		this.textureName = textureName;
 		this.id = id;
 	}
-	
-	public String getName()
-	{
+
+	public String getName () {
 		return name;
 	}
 
-	public void setName(String name)
-	{
+	public void setName (String name) {
 		this.name = name;
 	}
 
-	public String getTextureName()
-	{
+	public String getTextureName () {
 		return textureName;
 	}
 
-	public int getId()
-	{
+	public int getId () {
 		return id;
 	}
 
-	public void setTextureName(String textureName)
-	{
+	public void setTextureName (String textureName) {
 		this.textureName = textureName;
 	}
-	
+
 	@Override
-	public String toString()
-	{
+	public String toString () {
 		return name + " (id: " + id + ")";
 	}
 }

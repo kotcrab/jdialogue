@@ -1,179 +1,162 @@
 /*******************************************************************************
-    DialogueEditor
-    Copyright (C) 2013-2014 Pawel Pastuszak
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * DialogueEditor
+ * Copyright (C) 2013-2014 Pawel Pastuszak
+ * <p>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
 package pl.kotcrab.jdialogue.editor.components;
-
-import pl.kotcrab.jdialogue.editor.components.types.RelayComponent;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Rectangle;
+import pl.kotcrab.jdialogue.editor.components.types.RelayComponent;
 
-public class ConnectionRenderer
-{
+public class ConnectionRenderer {
 	private boolean renderCurves = true;
-	
+
 	Rectangle cameraRect;
-	
+
 	private int rendered;
-	
-	public int renderLines(ShapeRenderer shapeRenderer, DComponent comp, boolean ignoreInvisible)
-	{
+
+	public int renderLines (ShapeRenderer shapeRenderer, DComponent comp, boolean ignoreInvisible) {
 		rendered = 0;
-		
-		if(ignoreInvisible == false && comp instanceof RelayComponent)
-		{
-			if((boolean) comp.getTableModel().data[0][1] == true) return rendered;
+
+		if (ignoreInvisible == false && comp instanceof RelayComponent) {
+			if ((boolean) comp.getTableModel().data[0][1] == true) return rendered;
 		}
-		
+
 		Connector[] outputs = comp.getOutputs();
-		
-		for(int i = 0; i < outputs.length; i++)
-		{
+
+		for (int i = 0; i < outputs.length; i++) {
 			Connector con = outputs[i];
 			Connector target = con.getTarget();
-			
-			if(target == null) continue;
-			
+
+			if (target == null) continue;
+
 			float x1 = con.getX() + 6;
 			float y1 = con.getY() + 6;
 			float x2 = target.getX() + 6;
 			float y2 = target.getY() + 6;
-			
+
 			float startX;
-			if(x2 > x1)
-			{
+			if (x2 > x1) {
 				startX = x1;
 				shapeRenderer.setColor(Color.BLACK);
-			}
-			else
-			{
+			} else {
 				shapeRenderer.setColor(Color.BLUE);
 				startX = x2;
 			}
-			
+
 			float startY;
-			if(y2 > y1)
+			if (y2 > y1)
 				startY = y1;
 			else
 				startY = y2;
-			
-			if(cameraRect.overlaps(new Rectangle(startX, startY, Math.abs(x2 - x1), Math.abs(y2 - y1))) == false) continue;
-			
+
+			if (cameraRect.overlaps(new Rectangle(startX, startY, Math.abs(x2 - x1), Math.abs(y2 - y1))) == false)
+				continue;
+
 			float d = 0;
-			
-			if(renderCurves)
-			{
+
+			if (renderCurves) {
 				d = Math.abs(y1 - y2);
-				if(d > 100) d = 100; // limit
+				if (d > 100) d = 100; // limit
 			}
-			
-			if(renderCurves)
+
+			if (renderCurves)
 				shapeRenderer.curve(x1, y1, x1 + d, y1, x2 - d, y2, x2, y2, 32); // connection line
 			else
 				shapeRenderer.line(x1, y1, x2 - 12, y2);
-			
+
 			rendered++;
 		}
-		
+
 		return rendered;
 	}
-	
-	public void renderTraingles(ShapeRenderer shapeRenderer, DComponent comp, boolean ignoreInvisible)
-	{
-		if(comp instanceof RelayComponent)
-		{
+
+	public void renderTraingles (ShapeRenderer shapeRenderer, DComponent comp, boolean ignoreInvisible) {
+		if (comp instanceof RelayComponent) {
 			RelayComponent rcomp = (RelayComponent) comp;
-			if((boolean) rcomp.getTableModel().data[0][1] == true) shapeRenderer.setColor(Color.RED);
-			
+			if ((boolean) rcomp.getTableModel().data[0][1] == true) shapeRenderer.setColor(Color.RED);
+
 		}
-		
+
 		Connector[] inputs = comp.getOutputs();
-		
-		for(int i = 0; i < inputs.length; i++)
-		{
+
+		for (int i = 0; i < inputs.length; i++) {
 			Connector con = inputs[i];
 			Connector target = con.getTarget();
-			
-			if(target == null) continue;
-			
-			if(target.getParrentComponent().isVisible() == false && con.getParrentComponent().isVisible() == false) continue;
-			
+
+			if (target == null) continue;
+
+			if (target.getParrentComponent().isVisible() == false && con.getParrentComponent().isVisible() == false)
+				continue;
+
 			float y2 = target.getY() + 6;
-			
-			if(ignoreInvisible == false && comp instanceof RelayComponent && (boolean) comp.getTableModel().data[0][1] == true)
-			{
+
+			if (ignoreInvisible == false && comp instanceof RelayComponent && (boolean) comp.getTableModel().data[0][1] == true) {
 				shapeRenderer.setColor(Color.RED);
 				shapeRenderer.triangle(target.getX() - 8, target.getY() + 20, target.getX() - 8, target.getY() + 32, target.getX() + 3, y2 + 20); // ending triangle
 				shapeRenderer.triangle(con.getX() + 12, con.getY(), con.getX() + 12, con.getY() + 12, con.getX() + 22, con.getY() + 6); // ending triangle
-			}
-			else
-			{
+			} else {
 				shapeRenderer.setColor(Color.BLACK);
 				shapeRenderer.triangle(target.getX() - 8, target.getY(), target.getX() - 8, target.getY() + 12, target.getX() + 3, y2); // ending triangle
 			}
-			
+
 		}
 	}
-	
-	public void render(ShapeRenderer shapeRenderer, Connector selectedConnection, float x2, float y2)
-	{
+
+	public void render (ShapeRenderer shapeRenderer, Connector selectedConnection, float x2, float y2) {
 		shapeRenderer.begin(ShapeType.Line);
 		shapeRenderer.setColor(Color.ORANGE);
 		float x1 = selectedConnection.getX() + 6;
 		float y1 = selectedConnection.getY() + 6;
-		
+
 		float d = 0;
-		
-		if(renderCurves)
-		{
+
+		if (renderCurves) {
 			d = Math.abs(y1 - y2);
-			if(d > 100) d = 100; // limit
+			if (d > 100) d = 100; // limit
 		}
-		
-		if(selectedConnection.isInput() == true) // swaping values because curve will look weird without this
+
+		if (selectedConnection.isInput() == true) // swaping values because curve will look weird without this
 		{
 			float temp = x1;
 			x1 = x2;
 			x2 = temp;
-			
+
 			temp = y1;
 			y1 = y2;
 			y2 = temp;
 		}
-		
-		if(renderCurves)
+
+		if (renderCurves)
 			shapeRenderer.curve(x1, y1, x1 + d, y1, x2 - d, y2, x2, y2, 32);
 		else
 			shapeRenderer.line(x1, y1, x2, y2);
-		
+
 		shapeRenderer.end();
 	}
-	
-	public void setCameraCalc(Rectangle cameraRect)
-	{
+
+	public void setCameraCalc (Rectangle cameraRect) {
 		this.cameraRect = cameraRect;
 	}
-	
-	public void setRenderCurves(boolean renderCurves)
-	{
+
+	public void setRenderCurves (boolean renderCurves) {
 		this.renderCurves = renderCurves;
 	}
-	
+
 }

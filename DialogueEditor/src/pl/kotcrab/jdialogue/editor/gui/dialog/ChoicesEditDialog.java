@@ -1,27 +1,25 @@
 /*******************************************************************************
-    DialogueEditor
-    Copyright (C) 2013-2014 Pawel Pastuszak
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * DialogueEditor
+ * Copyright (C) 2013-2014 Pawel Pastuszak
+ * <p>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
 package pl.kotcrab.jdialogue.editor.gui.dialog;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import pl.kotcrab.jdialogue.editor.Editor;
+import pl.kotcrab.jdialogue.editor.components.ChoiceComponentChoices;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -30,26 +28,25 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import pl.kotcrab.jdialogue.editor.Editor;
-import pl.kotcrab.jdialogue.editor.components.ChoiceComponentChoices;
+public class ChoicesEditDialog extends JDialog {
 
-public class ChoicesEditDialog extends JDialog
-{
-	
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
-	
+
 	private JTable table;
 	private int tableLength;
-	
+
 	/**
 	 * Create the dialog.
-	 * 
+	 *
 	 * @param choicesComponent
 	 */
-	public ChoicesEditDialog(final ChoiceComponentChoices choicesComponent)
-	{
+	public ChoicesEditDialog (final ChoiceComponentChoices choicesComponent) {
 		super(Editor.window, true);
 		setTitle("Choices Editor");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -62,19 +59,18 @@ public class ChoicesEditDialog extends JDialog
 		{
 			String[] choices = choicesComponent.getChoicesTable();
 			tableLength = choices.length;
-			
+
 			String[][] tableModelData = new String[choices.length][1];
-			
-			for(int i = 0; i < choices.length; i++)
-			{
+
+			for (int i = 0; i < choices.length; i++) {
 				tableModelData[i][0] = choices[i];
 			}
-			
-			String[] columnName = { "Values" };
-			
+
+			String[] columnName = {"Values"};
+
 			table = new JTable(tableModelData, columnName);
 			table.setRowHeight(20);
-			
+
 			JScrollPane scrollPane = new JScrollPane(table);
 			table.setFillsViewportHeight(true);
 			table.getTableHeader().setReorderingAllowed(false);
@@ -90,16 +86,13 @@ public class ChoicesEditDialog extends JDialog
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				JButton okButton = new JButton("OK");
-				okButton.addActionListener(new ActionListener()
-				{
-					public void actionPerformed(ActionEvent e)
-					{
+				okButton.addActionListener(new ActionListener() {
+					public void actionPerformed (ActionEvent e) {
 						String[] newChoices = new String[tableLength];
-						for(int i = 0; i < newChoices.length; i++)
-						{
+						for (int i = 0; i < newChoices.length; i++) {
 							newChoices[i] = table.getModel().getValueAt(i, 0).toString();
 						}
-						
+
 						choicesComponent.setChoices(newChoices);
 						dispose();
 					}
@@ -110,10 +103,8 @@ public class ChoicesEditDialog extends JDialog
 			}
 			{
 				JButton cancelButton = new JButton("Cancel");
-				cancelButton.addActionListener(new ActionListener()
-				{
-					public void actionPerformed(ActionEvent e)
-					{
+				cancelButton.addActionListener(new ActionListener() {
+					public void actionPerformed (ActionEvent e) {
 						dispose();
 					}
 				});
@@ -121,7 +112,7 @@ public class ChoicesEditDialog extends JDialog
 				buttonPane.add(cancelButton);
 			}
 		}
-		
+
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setVisible(true);
 	}

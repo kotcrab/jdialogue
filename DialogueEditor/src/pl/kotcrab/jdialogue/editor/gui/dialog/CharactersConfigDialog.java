@@ -1,28 +1,26 @@
 /*******************************************************************************
-    DialogueEditor
-    Copyright (C) 2013-2014 Pawel Pastuszak
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * DialogueEditor
+ * Copyright (C) 2013-2014 Pawel Pastuszak
+ * <p>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 
 package pl.kotcrab.jdialogue.editor.gui.dialog;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import pl.kotcrab.jdialogue.editor.Editor;
+import pl.kotcrab.jdialogue.editor.project.PCharacter;
+import pl.kotcrab.jdialogue.editor.project.Project;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -34,25 +32,24 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
-import pl.kotcrab.jdialogue.editor.Editor;
-import pl.kotcrab.jdialogue.editor.project.PCharacter;
-import pl.kotcrab.jdialogue.editor.project.Project;
+public class CharactersConfigDialog extends JDialog {
 
-public class CharactersConfigDialog extends JDialog
-{
-	
 	private static final long serialVersionUID = 1L;
 	private CharactersConfigDialog instance;
 	private final JPanel contentPanel = new JPanel();
 	private JList<String> list;
 	private Project project;
-	
+
 	/**
 	 * Create the dialog.
 	 */
-	public CharactersConfigDialog(final Editor parrent, final Project project)
-	{
+	public CharactersConfigDialog (final Editor parrent, final Project project) {
 		super(parrent, true);
 		instance = this;
 		this.project = project;
@@ -67,9 +64,9 @@ public class CharactersConfigDialog extends JDialog
 		list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		list.setLayoutOrientation(JList.VERTICAL);
 		JScrollPane listScroller = new JScrollPane(list);
-		
+
 		updateList();
-		
+
 		contentPanel.add(listScroller);
 		JLabel lblSeq1 = new JLabel("Characters:");
 		contentPanel.add(lblSeq1, BorderLayout.NORTH);
@@ -77,35 +74,27 @@ public class CharactersConfigDialog extends JDialog
 		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		getContentPane().add(buttonPane, BorderLayout.SOUTH);
 		JButton btnCreateNew = new JButton("Create New");
-		btnCreateNew.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
+		btnCreateNew.addActionListener(new ActionListener() {
+			public void actionPerformed (ActionEvent e) {
 				new CharacterCreationDialog(parrent, project, null, true);
 				updateList();
 			}
 		});
 		buttonPane.add(btnCreateNew);
 		JButton okButton = new JButton("Edit");
-		okButton.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				if(isSelectionValid())
-				{
+		okButton.addActionListener(new ActionListener() {
+			public void actionPerformed (ActionEvent e) {
+				if (isSelectionValid()) {
 					new CharacterCreationDialog(parrent, project, getCharacterByName(list.getSelectedValue()), false);
 					updateList();
 				}
 			}
 		});
-		
+
 		JButton btnDelete = new JButton("Delete");
-		btnDelete.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				if(isSelectionValid())
-				{
+		btnDelete.addActionListener(new ActionListener() {
+			public void actionPerformed (ActionEvent e) {
+				if (isSelectionValid()) {
 					new CharacterDeleteDialog(parrent, project, getCharacterByName(list.getSelectedValue()));
 					updateList();
 				}
@@ -116,54 +105,47 @@ public class CharactersConfigDialog extends JDialog
 		buttonPane.add(okButton);
 		getRootPane().setDefaultButton(okButton);
 		JButton cancelButton = new JButton("Close");
-		cancelButton.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
+		cancelButton.addActionListener(new ActionListener() {
+			public void actionPerformed (ActionEvent e) {
 				dispose();
 			}
 		});
 		cancelButton.setActionCommand("Cancel");
 		buttonPane.add(cancelButton);
-		
+
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setVisible(true);
 	}
-	
-	private void updateList()
-	{
+
+	private void updateList () {
 		DefaultListModel<String> listModel = new DefaultListModel<String>();
 		ArrayList<PCharacter> characters = project.getCharacters();
-		for(PCharacter character : characters)
+		for (PCharacter character : characters)
 			listModel.addElement(character.getName());
-		
+
 		list.setModel(listModel);
 	}
-	
-	private PCharacter getCharacterByName(String name)
-	{
+
+	private PCharacter getCharacterByName (String name) {
 		ArrayList<PCharacter> charList = project.getCharacters();
-		
-		for(PCharacter ch : charList)
-			if(ch.getName().equals(name)) return ch;
-		
+
+		for (PCharacter ch : charList)
+			if (ch.getName().equals(name)) return ch;
+
 		return null;
 	}
-	
-	private boolean isSelectionValid()
-	{
-		if(list.getSelectedValue() == null)
-		{
+
+	private boolean isSelectionValid () {
+		if (list.getSelectedValue() == null) {
 			JOptionPane.showMessageDialog(instance, "Please select character.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
-		
-		if(list.getSelectedIndex() == 0)
-		{
+
+		if (list.getSelectedIndex() == 0) {
 			JOptionPane.showMessageDialog(instance, "This character cannot be edited or deleted.", "Error", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
-		
+
 		return true;
 	}
 }
