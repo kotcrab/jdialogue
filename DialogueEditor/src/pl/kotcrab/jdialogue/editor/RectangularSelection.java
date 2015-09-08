@@ -20,7 +20,6 @@ package pl.kotcrab.jdialogue.editor;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
@@ -81,7 +80,7 @@ public class RectangularSelection extends InputAdapter {
 
 	@Override
 	public boolean touchDown (int screenX, int screenY, int pointer, int button) {
-		if (button == Buttons.LEFT && Gdx.input.isKeyPressed(Keys.CONTROL_LEFT)) {
+		if (button == Buttons.LEFT) {
 			drawingPointer = pointer;
 			int x = (int) Touch.calcX(screenX);
 			int y = (int) Touch.calcY(screenY);

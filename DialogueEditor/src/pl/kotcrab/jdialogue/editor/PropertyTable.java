@@ -42,7 +42,6 @@ import java.awt.event.FocusListener;
 
 /**
  * Table with custom renderer
- *
  * @author Pawel Pastuszak
  */
 public class PropertyTable extends JTable {
@@ -90,16 +89,28 @@ public class PropertyTable extends JTable {
 
 		if (value instanceof PCharacter) {
 			characterCombobox.updateUI(); // make sure that combobox upadted itself (without this list will be blank if character list changed)
-			return new DefaultCellEditor(characterCombobox);
+			return new DefaultCellEditor(characterCombobox) {
+				@Override
+				public boolean stopCellEditing () {
+					if (characterCombobox.getSelectedItem() == null) cancelCellEditing();
+					return super.stopCellEditing();
+				}
+			};
 		}
 
 		if (value instanceof PCallback) {
 			callbackCombobox.updateUI();
-			return new DefaultCellEditor(callbackCombobox);
+			return new DefaultCellEditor(callbackCombobox) {
+				@Override
+				public boolean stopCellEditing () {
+					if (callbackCombobox.getSelectedItem() == null) cancelCellEditing();
+					return super.stopCellEditing();
+				}
+			};
 		}
 
-		if (value instanceof ChoiceComponentChoices) // TODO za kazdym razem nowy czy stary moze byc?
-		{
+		// TODO za kazdym razem nowy czy stary moze byc?
+		if (value instanceof ChoiceComponentChoices) {
 			return new ChoiceComponentChoicesEditor();
 		}
 

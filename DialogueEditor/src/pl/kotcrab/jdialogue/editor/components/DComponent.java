@@ -35,20 +35,20 @@ public abstract class DComponent {
 	 */
 	private int id;
 
-	private int x, y;
-	private int ry; // bottom, left point of background
-	private int height, width;
-	private Rectangle boundingRectangle = new Rectangle(0, 0, 0, 0);
+	protected int x, y;
+	protected int ry; // bottom, left point of background
+	protected int height, width;
+	protected Rectangle bounds = new Rectangle();
 
-	private Connector[] inputs;
-	private Connector[] outputs;
+	protected Connector[] inputs;
+	protected Connector[] outputs;
 
-	private KotcrabText[] inputsLabels;
-	private KotcrabText[] outputsLabels;
+	protected KotcrabText[] inputsLabels;
+	protected KotcrabText[] outputsLabels;
 
 	protected ComponentTableModel tableModel;
 
-	private boolean visible;
+	protected boolean visible;
 
 	public DComponent (String title, int x, int y, int inputs, int outputs) {
 		this.x = x;
@@ -76,7 +76,7 @@ public abstract class DComponent {
 		inputsLabels = provideInputLabels();
 		outputsLabels = provideOutputsLabels();
 
-		distrbuteLabels();
+		distributeLabels();
 	}
 
 	/**
@@ -87,7 +87,7 @@ public abstract class DComponent {
 		distributeConnections();
 		calcTextPos();
 
-		distrbuteLabels();
+		distributeLabels();
 	}
 
 	private void distributeConnections () {
@@ -108,15 +108,12 @@ public abstract class DComponent {
 		// but still i don't know why is this working...
 	}
 
-	private void calcSize (int inputs, int outputs) {
+	protected void calcSize (int inputs, int outputs) {
 		width = (int) (title.getTextBounds().width + 30);
 		if (inputs > outputs)
 			height = (inputs + 1) * 20 + 20;
 		else
 			height = (outputs + 1) * 20 + 20;
-
-		boundingRectangle.set(x, y - height / 2, width, height);
-
 	}
 
 	public void render (SpriteBatch batch) {
@@ -142,12 +139,6 @@ public abstract class DComponent {
 
 	}
 
-	public void renderOutline (ShapeRenderer shapeRenderer) {
-		shapeRenderer.setColor(Color.BLACK);
-		shapeRenderer.rect(x, ry, width, height); // outline
-		shapeRenderer.line(x, ry + height - 30, x + width, ry + height - 30); // line under text
-	}
-
 	public void renderSelectionOutline (ShapeRenderer shapeRenderer, Color color) {
 		shapeRenderer.setColor(color);
 		shapeRenderer.rect(x, ry, width, height); // outline
@@ -155,7 +146,7 @@ public abstract class DComponent {
 	}
 
 	public void renderDebug (ShapeRenderer shapeRenderer) {
-		shapeRenderer.rect(boundingRectangle.x, boundingRectangle.y, boundingRectangle.width, boundingRectangle.height);
+//		shapeRenderer.rect(boundingRectangle.x, boundingRectangle.y, boundingRectangle.width, boundingRectangle.height);
 	}
 
 	/**
@@ -179,11 +170,8 @@ public abstract class DComponent {
 
 	/**
 	 * Resizes the component, if new number is smaller than current, connection will be detached
-	 *
-	 * @param nInputs
-	 *            New number of inputs
-	 * @param nOutputs
-	 *            New number of outputs
+	 * @param nInputs New number of inputs
+	 * @param nOutputs New number of outputs
 	 */
 	public void resize (int nInputs, int nOutputs) {
 		if (nInputs != inputs.length) {
@@ -242,12 +230,11 @@ public abstract class DComponent {
 
 		calcTextPos();
 		distributeConnections();
-		distrbuteLabels();
+		distributeLabels();
 
 	}
 
-	public boolean contains (float x, float y) // is given point inside component
-	{
+	public boolean contains (float x, float y) {
 		return this.x <= x && this.x + this.width >= x && this.y - this.height / 2 <= y && this.y + this.height / 2 >= y;
 	}
 
@@ -278,7 +265,7 @@ public abstract class DComponent {
 		this.title.setPosition(x + this.title.getPosition().x, ry + height - 30);
 	}
 
-	private void distrbuteLabels () {
+	protected void distributeLabels () {
 		for (int i = 0; i < inputsLabels.length; i++) {
 			if (inputsLabels[i] != null) {
 				inputsLabels[i].setPosition(inputs[i].getX() + 16, inputs[i].getY() - 14);
@@ -304,8 +291,7 @@ public abstract class DComponent {
 
 		calcTextPos();
 		distributeConnections();
-		boundingRectangle.set(x, ry, width, height);
-		distrbuteLabels();
+		distributeLabels();
 	}
 
 	public KotcrabText[] provideInputLabels () {
@@ -364,16 +350,12 @@ public abstract class DComponent {
 		tableModel.data = data;
 	}
 
-	public Rectangle getBoundingRectangle () {
-		return boundingRectangle;
-	}
-
 	protected void setListeners () {
 
 	}
 
 	public void calcIfVisible (Rectangle cameraRect) {
-		if (cameraRect.overlaps(boundingRectangle))
+		if (cameraRect.overlaps(bounds.set(x, y - height / 2, width, height)))
 			visible = true;
 		else
 			visible = false;

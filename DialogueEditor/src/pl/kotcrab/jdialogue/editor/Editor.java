@@ -303,6 +303,10 @@ public class Editor extends JFrame {
 		if (returnVal == JFileChooser.APPROVE_OPTION) loadProject(loadProjectFileChooser.getSelectedFile());
 	}
 
+	public EditorLogic getLogic () {
+		return logic;
+	}
+
 	@Override
 	public void dispose () {
 		logic.renderer.dispose(); // we have to manulay dispose renderer from this thread, or we will get "No OpenGL context found in the current thread."

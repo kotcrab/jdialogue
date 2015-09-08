@@ -98,6 +98,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 	private boolean dirty;
 
 	private int panCounter = 0;
+	private boolean cameraDragged;
 
 	public Renderer (EditorListener listener, XStream xstream) {
 		this.listener = listener;
@@ -192,7 +193,7 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 
 			shapeRenderer.begin(ShapeType.Line);
 			for (DComponent comp : componentList) {
-				if (comp.isVisible()) comp.renderOutline(shapeRenderer);
+				if (comp.isVisible()) comp.renderSelectionOutline(shapeRenderer, Color.BLACK);
 			}
 			shapeRenderer.end();
 
@@ -278,6 +279,10 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		}
 	}
 
+	public OrthographicCamera getCamera () {
+		return camera;
+	}
+
 	@Override
 	public void resize (int width, int height) {
 		Vector3 pos = camera.position.cpy();
@@ -329,11 +334,8 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 
 	/**
 	 * Find selected connection
-	 *
-	 * @param x
-	 *            in screen cords
-	 * @param y
-	 *            in screen cords
+	 * @param x in screen cords
+	 * @param y in screen cords
 	 */
 	private void findConnection (float x, float y, boolean touchUp) {
 		x = Touch.calcX(x);
@@ -494,15 +496,6 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 
 	// ==================================================================INPUT============================================================================
 	@Override
-	public boolean touchDown (int screenX, int screenY, int pointer, int button) {
-		if (button == Buttons.RIGHT) {
-			listener.mouseRightClicked(screenX, screenY); // ! we are sending raw coordinates
-			return true;
-		}
-		return false;
-	}
-
-	@Override
 	public boolean scrolled (int amount) {
 		float newZoom = 0;
 		if (amount == 1) // out
@@ -546,7 +539,8 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 		if (panCounter > 0) //this will igore moving camera when clicked somewhere with menu opened
 		{
 			if (selectedComponent == null && selectedConnector == null && selectedComponentsList.size() == 0) {
-				if (Gdx.input.isButtonPressed(Buttons.LEFT) && Gdx.input.isKeyPressed(Keys.CONTROL_LEFT) == false) {
+				if (Gdx.input.isButtonPressed(Buttons.RIGHT) && Gdx.input.isKeyPressed(Keys.CONTROL_LEFT) == false) {
+					cameraDragged = true;
 					camera.position.x = camera.position.x - deltaX * camera.zoom;
 					camera.position.y = camera.position.y + deltaY * camera.zoom;
 					return true;
@@ -560,6 +554,11 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 
 	@Override
 	public boolean touchUp (int screenX, int screenY, int pointer, int button) {
+		if (button == Buttons.RIGHT && cameraDragged == false) {
+			listener.mouseRightClicked(screenX, screenY); // ! we are sending raw coordinates
+			return true;
+		}
+
 		findConnection(screenX, screenY, true);
 		return false;
 	}
@@ -724,6 +723,11 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 
 	@Override
 	public boolean keyTyped (char character) {
+		return false;
+	}
+
+	@Override
+	public boolean touchDown (int screenX, int screenY, int pointer, int button) {
 		return false;
 	}
 }

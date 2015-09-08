@@ -28,7 +28,6 @@ import com.badlogic.gdx.math.Vector2;
 
 /**
  * Text that you can scale, rotate, change color itp. Supports distance field fonts
- *
  * @author Pawel Pastuszak
  */
 public class KotcrabText {
@@ -90,18 +89,25 @@ public class KotcrabText {
 		newMatrix.translate(-origin.x, -origin.y, 0);
 	}
 
-	public void setText (String text) // zmiana tekstu
-	{
+	public void setText (String text) {
 		textBounds = bitmapFontCache.setText(text, 0, 0); // tak to musi byc 0 poniewaz pozycja jest ustalona podczas przeksztalanie matrixa (zobacz translate())
 
-		if (autoSetOriginToMiddle == true) // wymagane poznowne obliczenie origina
+		if (autoSetOriginToMiddle) // wymagane poznowne obliczenie origina
 			calculateOrigin();
 
 		translate();
 	}
 
-	protected void calculateOrigin () // obliczanie origina
-	{
+	public void setWrappedText (String text, float wrapWidth) {
+		textBounds = bitmapFontCache.setWrappedText(text, 0, 0, wrapWidth);
+
+		if (autoSetOriginToMiddle)
+			calculateOrigin();
+
+		translate();
+	}
+
+	protected void calculateOrigin () {
 		origin = new Vector2(textBounds.width / 2, -textBounds.height / 2);
 	}
 
