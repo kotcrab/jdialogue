@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Class-Path: xstream-1.4.6.jar gdx-backend-lwjgl-natives.jar xmlpull-1.
+ 1.3.1.jar gdx-backend-lwjgl.jar xpp3_min-1.1.4c.jar gdx.jar tween-eng
+ ine-api.jar gdx-sources.jar gdx-natives.jar
+Main-Class: pl.kotcrab.jdialogue.editor.Main
+

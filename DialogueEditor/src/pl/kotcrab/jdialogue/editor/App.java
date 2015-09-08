@@ -25,6 +25,8 @@ import java.util.Arrays;
 
 //TODO wersja przy jakiej utworzono projekt i sprawdzanie tego przy uruchomieniu
 public class App {
+	public static final String VERSION = "0.0.1";
+
 	public static final String prefsLastOpenedFolder = "lastOpenedFolder";
 
 	private static Preferences prefs;
@@ -37,6 +39,7 @@ public class App {
 
 	//TODO nie potrzeba rzucaæ wyj¹tku, ale nie ma to az tak du¿ego znaczenia
 	public static void parseArguments (String[] args) {
+		System.out.println("JDialogue " + VERSION);
 		System.out.println("Arguments: " + Arrays.toString(args));
 
 		for (int i = 0; i < args.length; i++) {
