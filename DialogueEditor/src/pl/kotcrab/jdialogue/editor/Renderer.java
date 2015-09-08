@@ -559,6 +559,8 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 			return true;
 		}
 
+		cameraDragged = false;
+
 		findConnection(screenX, screenY, true);
 		return false;
 	}
