@@ -610,7 +610,8 @@ public class Renderer implements ApplicationListener, InputProcessor, GestureLis
 			selectedComponent = null;
 			listener.changePropertyTableModel(null);
 			selectedComponentsList.clear();
-		}
+		} else
+			return true;
 
 		return false;
 	}

@@ -86,6 +86,7 @@ public class RectangularSelection extends InputAdapter {
 			int y = (int) Touch.calcY(screenY);
 			currentRect = new Rectangle(x, y, 0, 0);
 			updateDrawableRect();
+			return true;
 		}
 
 		return false;
